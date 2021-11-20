@@ -1,0 +1,149 @@
+
+            // <View style = {{flex: 1, justifyContent: 'center' }}>
+            // <TextInput
+            //         placeholder="Dog Name"
+            //         onChangeText={(dogName) => this.setState({ dogName })}
+            //     />
+            //     <TextInput
+            //         placeholder="Email"
+            //         onChangeText={(email) => this.setState({ email })}
+            //     />
+            //     <TextInput
+            //         placeholder="Password"
+            //         secureTextEntry={true}
+            //         onChangeText={(password) => this.setState({ password })}
+            //     />
+
+
+            //     <Button
+            //         title="Next Step"
+            //         onPress={() => this.onSignUp()}
+            //     />
+
+            // </View>
+
+
+
+
+
+OLD LOGIN
+
+
+import React, { useState } from 'react'
+import {
+    Box,
+    Text,
+    Heading,
+    VStack,
+    FormControl,
+    Input,
+    Link,
+    Button,
+    HStack
+  } from 'native-base';
+
+import firebase from 'firebase'
+
+export default class Login extends Component {
+
+    constructor(props) {
+
+        super(props)
+
+        this.state = {
+            email: '',
+            password: '',
+            dogName: '',
+            alert: 'Must be atleast 6 characters.'
+        }
+
+        this.onSignIn = this.onSignIn.bind(this);
+    }
+
+    onSignIn() {
+      console.log('signing in');
+        const { email, password } = this.state;
+        firebase.auth().signInWithEmailAndPassword(email, password)
+            .then((result) => {
+                console.log(result)
+            })
+            .catch((error) => {
+              console.log(error.message)
+
+                this.setState({
+                  alert: error.message
+                })
+            })
+
+    }
+
+    render() {
+
+        return (
+            
+            <Box safeArea flex={1} p="2" py="8" w="90%" mx="auto">
+            <Heading size="lg" fontWeight="600" color="coolGray.800">
+              Welcome Back
+            </Heading>
+            <Heading mt="1" color="coolGray.600" fontWeight="medium" size="xs">
+              Sign in to continue!
+            </Heading>
+    
+            <VStack space={3} mt="5">
+              <FormControl>
+                <FormControl.Label
+                  _text={{
+                    color: 'coolGray.800',
+                    fontSize: 'xs',
+                    fontWeight: 500,
+                  }}>
+                  Email ID
+                </FormControl.Label>
+                <Input type = 'email' onChangeText={(email) => this.setState({ email })}/>
+              </FormControl>
+              <FormControl>
+                <FormControl.Label
+                  _text={{
+                    color: 'coolGray.800',
+                    fontSize: 'xs',
+                    fontWeight: 500,
+                  }}>
+                  Password
+                </FormControl.Label> 
+                <Input type="password" onChangeText={(password) => this.setState({ password })}/>
+                <FormControl.HelperText>
+            {this.state.alert}
+          </FormControl.HelperText>
+                {/* <Link
+                  _text={{ fontSize: 'xs', fontWeight: '500', color: 'indigo.500' }}
+                  alignSelf="flex-end"
+                  mt="1">
+                  Forget Password?
+                </Link> */}
+              </FormControl>
+              <Button mt="2" colorScheme="indigo"  onPress={() => this.onSignIn()}>
+                Sign in
+              </Button>
+              <Button mt="2" variant = "outline"colorScheme="indigo"  onPress= {() => this.props.navigation.goBack()}>
+                Back
+              </Button>
+              <HStack mt="6" justifyContent="center">
+                <Text fontSize="sm" color="muted.700" fontWeight={400}>
+                  I'm a new user.{' '}
+                </Text>
+                <Link
+                  _text={{
+                    color: 'indigo.500',
+                    fontWeight: 'medium',
+                    fontSize: 'sm',
+                  }}
+                  onPress= {() => this.props.navigation.navigate("Register")}>
+                  Sign Up
+                </Link>
+              </HStack>
+            </VStack>
+          </Box>
+
+        )
+    }
+}
