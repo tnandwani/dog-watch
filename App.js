@@ -4,17 +4,14 @@ import { Provider } from 'react-redux'
 import { createStore, combineReducers, compose, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk'
 import {userReducer} from './redux/reducers'
-import {firebaseConfig} from './constants'
+import {firebaseConfig, MyTheme} from './constants'
 
 // FIREBASE
 import firebase from 'firebase/app'
-
 const app = firebase.initializeApp(firebaseConfig);
 
-// REDUX ROOT REDUCER
+// REDUX
 const rootReducer = combineReducers({userReducer});
-
-// REDUX STORE
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 export const store = createStore(
   rootReducer, 
@@ -26,18 +23,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 const Stack = createStackNavigator()
 
-const MyTheme = {
-  dark: true,
-  colors: {
-    primary: 'rgb(127,109,243)',
-    background: 'rgb(255, 255, 255)',
-    card: 'rgb(0, 0, 0)',
-    background: 'rgb(242, 242, 242)',
-    text: 'rgb(242, 242, 242)',
-    border: 'rgb(199, 199, 204)',
-    notification: 'rgb(255, 69, 58)',
-  },
-};
 
 // SCREENS
 import LandingScreen from './components/auth/Landing'
@@ -47,8 +32,6 @@ import CreateScreen from './components/auth/steps/Step3'
 import SettingScreen from './components/auth/steps/Step2'
 
 import MainScreen from './components/Main'
-
-
 
 
 export class App extends Component {
@@ -81,7 +64,7 @@ export class App extends Component {
     if (!loaded) {
       return (
         <NativeBaseProvider>
-          <Center>
+        <Center flex={1} px="3">
           <Spinner color="indigo.500"/>
 
           </Center>
