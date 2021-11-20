@@ -1,5 +1,9 @@
-# dog-watch
+# DOG WATCH
 
+
+
+
+--------------------------------
 # TODAY 
 - convert components to functions
     - classes    
@@ -8,7 +12,7 @@
         - Step 3
         - DogCard 
 
-# REMAINING
+# LEFT TO DO
 - implement redux
 - save user data
 - profile page
@@ -16,7 +20,6 @@
 - theme
 
 --------------------------------
-
 # MY WEB DEV PATH 
 
 ~ easy ~
