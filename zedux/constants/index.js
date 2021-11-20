@@ -1,6 +1,0 @@
-export const GET_USER_LOGIN = 'GET_USER_LOGIN';
-export const GET_USER_DETAILS = 'GET_USER_DETAILS';
-
-export const SET_USER_BASICS = 'SET_USER_BASICS';
-export const SET_USER_LOCATION = 'SET_USER_LOCATION';
-export const SET_USER_LOGIN = 'SET_USER_LOGIN';
