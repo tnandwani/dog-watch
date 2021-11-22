@@ -1,22 +1,12 @@
 import React, { Component } from 'react'
 import { NativeBaseProvider, Center, Spinner} from "native-base"
 import { Provider } from 'react-redux'
-import { createStore, combineReducers, compose, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk'
-import {userReducer} from './redux/reducers'
+import {store} from './redux/store'
 import {firebaseConfig, MyTheme} from './constants'
 
 // FIREBASE
 import firebase from 'firebase/app'
 const app = firebase.initializeApp(firebaseConfig);
-
-// REDUX
-const rootReducer = combineReducers({userReducer});
-const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-export const store = createStore(
-  rootReducer, 
-composeEnhancer(applyMiddleware(thunk))
-);
 
 // NAVIGATION
 import { NavigationContainer } from '@react-navigation/native';

@@ -8,15 +8,10 @@ Featues
 
 --------------------------------
 # TODAY 
-- convert components to functions
-    - classes    
-        - app (keep class)
-\        - Step 3
-        - DogCard 
-
-# LEFT TO DO
 - implement redux
 - save user data
+
+# LEFT TO DO
 - profile page
 - add location markers 
 - theme
