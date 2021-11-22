@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+
+import { saveDogDetails } from '../../../redux/slices/userSlice'
 import { useSelector, useDispatch } from 'react-redux'
 
 import {
@@ -14,13 +16,19 @@ import {
 
 export default function Step1({ navigation }) {
 
+    // local state
     const [dogName, setDogName] = useState();
     const [breed, setBreed] = useState();
     const [age, setAge] = useState();
     const [gender, setGender] = useState();
 
-    const dogName = useSelector((state) => state.user.dogName)
     const dispatch = useDispatch()
+
+    // save data to redux
+    const saveStep = () => {
+        dispatch(saveDogDetails({dogName, breed, age, gender}))
+        navigation.navigate("Settings")
+    }
 
     return (
         <Box safeArea flex={1} p="2" w="90%" mx="auto" py="8">
@@ -111,7 +119,7 @@ export default function Step1({ navigation }) {
                 </Select>
             </FormControl>
 
-            {dogName}
+            {doggyName}
 
             <Button.Group
                 mx={{
@@ -122,7 +130,7 @@ export default function Step1({ navigation }) {
                 <Button mt="2" variant="outline" colorScheme="indigo" onPress={() => navigation.goBack()}>
                     Back
                 </Button>
-                <Button mt="2" colorScheme="indigo" onPress= {() => navigation.navigate("Settings")}>
+                <Button mt="2" colorScheme="indigo" onPress= {() => saveStep()}>
                     Next Step
                 </Button>
 
