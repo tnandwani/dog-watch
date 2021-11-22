@@ -1,5 +1,5 @@
 
-import React, { Component, useState } from 'react'
+import React, { useState } from 'react'
 import {
     Box,
     Heading,
@@ -11,49 +11,36 @@ import {
 
 import firebase from 'firebase'
 
-export default class Create extends Component {
+export default function Step3({ navigation }) {
 
-    constructor(props) {
-        super(props);
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
+    const [confirm, setConfirm] = useState();
+    const [number, setNumber] = useState();
+    const [alert, setAlert] = useState('Must be atleast 6 characters.');
 
-        this.state = {
-            email: '',
-            password: '',
-            number: '',
-            alert: 'Must be atleast 6 characters.'
-        }
-
-        this.onSignUp = this.onSignUp.bind(this);
-    }
-
-    onSignUp() {
-        console.log("creating....");
-        const { email, password } = this.state;
+    const onSignUp = () => {
         firebase.auth().createUserWithEmailAndPassword(email, password)
-            .then((result) => {
-                console.log(result);
-                firebase.firestore().collection("users")
-                    .doc(firebase.auth().currentUser.uid)
-                    .set({
-                        email
-                    })
-            }).then(() => {
-                this.props.navigation.navigate('Settings')
-            })
-            .catch((error) => {
-                console.log(error)
-                this.setState({
-                    alert: error.message
-                  })
-            })
-
+        .then((result) => {
+            console.log(result);
+            firebase.firestore().collection("users")
+                .doc(firebase.auth().currentUser.uid)
+                .set({
+                    email
+                })
+        }).then(() => {
+            navigate('Settings')
+        })
+        .catch((error) => {
+            console.log(error)
+            setAlert(error.message)
+       
+        })
     }
 
-    render() {
-
-
-        return (
-            <Box safeArea flex={1} p="2" w="90%" mx="auto" py="8">
+    return (
+        <div>
+                    <Box safeArea flex={1} p="2" w="90%" mx="auto" py="8">
                 <Heading size="lg" color="coolGray.800" fontWeight="600">
                     Owner info
                 </Heading>
@@ -67,30 +54,30 @@ export default class Create extends Component {
                             _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
                             Email
                         </FormControl.Label>
-                        <Input type='email' onChangeText={(email) => this.setState({ email })} />
+                        <Input type='email' onChangeText={(value) => setEmail(value)}/>
                     </FormControl>
                     <FormControl>
                         <FormControl.Label
                             _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
                             Phone
                         </FormControl.Label>
-                        <Input type="password" onChangeText={(number) => this.setState({ number })} />
+                        <Input value = "" type="number" placeholder = "(XXX) XXX XXXX" onChangeText={(value) => setNumber(value)} />
                     </FormControl>
                     <FormControl>
                         <FormControl.Label
                             _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
                             Password
                         </FormControl.Label>
-                        <Input type="password" onChangeText={(password) => this.setState({ password })} />
+                        <Input type="password" onChangeText={(value) => setPassword(value)} />
                     </FormControl>
                     <FormControl>
                         <FormControl.Label
                             _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
                             Cofirm Password
                         </FormControl.Label>
-                        <Input type="password" />
+                        <Input type="password" onChangeText={(value) => setConfirm(value)}/>
                         <FormControl.HelperText>
-            {this.state.alert}
+            {alert}
           </FormControl.HelperText>
                     </FormControl>
                     <Button.Group
@@ -99,10 +86,10 @@ export default class Create extends Component {
                             md: 0,
                         }}
                     >
-                                 <Button mt="2" variant = "outline" colorScheme="indigo" onPress={() => this.props.navigation.goBack()}>
+                                 <Button mt="2" variant = "outline" colorScheme="indigo" onPress={() => navigation.goBack()}>
                             Back
                         </Button>
-                        <Button mt="2" colorScheme="indigo" _text={{ color: 'white' }} onPress={() => this.onSignUp()}>
+                        <Button mt="2" colorScheme="indigo" _text={{ color: 'white' }} onPress={() => onSignUp()}>
                             Next Step
                         </Button>
                  
@@ -110,7 +97,7 @@ export default class Create extends Component {
 
                 </VStack>
             </Box>
-
-        )
-    }
+            
+        </div>
+    )
 }

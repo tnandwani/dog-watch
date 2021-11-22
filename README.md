@@ -1,15 +1,17 @@
 # DOG WATCH
-
-
-
+A COMMUNITY FOR DOG OWNERS 
+Featues
+- Find my dog
+- Community Feed
+- Dog adoption page
+- Resources
 
 --------------------------------
 # TODAY 
 - convert components to functions
     - classes    
         - app (keep class)
-        - Step 2
-        - Step 3
+\        - Step 3
         - DogCard 
 
 # LEFT TO DO
