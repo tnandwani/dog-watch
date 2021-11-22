@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { NativeBaseProvider, Center, Spinner} from "native-base"
 import { Provider } from 'react-redux'
-import {store} from './redux/store'
+import store from './redux/store'
 import {firebaseConfig, MyTheme} from './constants'
 
 // FIREBASE

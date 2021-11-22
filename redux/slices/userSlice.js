@@ -4,6 +4,7 @@ export const userSlice = createSlice({
   name: 'user',
   initialState: {
     value: 0,
+    dogName: ''
   },
   reducers: {
     increment: (state) => {

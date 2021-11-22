@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+
 import {
     Heading,
     VStack,
@@ -17,6 +19,8 @@ export default function Step1({ navigation }) {
     const [age, setAge] = useState();
     const [gender, setGender] = useState();
 
+    const dogName = useSelector((state) => state.user.dogName)
+    const dispatch = useDispatch()
 
     return (
         <Box safeArea flex={1} p="2" w="90%" mx="auto" py="8">
@@ -106,6 +110,8 @@ export default function Step1({ navigation }) {
 
                 </Select>
             </FormControl>
+
+            {dogName}
 
             <Button.Group
                 mx={{
