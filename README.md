@@ -1,7 +1,7 @@
 # DOG WATCH
 ## A COMMUNITY FOR DOG OWNERS
 
-**Featues**
+**Features**
 - Find my dog
 - Community Feed
 - Dog adoption page
@@ -10,7 +10,13 @@
 --------------------------------
 ### LEFT TO DO 
 
-- NOW 
+- NOW
+    - testing AppWrite
+        - users 
+        - db
+        - analytics
+        
+- TODAY 
     - save user data during steps
         - step 1 - working???? not onChangeText
         - step 2

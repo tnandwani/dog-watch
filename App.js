@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import {appWriteID} from './constants'
 import { NativeBaseProvider, Center, Spinner} from "native-base"
 import { Provider } from 'react-redux'
 import store from './redux/store'
@@ -23,6 +24,25 @@ import SettingScreen from './components/auth/steps/Step2'
 
 import MainScreen from './components/Main'
 
+
+// APPWRITE TEST
+
+import { Appwrite } from "appwrite";
+// Init your Web SDK
+const appwrite = new Appwrite();
+
+appwrite
+    .setEndpoint('http://localhost/v1') // Your Appwrite Endpoint
+    .setProject(appWriteID) // Your project ID
+;
+// Register User
+appwrite
+    .account.create('me@example.com', 'password', 'Jane Doe')
+        .then(response => {
+            console.log(response);
+        }, error => {
+            console.log(error);
+        });
 
 export class App extends Component {
 
