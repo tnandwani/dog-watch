@@ -51,6 +51,7 @@ export class App extends Component {
 
   render() {
     const { loggedIn, loaded } = this.state;
+    
     if (!loaded) {
       return (
         <NativeBaseProvider>
@@ -64,8 +65,9 @@ export class App extends Component {
 
     if (!loggedIn) {
       return (
-        <Provider store={store}>
 
+        // NEW USER
+        <Provider store={store}>
         <NativeBaseProvider>
           <NavigationContainer theme={MyTheme}>
             <Stack.Navigator initialRouteName="Landing">
@@ -84,6 +86,7 @@ export class App extends Component {
 
     return (
 
+      // RETURNING USER
       <Provider store={store}>
         <NativeBaseProvider>
 
