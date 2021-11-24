@@ -1,17 +1,23 @@
 import React from 'react'
 import { Text, Button, Stack, Icon, Center, Heading } from "native-base"
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import {createUser} from '../../database'
 
 export default function Landing({ navigation }) {
+
+    const createButton = () => {
+        createUser();
+    }
+    
     return (
 
         <Center flex={1} px="3">
-       <Heading size="2xl" color="coolGray.800" fontWeight="600" bold>
-                    Dog Watch
-                </Heading>
-                <Heading mt="1" mb = '5' color="coolGray.600" fontWeight="medium" size="xs">
-                    A Community for Dog Owners
-                </Heading>
+            <Heading size="2xl" color="coolGray.800" fontWeight="600" bold>
+                Dog Watch
+            </Heading>
+            <Heading mt="1" mb='5' color="coolGray.600" fontWeight="medium" size="xs">
+                A Community for Dog Owners
+            </Heading>
             <Stack
                 mt="4"
                 direction={{
@@ -41,6 +47,8 @@ export default function Landing({ navigation }) {
                 >
                     Explore
                 </Button>
+
+                <Button onPress={() => createButton()}>Create</Button>
             </Stack>
         </Center>
 

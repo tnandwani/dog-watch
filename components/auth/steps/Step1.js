@@ -119,8 +119,6 @@ export default function Step1({ navigation }) {
                 </Select>
             </FormControl>
 
-            {doggyName}
-
             <Button.Group
                 mx={{
                     base: "auto",
