@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import {appWriteID} from './constants'
 import { NativeBaseProvider, Center, Spinner} from "native-base"
 import { Provider } from 'react-redux'
 import store from './redux/store'
@@ -22,7 +23,6 @@ import CreateScreen from './components/auth/steps/Step3'
 import SettingScreen from './components/auth/steps/Step2'
 
 import MainScreen from './components/Main'
-
 
 export class App extends Component {
 
