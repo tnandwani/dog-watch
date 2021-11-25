@@ -1,5 +1,7 @@
 
 import React, { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+
 import {
     Box,
     Heading,
@@ -8,6 +10,7 @@ import {
     Input,
     Button,
 } from 'native-base';
+import { saveDogAccount } from '../../../redux/slices/userSlice'
 
 // FIREBASE
 import firebase from 'firebase/app'
@@ -20,13 +23,23 @@ export default function Step3({ navigation }) {
     const [number, setNumber] = useState();
     const [alert, setAlert] = useState('Must be atleast 6 characters.');
 
+    const dispatch = useDispatch()
+
+    // save data to redux
+    const saveStep = () => {
+        dispatch(saveDogAccount({ email, number }))
+    }
+
     const onSignUp = () => {
 
         firebase.auth().createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
           // Signed in 
           var user = userCredential.user;
-
+        
+          // save user cred to redux
+            saveStep();
+            
           // push final user to AppWrite db 
 
           
@@ -59,7 +72,7 @@ export default function Step3({ navigation }) {
                             _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
                             Phone
                         </FormControl.Label>
-                        <Input value = "" type="number" placeholder = "(XXX) XXX XXXX" onChangeText={(value) => setNumber(value)} />
+                        <Input type="number" placeholder = "(XXX) XXX XXXX" onChangeText={(value) => setNumber(value)} />
                     </FormControl>
                     <FormControl>
                         <FormControl.Label

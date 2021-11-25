@@ -11,18 +11,16 @@
 ### LEFT TO DO 
 
 - NOW
-    - testing AppWrite
-        - users 
-        - db
-        - analytics
-        
-- TODAY 
-    - save user data during steps
-        - step 1 - working???? not onChangeText
-        - step 2
-        - step 3
+    1. make dogSlice
+    2. save steps 1 + 2 to dogSlice
+    3. save step 4 to userSlice
+    4. verify all data available
+    4. save slices to appWrite db
+
+- NEXT 
+    - make profile page
+
 - LATER
-    - profile page
     - add location markers 
     - theme
     
