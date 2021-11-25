@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import {appWriteID} from './constants'
 import { NativeBaseProvider, Center, Spinner} from "native-base"
 import { Provider } from 'react-redux'
 import store from './redux/store'
@@ -13,16 +12,13 @@ const app = firebase.initializeApp(firebaseConfig);
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 const Stack = createStackNavigator()
-
-
 // SCREENS
 import LandingScreen from './components/auth/Landing'
 import LoginScreen from './components/auth/Login'
 import RegisterScreen from './components/auth/steps/Step1'
 import CreateScreen from './components/auth/steps/Step3'
 import SettingScreen from './components/auth/steps/Step2'
-
-import MainScreen from './components/Main'
+import MainScreen from './components/Main' // holds user tabs 
 
 
 

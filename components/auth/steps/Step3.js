@@ -26,7 +26,10 @@ export default function Step3({ navigation }) {
         .then((userCredential) => {
           // Signed in 
           var user = userCredential.user;
-          // ...
+
+          // push final user to AppWrite db 
+
+          
         })
         .catch((error) => {
           var errorMessage = error.message;
