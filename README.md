@@ -18,9 +18,11 @@
     4. save slices to appWrite db
 
 - NEXT 
+    - convert location to zipcode
     - make profile page
 
 - LATER
     - add location markers 
+    - Home layout
     - theme
     
