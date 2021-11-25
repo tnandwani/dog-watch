@@ -9,7 +9,8 @@ import {
     Button,
 } from 'native-base';
 
-import firebase from 'firebase'
+// FIREBASE
+import firebase from 'firebase/app'
 
 export default function Step3({ navigation }) {
 
@@ -20,23 +21,17 @@ export default function Step3({ navigation }) {
     const [alert, setAlert] = useState('Must be atleast 6 characters.');
 
     const onSignUp = () => {
+
         firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then((result) => {
-            console.log(result);
-            firebase.firestore().collection("users")
-                .doc(firebase.auth().currentUser.uid)
-                .set({
-                    email
-                })
-        }).then(() => {
-            navigate('Settings')
+        .then((userCredential) => {
+          // Signed in 
+          var user = userCredential.user;
+          // ...
         })
         .catch((error) => {
-            console.log(error)
-            setAlert(error.message)
-       
-        })
-    }
+          var errorMessage = error.message;
+          setAlert(errorMessage);
+        });    }
 
     return (
         <div>

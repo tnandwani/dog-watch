@@ -24,6 +24,8 @@ import SettingScreen from './components/auth/steps/Step2'
 
 import MainScreen from './components/Main'
 
+
+
 export class App extends Component {
 
   constructor(props) {

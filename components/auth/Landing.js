@@ -1,14 +1,9 @@
 import React from 'react'
 import { Text, Button, Stack, Icon, Center, Heading } from "native-base"
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import {createUser} from '../../database'
 
 export default function Landing({ navigation }) {
 
-    const createButton = () => {
-        createUser();
-    }
-    
     return (
 
         <Center flex={1} px="3">
@@ -47,8 +42,6 @@ export default function Landing({ navigation }) {
                 >
                     Explore
                 </Button>
-
-                <Button onPress={() => createButton()}>Create</Button>
             </Stack>
         </Center>
 
