@@ -10,7 +10,9 @@ import {
     Input,
     Button,
 } from 'native-base';
-import { saveDogAccount } from '../../../redux/slices/userSlice'
+import { saveDogAccount } from '../../../redux/slices/dogSlice'
+import { saveUserAccount } from '../../../redux/slices/userSlice'
+
 
 // FIREBASE
 import firebase from 'firebase/app'
@@ -26,8 +28,10 @@ export default function Step3({ navigation }) {
     const dispatch = useDispatch()
 
     // save data to redux
-    const saveStep = () => {
-        dispatch(saveDogAccount({ email, number }))
+    const saveStep = (uid) => {
+        dispatch(saveDogAccount({ email, number, uid  }))
+        dispatch(saveUserAccount({ email, number, uid  }))
+
     }
 
     const onSignUp = () => {
@@ -38,7 +42,7 @@ export default function Step3({ navigation }) {
           var user = userCredential.user;
         
           // save user cred to redux
-            saveStep();
+            saveStep(user.uid);
             
           // push final user to AppWrite db 
 

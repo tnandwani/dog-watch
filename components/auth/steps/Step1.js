@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { saveDogDetails } from '../../../redux/slices/userSlice'
+import { saveDogDetails } from '../../../redux/slices/dogSlice'
 import { useSelector, useDispatch } from 'react-redux'
 
 import {

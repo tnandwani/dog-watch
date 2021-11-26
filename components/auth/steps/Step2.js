@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
-import { saveDogSettings } from '../../../redux/slices/userSlice'
+import { saveDogSettings } from '../../../redux/slices/dogSlice'
 
 
 import {
@@ -52,7 +52,7 @@ export default function Step2({ navigation }) {
 
             let currentLocation = await Location.getCurrentPositionAsync({});
             console.log(currentLocation);
-            setLocation(currentLocation);
+            setLocation(currentLocation.coords);
             setLocationStatus(<Text> Location Received</Text>)
 
         })();

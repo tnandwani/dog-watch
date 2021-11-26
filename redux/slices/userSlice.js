@@ -5,39 +5,23 @@ import {
 export const userSlice = createSlice({
   name: 'user',
   initialState: {
-    dogName: 'Milo',
-    breed: null,
-    gender: null,
-    age: null,
-    accuracy: null,
-    visibility: null,
-    location: null
+    email: null,
+    number: null,
+    uid: null,
+    dogs: []
   },
   reducers: {
-    saveDogDetails: (state, action) => {
-      state.dogName = action.payload.dogName
-      state.age = action.payload.age
-      state.gender = action.payload.gender
-      state.breed = action.payload.breed
-
-    },
-    saveDogSettings: (state, action) => {
-      state.accuracy = action.payload.accuracy
-      state.visibility = action.payload.visibility
-      state.location = action.payload.location
-    },
-    saveDogAccount: (state, action) => {
+    saveUserAccount: (state, action) => {
       state.email = action.payload.email
       state.number = action.payload.number
+      state.uid = action.payload.uid
     },
   },
 })
 
 // Action creators are generated for each case reducer function
 export const {
-  saveDogDetails,
-  saveDogSettings,
-  saveDogAccount
+  saveUserAccount
 } = userSlice.actions
 
 export default userSlice.reducer
