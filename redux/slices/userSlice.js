@@ -6,14 +6,12 @@ export const userSlice = createSlice({
   name: 'user',
   initialState: {
     email: null,
-    number: null,
     uid: null,
-    dogs: []
+    dogs: [],
   },
   reducers: {
     saveUserAccount: (state, action) => {
       state.email = action.payload.email
-      state.number = action.payload.number
       state.uid = action.payload.uid
     },
   },

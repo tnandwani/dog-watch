@@ -11,18 +11,16 @@
 ### LEFT TO DO 
 
 - NOW
-    1. make dogSlice
-    2. save steps 1 + 2 to dogSlice
-    3. save step 4 to userSlice
-    4. verify all data available
-    4. save slices to appWrite db
+    1. Add Profile Image
+    2. verify data in steps
+    3. Add neighborhood sector
+    3. save slices to appWrite db
 
 - NEXT 
-    - convert location to zipcode
     - make profile page
 
 - LATER
-    - add location markers 
+    - add location markers to explore page
     - Home layout
     - theme
     

@@ -12,7 +12,9 @@ export const dogSlice = createSlice({
     accuracy: null,
     visibility: null,
     location: null,
-    owner: null
+    owner: null,
+    email: null,
+    phoneNumber: null,
   },
   reducers: {
     saveDogDetails: (state, action) => {
@@ -29,7 +31,7 @@ export const dogSlice = createSlice({
     },
     saveDogAccount: (state, action) => {
       state.email = action.payload.email
-      state.number = action.payload.number
+      state.phoneNumber = action.payload.phoneNumber
       state.owner = action.payload.uid
     },
   },
