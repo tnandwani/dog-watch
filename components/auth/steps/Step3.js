@@ -8,7 +8,7 @@ import {
     VStack,
     FormControl,
     Input,
-    Button,
+    Button
 } from 'native-base';
 import { saveDogAccount } from '../../../redux/slices/dogSlice'
 import { saveUserAccount } from '../../../redux/slices/userSlice'
@@ -86,6 +86,7 @@ export default function Step3({ navigation }) {
                 </Heading>
 
                 <VStack space={3} mt="5">
+  
                     <FormControl>
                         <FormControl.Label
                             _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>

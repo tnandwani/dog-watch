@@ -13,8 +13,9 @@
 - NOW
     1. Add Profile Image
     2. verify data in steps
-    3. Add neighborhood sector
-    3. save slices to appWrite db
+    3. Update firebase User
+    4. Add neighborhood sector
+    5. save slices to appWrite db
 
 - NEXT 
     - make profile page
