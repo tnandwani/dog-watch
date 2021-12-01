@@ -21,7 +21,6 @@ import {
 
 export default function Step2({ navigation }) {
 
-    const [accuracy, setAccuracy] = useState();
     const [visibility, setVisibility] = useState();
     const [location, setLocation] = useState();
     const [errorMessage, setErrorMessage] = useState();
@@ -31,7 +30,7 @@ export default function Step2({ navigation }) {
 
     // save data to redux
     const saveStep = () => {
-        dispatch(saveDogSettings({ accuracy, visibility, location }))
+        dispatch(saveDogSettings({visibility, location }))
         navigation.navigate("Create")
     }
 
@@ -52,7 +51,7 @@ export default function Step2({ navigation }) {
 
             // get coords
             let currentPin = await Location.getCurrentPositionAsync({});
-            var currentAddress;
+            var currentAddress = 0;
 
 
             // If not mobile get address
@@ -95,31 +94,7 @@ export default function Step2({ navigation }) {
                 <FormControl>
                     <FormControl.Label
                         _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
-                        Neighborhood
-                    </FormControl.Label>
-                    <Select
-                        selectedValue={accuracy}
-                        minWidth="200"
-                        accessibilityLabel="Choose Accuracy"
-                        placeholder="Choose Range"
-                        _selectedItem={{
-                            bg: "teal.600",
-                            endIcon: <CheckIcon size="5" />,
-                        }}
-                        mt={1}
-                        onValueChange={(value) => setAccuracy(value)}
-                    >
-                        <Select.Item label="1 Mile" value="1" />
-                        <Select.Item label="3 Miles" value="3" />
-                        <Select.Item label="5 Miles" value="5" />
-                        <Select.Item label="10 Miles" value="10" />
-
-                    </Select>
-                </FormControl>
-                <FormControl>
-                    <FormControl.Label
-                        _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
-                        Privacy
+                        Visibility
                     </FormControl.Label>
                     <Select
                         selectedValue={visibility}

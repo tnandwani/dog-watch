@@ -12,7 +12,6 @@ export const dogSlice = createSlice({
     breed: null,
     gender: null,
     age: null,
-    accuracy: null,
     visibility: null,
     profileImage: null,
     location: null,
@@ -34,7 +33,6 @@ export const dogSlice = createSlice({
 
     },
     saveDogSettings: (state, action) => {
-      state.accuracy = action.payload.accuracy
       state.visibility = action.payload.visibility
       state.location = action.payload.location
     },
