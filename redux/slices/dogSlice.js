@@ -2,6 +2,9 @@ import {
   createSlice
 } from '@reduxjs/toolkit'
 
+// APPWRITE ACTIONS
+import { uploadImage } from '../../database'
+
 export const dogSlice = createSlice({
   name: 'dog',
   initialState: {
@@ -11,6 +14,7 @@ export const dogSlice = createSlice({
     age: null,
     accuracy: null,
     visibility: null,
+    profileImage: null,
     location: null,
     owner: null,
     email: null,
@@ -22,6 +26,8 @@ export const dogSlice = createSlice({
       state.age = action.payload.age
       state.gender = action.payload.gender
       state.breed = action.payload.breed
+      state.profileImage = action.payload.profileImage
+      uploadImage(action.payload.profileImage)
 
     },
     saveDogSettings: (state, action) => {

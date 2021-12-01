@@ -32,7 +32,7 @@ export default function Step1({ navigation }) {
 
     // save data to redux
     const saveStep = () => {
-        dispatch(saveDogDetails({ dogName, breed, age, gender }))
+        dispatch(saveDogDetails({ dogName, breed, age, gender, profileImage }))
         navigation.navigate("Settings")
     }
 
@@ -75,17 +75,19 @@ export default function Step1({ navigation }) {
             <VStack space={3} mt="5">
 
 
-                {profileImage && <Pressable onPress={pickImage} > <Avatar
-                    mt="4"
-                    bg="purple.600"
-                    alignSelf="center"
-                    size="2xl"
-                    source={{
-                        uri: profileImage,
-                    }}
-                >
-                    RB
-                </Avatar></Pressable>}
+                {profileImage && <Pressable onPress={pickImage} >
+                    <Avatar
+                        bg="indigo.600"
+                        alignSelf="center"
+                        size="2xl"
+                        source={{
+                            uri: profileImage,
+                        }}
+                    >
+
+                    </Avatar>
+                </Pressable>}
+
                 {!profileImage && <Pressable onPress={pickImage} >
                     <Avatar
                         bg="indigo.600"
@@ -95,7 +97,7 @@ export default function Step1({ navigation }) {
                             uri: "https://freesvg.org/img/DogProfile.png",
                         }}
                     >
-                        
+
                     </Avatar>
                 </Pressable>}
 

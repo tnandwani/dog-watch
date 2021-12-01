@@ -1,6 +1,10 @@
 // APPWRITE TEST
-import { Appwrite } from "appwrite";
-import {appWriteID} from './constants'
+import {
+    Appwrite
+} from "appwrite";
+import {
+    appWriteID
+} from './constants'
 
 // Init your Web SDK
 const appwrite = new Appwrite();
@@ -9,9 +13,9 @@ appwrite
     .setProject(appWriteID) // Your project ID
 ;
 
- // Register User
-export function createUser(email, pass){
-    
+// Register User
+export function createUser(email, pass) {
+
     let promise = appwrite.account.create(email, pass);
 
     promise.then(function (response) {
@@ -25,6 +29,28 @@ export function createUser(email, pass){
 
 
     });
-   
+}
 
+export async function uploadImage(profileImage) {
+
+    const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+            resolve(xhr.response);
+        };
+        xhr.onerror = function (e) {
+            console.log(e);
+            reject(new TypeError("Network request failed"));
+        };
+        xhr.responseType = "blob";
+        xhr.open("GET", profileImage, true);
+        xhr.send(null);
+    });
+    let promise = appwrite.storage.createFile(blob);
+
+    promise.then(function (response) {
+        console.log(response); // Success
+    }, function (error) {
+        console.log(error); // Failure
+    });
 }
