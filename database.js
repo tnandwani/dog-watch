@@ -33,6 +33,7 @@ export function createUser(email, pass) {
 
 export async function uploadImage(profileImage) {
 
+    // create binary blob file 
     const blob = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.onload = function () {
@@ -46,6 +47,8 @@ export async function uploadImage(profileImage) {
         xhr.open("GET", profileImage, true);
         xhr.send(null);
     });
+
+    //push to AW
     let promise = appwrite.storage.createFile(blob);
 
     promise.then(function (response) {

@@ -11,7 +11,8 @@
 ### LEFT TO DO 
 
 - NOW
-    1. Add Profile Image
+    0. Figure out data flow (when to publish to AppWrite)
+    1. Add Profile Image 
     2. verify data in steps
     3. Update firebase User
     4. Add neighborhood sector
