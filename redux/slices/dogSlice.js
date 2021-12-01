@@ -27,7 +27,10 @@ export const dogSlice = createSlice({
       state.gender = action.payload.gender
       state.breed = action.payload.breed
       state.profileImage = action.payload.profileImage
-      uploadImage(action.payload.profileImage)
+      if (action.payload.profileImage){
+        uploadImage(action.payload.profileImage)
+
+      }
 
     },
     saveDogSettings: (state, action) => {

@@ -50,10 +50,32 @@ export default function Step2({ navigation }) {
                 return;
             }
 
-            let currentLocation = await Location.getCurrentPositionAsync({});
-            console.log(currentLocation);
-            setLocation(currentLocation.coords);
-            setLocationStatus(<Text> Location Received</Text>)
+            // get coords
+            let currentPin = await Location.getCurrentPositionAsync({});
+            var currentAddress;
+
+
+            // If not mobile get address
+            if (Platform.OS !== 'web') {
+                // get address
+                let reveresResult = await Location.reverseGeocodeAsync(currentPin.coords, false)
+                currentAddress = reveresResult[0];
+            }
+            else {
+                // get API key for web created accounts
+                console.log("Web Mode")
+
+            }
+
+            // create new location object 
+            let userLocation = {
+                coords: currentPin.coords,
+                address: currentAddress
+            }
+
+            // save state and update UI
+            setLocation(userLocation);
+            setLocationStatus(<Text>Location Received</Text>)
 
         })();
     }
