@@ -17,7 +17,7 @@ import {
 } from "native-base"
 
 
-export default function ProfileTab() {
+export default function ProfileTab({navigation}) {
     return (
         <Box mt="2">
             <Heading ml="5" size="2xl">Profile</Heading>
@@ -27,14 +27,14 @@ export default function ProfileTab() {
                     <DogCard />
                 </Box>
 
-                <Button m="5" h="40" colorScheme="indigo" variant="outline" > + Add Dog </Button>
+                <Button m="5" h="40" colorScheme="indigo" variant="outline"   onPress={() => navigation.navigate("DogCreator")}> + Add Dog </Button>
 
                 <Button m="5" mt="1" colorScheme="indigo" _text={{ color: 'white' }}  > Verify Location </Button>
 
             </VStack>
 
 
-            <Divider my="2" />
+            <Divider my="2" thickness="2" />
 
             <Heading ml='5'>Resources</Heading>
 

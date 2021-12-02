@@ -12,13 +12,22 @@ const app = firebase.initializeApp(firebaseConfig);
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 const Stack = createStackNavigator()
+
 // SCREENS
+// MAIN
+import MainScreen from './components/Main'
+// LANDING
 import LandingScreen from './components/auth/Landing'
 import LoginScreen from './components/auth/Login'
-import RegisterScreen from './components/auth/steps/Step1'
 import CreateScreen from './components/auth/Step3'
+//SIGNUP - OLD
+import RegisterScreen from './components/auth/steps/Step1'
 import SettingScreen from './components/auth/steps/Step2'
-import MainScreen from './components/Main' // holds user tabs 
+
+// VIEW COMPONENTS
+import DogCreator from './components/views/DogCreator' // holds user tabs 
+
+
 
 
 
@@ -91,6 +100,7 @@ export class App extends Component {
         <NavigationContainer theme={MyTheme} >
           <Stack.Navigator initialRouteName="Main" >
             <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="DogCreator" component={DogCreator} options={{ headerShown: false }} />
 
           </Stack.Navigator>
         </NavigationContainer>

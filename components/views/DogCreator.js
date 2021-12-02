@@ -2,24 +2,26 @@ import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import * as ImagePicker from 'expo-image-picker';
-import { saveDogDetails } from '../../../redux/slices/dogSlice'
+import { saveDogDetails } from '../../redux/slices/dogSlice'
 import { Platform } from 'react-native';
+
+import DogCard from '../tabs/components/DogCard';
 
 import {
     Heading,
     VStack,
+    Center,
+    HStack,
     FormControl,
     Input,
     Button,
     Select,
     CheckIcon,
     Box,
-    Avatar,
-    Pressable,
     Divider
 } from 'native-base';
 
-export default function Step1({ navigation }) {
+export default function DogCreator({ navigation }) {
 
     // local state
     const [dogName, setDogName] = useState();
@@ -73,33 +75,6 @@ export default function Step1({ navigation }) {
             </Heading>
 
             <VStack space={3} mt="5">
-
-
-                {profileImage && <Pressable onPress={pickImage} >
-                    <Avatar
-                        bg="indigo.600"
-                        alignSelf="center"
-                        size="2xl"
-                        source={{
-                            uri: profileImage,
-                        }}
-                    >
-
-                    </Avatar>
-                </Pressable>}
-
-                {!profileImage && <Pressable onPress={pickImage} >
-                    <Avatar
-                        bg="indigo.600"
-                        alignSelf="center"
-                        size="2xl"
-                        source={{
-                            uri: "https://freesvg.org/img/DogProfile.png",
-                        }}
-                    >
-
-                    </Avatar>
-                </Pressable>}
 
                 <FormControl>
                     <FormControl.Label
@@ -180,27 +155,28 @@ export default function Step1({ navigation }) {
                     </Select>
                 </FormControl>
 
-                <Button.Group
-                    mx={{
-                        base: "auto",
-                        md: 0,
-                    }}
-                >
-                    <Button mt="2" variant="outline" colorScheme="indigo" onPress={() => navigation.goBack()}>
-                        Back
-                    </Button>
-                    <Button mt="2" colorScheme="indigo" onPress={() => saveStep()}>
-                        Next Step
-                    </Button>
+                <Button colorScheme="indigo" variant="outline"> Upload Image</Button>
 
-                </Button.Group>
+
 
             </VStack>
 
-            <Divider>
+            <Divider thickness="2" my="5" />
+            <Center>
+                <Box mx='5'>
+                    <DogCard />
+                </Box>
 
-            </Divider>
+                <HStack space={2} mt='3'>
+                    <Button variant="outline" colorScheme="indigo" onPress={() => navigation.goBack()}>
+                        Cancel
+                    </Button>
+                    <Button colorScheme="indigo" onPress={() => saveStep()}>
+                        Create Dog Tag
+                    </Button>
 
+                </HStack>
+            </Center>
 
 
         </Box>
