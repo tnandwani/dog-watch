@@ -5,7 +5,6 @@ import {
 // APPWRITE ACTIONS
 import {
   uploadImage,
-  uploadDog
 } from '../../database'
 
 

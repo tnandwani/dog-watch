@@ -5,10 +5,11 @@ import firebase from 'firebase/app'
 import { useDispatch } from 'react-redux'
 import { saveUserAccount } from '../redux/slices/userSlice'
 
-
-// TABS + ICONS
-const Tab = createBottomTabNavigator();
+//ICONS
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+
+// TABS 
+const Tab = createBottomTabNavigator();
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeTab from './tabs/HomeTab'
 import ExploreTab from './tabs/ExploreTab'
@@ -34,6 +35,12 @@ export default function Main() {
 
     return (
         <Tab.Navigator>
+             <Tab.Screen name="Profile" component={ProfileTab} options={{
+                    headerShown: false,
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialIcons name="dog-side" color={color} size={size} />
+                    )
+                }} />
                 <Tab.Screen name="Home" component={HomeTab} options={{
                     headerShown: false,
                     tabBarIcon: ({ color, size }) => (
@@ -46,12 +53,7 @@ export default function Main() {
                         <MaterialIcons name="compass" color={color} size={size} />
                     )
                 }} />
-                <Tab.Screen name="Profile" component={ProfileTab} options={{
-                    headerShown: false,
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialIcons name="dog-side" color={color} size={size} />
-                    )
-                }} />
+               
             </Tab.Navigator>
     )
 }
