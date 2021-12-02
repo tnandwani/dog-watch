@@ -35,10 +35,11 @@ export const dogSlice = createSlice({
     saveDogSettings: (state, action) => {
       state.visibility = action.payload.visibility
       state.location = action.payload.location
+      state.phoneNumber = action.payload.phoneNumber
+
     },
     saveDogAccount: (state, action) => {
       state.email = action.payload.email
-      state.phoneNumber = action.payload.phoneNumber
       state.owner = action.payload.uid
     },
   },

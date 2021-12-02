@@ -3,7 +3,8 @@ import {
     Appwrite
 } from "appwrite";
 import {
-    appWriteID
+    appWriteID,
+    googleAPI
 } from './constants'
 
 // Init your Web SDK

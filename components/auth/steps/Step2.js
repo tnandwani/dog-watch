@@ -16,11 +16,14 @@ import {
     VStack,
     FormControl,
     Button,
+    Input,
     CheckIcon
 } from 'native-base';
+import { googleAPI } from '../../../constants';
 
 export default function Step2({ navigation }) {
 
+    const [phoneNumber, setPhoneNumber] = useState();
     const [visibility, setVisibility] = useState();
     const [location, setLocation] = useState();
     const [errorMessage, setErrorMessage] = useState();
@@ -30,7 +33,7 @@ export default function Step2({ navigation }) {
 
     // save data to redux
     const saveStep = () => {
-        dispatch(saveDogSettings({visibility, location }))
+        dispatch(saveDogSettings({ visibility, location, phoneNumber }))
         navigation.navigate("Create")
     }
 
@@ -51,7 +54,7 @@ export default function Step2({ navigation }) {
 
             // get coords
             let currentPin = await Location.getCurrentPositionAsync({});
-            var currentAddress = 0;
+            var currentAddress = false;
 
 
             // If not mobile get address
@@ -61,15 +64,19 @@ export default function Step2({ navigation }) {
                 currentAddress = reveresResult[0];
             }
             else {
-                // get API key for web created accounts
                 console.log("Web Mode")
-
+                // get API key for web created accounts - too expensive for only web
+                // Location.setGoogleApiKey(googleAPI)
+                // let reveresResult = await Location.reverseGeocodeAsync(currentPin.coords, false)
+                // currentAddress = reveresResult[0];
             }
+
 
             // create new location object 
             let userLocation = {
                 coords: currentPin.coords,
-                address: currentAddress
+                address: currentAddress,
+
             }
 
             // save state and update UI
@@ -92,7 +99,14 @@ export default function Step2({ navigation }) {
 
             <VStack space={3} mt="5">
                 <FormControl>
-                    <FormControl.Label
+                    <FormControl>
+                        <FormControl.Label
+                            _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
+                            Emergency Contact
+                        </FormControl.Label>
+                        <Input placeholder="(XXX) XXX XXXX" onChangeText={(value) => setPhoneNumber(value)} />
+                    </FormControl>
+                    <FormControl.Label mt= '2'
                         _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
                         Visibility
                     </FormControl.Label>
@@ -109,7 +123,7 @@ export default function Step2({ navigation }) {
                         onValueChange={(value) => setVisibility(value)}
                     >
                         <Select.Item label="Public" value="Public" />
-                        <Select.Item label="Verified Members" value="Members" />
+                        <Select.Item label="Emergency Only" value="Emergency" />
                         <Select.Item label="Friends" value="Friends" />
                     </Select>
                 </FormControl>
