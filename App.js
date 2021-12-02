@@ -16,7 +16,7 @@ const Stack = createStackNavigator()
 import LandingScreen from './components/auth/Landing'
 import LoginScreen from './components/auth/Login'
 import RegisterScreen from './components/auth/steps/Step1'
-import CreateScreen from './components/auth/steps/Step3'
+import CreateScreen from './components/auth/Step3'
 import SettingScreen from './components/auth/steps/Step2'
 import MainScreen from './components/Main' // holds user tabs 
 

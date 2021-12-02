@@ -32,8 +32,10 @@ export function createUser(email, pass) {
     });
 }
 
-export async function uploadImage(profileImage) {
+export async function uploadImage(imageURI) {
 
+
+    console.log("in uploader");
     // create binary blob file 
     const blob = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
@@ -45,7 +47,7 @@ export async function uploadImage(profileImage) {
             reject(new TypeError("Network request failed"));
         };
         xhr.responseType = "blob";
-        xhr.open("GET", profileImage, true);
+        xhr.open("GET", imageURI, true);
         xhr.send(null);
     });
 
@@ -53,8 +55,21 @@ export async function uploadImage(profileImage) {
     let promise = appwrite.storage.createFile(blob);
 
     promise.then(function (response) {
-        console.log(response); // Success
+
+        const photoID = response.$id
+        console.log("response is"); // Success
+        console.log(photoID); // avatar URL
+
+
     }, function (error) {
         console.log(error); // Failure
+        return (error.message)
     });
+}
+
+
+export function uploadDog(dog){
+    //upload dog here
+    console.log("Getting ready to upload the following")
+    console.log(dog)
 }

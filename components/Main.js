@@ -23,8 +23,7 @@ export default function Main() {
             
         } else {
             // user here
-            console.log("logged in:")
-            console.log(user)
+            console.log("welcome back " + user.email)
             const email = user.email
             const uid = user.uid
             dispatch(saveUserAccount({ email, uid  }))

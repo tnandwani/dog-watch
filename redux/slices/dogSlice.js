@@ -3,7 +3,12 @@ import {
 } from '@reduxjs/toolkit'
 
 // APPWRITE ACTIONS
-import { uploadImage } from '../../database'
+import {
+  uploadImage,
+  uploadDog
+} from '../../database'
+
+
 
 export const dogSlice = createSlice({
   name: 'dog',
@@ -26,11 +31,6 @@ export const dogSlice = createSlice({
       state.gender = action.payload.gender
       state.breed = action.payload.breed
       state.profileImage = action.payload.profileImage
-      if (action.payload.profileImage){
-        uploadImage(action.payload.profileImage)
-
-      }
-
     },
     saveDogSettings: (state, action) => {
       state.visibility = action.payload.visibility
@@ -40,8 +40,16 @@ export const dogSlice = createSlice({
     },
     saveDogAccount: (state, action) => {
       state.email = action.payload.email
-      state.owner = action.payload.uid
+      state.owner = action.payload.ui
+      if (state.profileImage) {
+        uploadImage(state.profileImage);
+
+      }
     },
+    saveDogPic: (state, action) => {
+      state.profileImage = action.payload.photoID
+    },
+
   },
 })
 
@@ -49,7 +57,8 @@ export const dogSlice = createSlice({
 export const {
   saveDogDetails,
   saveDogSettings,
-  saveDogAccount
+  saveDogAccount,
+  saveDogPic
 } = dogSlice.actions
 
 export default dogSlice.reducer
