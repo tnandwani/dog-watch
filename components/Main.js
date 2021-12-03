@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import firebase from 'firebase/app'
 
 // redux
@@ -34,21 +34,21 @@ export default function Main() {
 
 
     return (
-        <Tab.Navigator>
+        <Tab.Navigator >
              <Tab.Screen name="Profile" component={ProfileTab} options={{
-                    headerShown: false,
+                    headerShown: true,
                     tabBarIcon: ({ color, size }) => (
                         <MaterialIcons name="dog-side" color={color} size={size} />
                     )
                 }} />
                 <Tab.Screen name="Home" component={HomeTab} options={{
-                    headerShown: false,
+                    headerShown: true,
                     tabBarIcon: ({ color, size }) => (
                         <MaterialIcons name="home" color={color} size={size} />
                     )
                 }} />
                 <Tab.Screen name="Explore" component={ExploreTab} options={{
-                    headerShown: false,
+                    headerShown: true,
                     tabBarIcon: ({ color, size }) => (
                         <MaterialIcons name="compass" color={color} size={size} />
                     )

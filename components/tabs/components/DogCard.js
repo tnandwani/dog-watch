@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 
 
-import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-
 import {
     Box,
     Heading,
@@ -11,14 +9,13 @@ import {
     Text,
     Center,
     Stack,
-    HStack
+    HStack,
 } from 'native-base';
 
 
 export default function DogCard() {
     return (
-
-        <Center>
+        <Center w='100%'>
             <Box
                 w="100%"
                 rounded="lg"
@@ -30,16 +27,16 @@ export default function DogCard() {
                     backgroundColor: "gray.700",
                 }}
                 _web={{
-                    shadow: 2,
+                    shadow: 7,
                     borderWidth: 0,
                 }}
                 _light={{
                     backgroundColor: "gray.50",
                 }}
             >
-                <HStack>
-                    <Center w='30vw'>
-                        <AspectRatio w="115%" ratio={9 / 9}>
+                <HStack w='100%'>
+                    <Center w='30%'>
+                        <AspectRatio w="100%" ratio={9 / 9}>
                             <Image
                                 source={{
                                     uri: "https://www.akc.org/wp-content/uploads/2016/06/German-Shepherd-Dog-laying-down-in-the-backyard-500x487.jpeg",
@@ -48,8 +45,8 @@ export default function DogCard() {
                             />
                         </AspectRatio>
                     </Center>
-                    <Box w='60vw'>
-                        <Stack p="4" ml='2' space={3}>
+                    <Box w='60%'>
+                        <Stack p="4" space={3}>
                             <Heading size="md" ml="-1">
                                 Dog Name
                             </Heading>
@@ -84,7 +81,7 @@ export default function DogCard() {
                         </Stack>
                     </Box>
 
-                    <Box w="5vw">
+                    <Box w="5%">
 
                     </Box>
                 </HStack>

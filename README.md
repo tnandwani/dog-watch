@@ -11,18 +11,30 @@
 ### LEFT TO DO 
 
 - NOW
-    0. Figure out data flow (when to publish to AppWrite)
-    1. Add Profile Image 
-    2. verify data in steps
-    3. Update firebase User
-    4. Add neighborhood sector
-    5. save slices to appWrite db
+    - Signup 
+        1. Create user doc with firebase uid
+        2. Set Zone to false on signup
 
 - NEXT 
-    - make profile page
+    - Create Dog
+        1. Input -> Store on type
+        2. Store -> DogCard with useSelector
+        3. upload photo 
+            - save uri
+        4. save dog to db
+            - push state
+            - push uri
+            - save duid  
+        5. update user
+            - push duid to owner doc
+        
+    - Join Neighborhood Button
+        1. Get location onPress
+        2. reverse Geocode
+        3. Save coorinates/address to db (user + dog)
 
 - LATER
     - add location markers to explore page
-    - Home layout
-    - theme
+    - Fill Resources 
+    - Home/Feed layout
     

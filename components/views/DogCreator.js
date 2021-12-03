@@ -18,7 +18,8 @@ import {
     Select,
     CheckIcon,
     Box,
-    Divider
+    Divider,
+    Container
 } from 'native-base';
 
 export default function DogCreator({ navigation }) {
@@ -66,7 +67,7 @@ export default function DogCreator({ navigation }) {
     };
 
     return (
-        <Box safeArea flex={1} p="2" w="90%" mx="auto" py="8">
+        <Container safeArea flex={1} p="2" w="90%" mx="auto" py="8">
             <Heading size="lg" color="coolGray.800" fontWeight="600">
                 Lets get started!
             </Heading>
@@ -162,10 +163,8 @@ export default function DogCreator({ navigation }) {
             </VStack>
 
             <Divider thickness="2" my="5" />
-            <Center>
-                <Box mx='5'>
-                    <DogCard />
-                </Box>
+            <Center  flex={1} >
+            <DogCard />
 
                 <HStack space={2} mt='3'>
                     <Button variant="outline" colorScheme="indigo" onPress={() => navigation.goBack()}>
@@ -179,6 +178,6 @@ export default function DogCreator({ navigation }) {
             </Center>
 
 
-        </Box>
+        </Container>
     )
 }

@@ -9,60 +9,67 @@ import {
     Box,
     Button,
     Center,
-    HStack,
     VStack,
-    Heading,
-    Divider
-
+    Flex,
+    Spacer,
+    Divider,
+    Heading
 } from "native-base"
 
 
-export default function ProfileTab({navigation}) {
+export default function ProfileTab({ navigation }) {
     return (
-        <Box mt="2">
-            <Heading ml="5" size="2xl">Profile</Heading>
+        <Box m='3'>
+            <DogCard />
+            <Button mt="5" height='20%' colorScheme="indigo" variant="outline" onPress={() => navigation.navigate("DogCreator")}> + Add Dog </Button>
 
-            <VStack mt='2'>
-                <Box mx = '5'>
-                    <DogCard />
-                </Box>
+            <Button my="3" colorScheme="indigo" _text={{ color: 'white' }} shadow="7"   > Join Neighborhood </Button>
 
-                <Button m="5" h="40" colorScheme="indigo" variant="outline"   onPress={() => navigation.navigate("DogCreator")}> + Add Dog </Button>
+            <Divider my='5' thickness= '2'/>
+            <Heading >Resources</Heading>
+            <VStack w='100%' mt='3'>
+                <Flex
+                    direction="row"
 
-                <Button m="5" mt="1" colorScheme="indigo" _text={{ color: 'white' }}  > Verify Location </Button>
+                    mb="2.5"
+                    mt="1.5"
+                    _text={{
+                        color: "coolGray.800",
+                    }}
+                >
+
+                    <Center w='48%' h='20' bg="tertiary.500" rounded='lg' shadow='5'>
+                        300
+                    </Center>
+                    <Spacer />
+
+                    <Center w='48%' h='20' bg="primary.800" rounded='lg' shadow='5'>
+                        400
+                    </Center>
+                </Flex>
+                <Flex
+                    direction="row"
+
+                    mb="2.5"
+                    mt="1.5"
+                    _text={{
+                        color: "coolGray.800",
+                    }}
+                >
+
+                    <Center w='48%' h='20' bg="purple.800" rounded='lg' shadow='5'>
+                        300
+                    </Center>
+                    <Spacer />
+
+                    <Center w='48%' h='20' bg="danger.300" rounded='lg' shadow='5'>
+                        400
+                    </Center>
+                </Flex>
+
 
             </VStack>
 
-
-            <Divider my="2" thickness="2" />
-
-            <Heading ml='5'>Resources</Heading>
-
-            <Center my="5">
-
-                <VStack space={4} alignItems="center">
-                    <HStack space={3} alignItems="center">
-                        <Center h="20" w="45vw" bg="primary.500" rounded="md" shadow={3} > Training </Center>
-                        <Center h="20" w="45vw" bg="fuchsia.400" rounded="md" shadow={3} > Diet </Center>
-                    </HStack>
-                    <HStack space={3} alignItems="center">
-                        <Center h="20" w="45vw" bg="tertiary.400" rounded="md" shadow={3} > Healthcare </Center>
-                        <Center h="20" w="45vw" bg="info.600" rounded="md" shadow={3} > Meetups? </Center>
-                    </HStack>
-
-                </VStack>
-
-
-            </Center>
-
-
-
-            <Button m="5" mt="1" colorScheme="orange" _text={{ color: 'white' }} onPress={() => firebase.auth().signOut()} > Sign Out</Button>
-
-
-
-
         </Box>
-
     )
 }

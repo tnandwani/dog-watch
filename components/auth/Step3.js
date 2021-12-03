@@ -27,83 +27,81 @@ export default function Step3({ navigation }) {
 
         if (password === confirm) {
             firebase.auth().createUserWithEmailAndPassword(email, password)
-            .then((userCredential) => {
-                // Signed in 
-                var user = userCredential.user;
-                // save user cred to redux
-                finalStep(user, email, user.uid);
-                // push final user to AppWrite db 
-                
+                .then((userCredential) => {
+                    // Signed in 
+                    var user = userCredential.user;
+                    // save user cred to redux
+                    finalStep(user, email, user.uid);
+                    // push final user to AppWrite db 
 
-            })
-            .catch((error) => {
-                var errorMessage = error.message;
-                setAlert(errorMessage);
-            });
+
+                })
+                .catch((error) => {
+                    var errorMessage = error.message;
+                    setAlert(errorMessage);
+                });
 
         }
         else {
             setAlert("Passwords do not match");
 
         }
-        
+
     }
 
     return (
-        <div>
-            <Box safeArea flex={1} p="2" w="90%" mx="auto" py="8">
-                <Heading size="lg" color="coolGray.800" fontWeight="600">
-                    Lets get started!
-                </Heading>
-                <Heading mt="1" color="coolGray.600" fontWeight="medium" size="xs">
-                    We need some basic info...
-                </Heading>
+        <Box safeArea flex={1} p="2" w="90%" mx="auto" py="8">
+            <Heading size="lg" color="coolGray.800" fontWeight="600">
+                Lets get started!
+            </Heading>
+            <Heading mt="1" color="coolGray.600" fontWeight="medium" size="xs">
+                We need some basic info...
+            </Heading>
 
-                <VStack space={3} mt="5">
+            <VStack space={3} mt="5">
 
-                    <FormControl>
-                        <FormControl.Label
-                            _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
-                            Email
-                        </FormControl.Label>
-                        <Input type='email' onChangeText={(value) => setEmail(value)} />
-                    </FormControl>
+                <FormControl>
+                    <FormControl.Label
+                        _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
+                        Email
+                    </FormControl.Label>
+                    <Input type='email' onChangeText={(value) => setEmail(value)} />
+                </FormControl>
 
-                    <FormControl>
-                        <FormControl.Label
-                            _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
-                            Password
-                        </FormControl.Label>
-                        <Input type="password" onChangeText={(value) => setPassword(value)} />
-                    </FormControl>
-                    <FormControl>
-                        <FormControl.Label
-                            _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
-                            Confirm Password
-                        </FormControl.Label>
-                        <Input type="password" onChangeText={(value) => setConfirm(value)} />
-                        <FormControl.HelperText>
-                            {alert}
-                        </FormControl.HelperText>
-                    </FormControl>
-                    <Button.Group
-                        mx={{
-                            base: "auto",
-                            md: 0,
-                        }}
-                    >
-                        <Button mt="2" variant="outline" colorScheme="indigo" onPress={() => navigation.goBack()}>
-                            Back
-                        </Button>
-                        <Button mt="2" colorScheme="indigo" _text={{ color: 'white' }} onPress={() => onSignUp()}>
-                            Finish
-                        </Button>
+                <FormControl>
+                    <FormControl.Label
+                        _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
+                        Password
+                    </FormControl.Label>
+                    <Input type="password" onChangeText={(value) => setPassword(value)} />
+                </FormControl>
+                <FormControl>
+                    <FormControl.Label
+                        _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
+                        Confirm Password
+                    </FormControl.Label>
+                    <Input type="password" onChangeText={(value) => setConfirm(value)} />
+                    <FormControl.HelperText>
+                        {alert}
+                    </FormControl.HelperText>
+                </FormControl>
+                <Button.Group
+                    mx={{
+                        base: "auto",
+                        md: 0,
+                    }}
+                >
+                    <Button mt="2" variant="outline" colorScheme="indigo" onPress={() => navigation.goBack()}>
+                        Back
+                    </Button>
+                    <Button mt="2" colorScheme="indigo" _text={{ color: 'white' }} onPress={() => onSignUp()}>
+                        Finish
+                    </Button>
 
-                    </Button.Group>
+                </Button.Group>
 
-                </VStack>
-            </Box>
+            </VStack>
+        </Box>
 
-        </div>
     )
 }
