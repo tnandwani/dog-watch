@@ -36,5 +36,5 @@
 - LATER
     - add location markers to explore page
     - Fill Resources 
-    - Home/Feed layout
+    - Home/Feed layout - rough draft
     
