@@ -21,39 +21,39 @@ export default function Main() {
     firebase.auth().onAuthStateChanged((user) => {
         if (!user) {
             // no user
-            
+
         } else {
             // user here
             console.log("welcome back " + user.email)
             const email = user.email
             const uid = user.uid
-            dispatch(saveUserAccount({ email, uid  }))
+            dispatch(saveUserAccount({ email, uid }))
 
         }
-      })
+    })
 
 
     return (
         <Tab.Navigator >
-             <Tab.Screen name="Profile" component={ProfileTab} options={{
-                    headerShown: true,
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialIcons name="dog-side" color={color} size={size} />
-                    )
-                }} />
-                <Tab.Screen name="Home" component={HomeTab} options={{
-                    headerShown: true,
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialIcons name="home" color={color} size={size} />
-                    )
-                }} />
-                <Tab.Screen name="Explore" component={ExploreTab} options={{
-                    headerShown: true,
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialIcons name="compass" color={color} size={size} />
-                    )
-                }} />
-               
-            </Tab.Navigator>
+
+            <Tab.Screen name="Home" component={HomeTab} options={{
+                headerShown: true,
+                tabBarIcon: ({ color, size }) => (
+                    <MaterialIcons name="home" color={color} size={size} />
+                )
+            }} />
+            <Tab.Screen name="Explore" component={ExploreTab} options={{
+                headerShown: true,
+                tabBarIcon: ({ color, size }) => (
+                    <MaterialIcons name="compass" color={color} size={size} />
+                )
+            }} />
+            <Tab.Screen name="Profile" component={ProfileTab} options={{
+                headerShown: true,
+                tabBarIcon: ({ color, size }) => (
+                    <MaterialIcons name="dog-side" color={color} size={size} />
+                )
+            }} />
+        </Tab.Navigator>
     )
 }
