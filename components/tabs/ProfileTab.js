@@ -1,6 +1,7 @@
 import React from 'react';
 import firebase from 'firebase';
-import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DogCard from './components/DogCard'
 
 
@@ -23,9 +24,10 @@ export default function ProfileTab({ navigation }) {
             <DogCard />
             <Button mt="5" height='20%' colorScheme="indigo" variant="outline" onPress={() => navigation.navigate("DogCreator")}> + Add Dog </Button>
 
-            <Button my="3" colorScheme="indigo" _text={{ color: 'white' }} shadow="7"   > Join Neighborhood </Button>
+            <Button my="4" colorScheme="indigo" _text={{ color: 'white' }} shadow="7"   > Join Neighborhood </Button>
+            <Button  colorScheme="orange" _text={{ color: 'white' }} onPress={() => firebase.auth().signOut()} > Sign Out</Button>
 
-            <Divider my='5' thickness= '2'/>
+            <Divider my='5' thickness='2' />
             <Heading >Resources</Heading>
             <VStack w='100%' mt='3'>
                 <Flex
@@ -38,13 +40,15 @@ export default function ProfileTab({ navigation }) {
                     }}
                 >
 
-                    <Center w='48%' h='20' bg="tertiary.500" rounded='lg' shadow='5'>
-                        300
+                    <Center w='48%' h='20' bg="amber.400" rounded='lg' _text={{ color: 'white' }} shadow='5'>
+                        <MaterialCommunityIcons name="dog-service" size={24} color="white" />
+                        Training
                     </Center>
                     <Spacer />
 
-                    <Center w='48%' h='20' bg="primary.800" rounded='lg' shadow='5'>
-                        400
+                    <Center w='48%' h='20' bg="danger.400" rounded='lg' _text={{ color: 'white' }} shadow='5'>
+                        <MaterialCommunityIcons name="stethoscope" size={24} color="white" />
+                        Health
                     </Center>
                 </Flex>
                 <Flex
@@ -58,17 +62,20 @@ export default function ProfileTab({ navigation }) {
                 >
 
                     <Center w='48%' h='20' bg="purple.800" rounded='lg' shadow='5'>
-                        300
+                        <MaterialCommunityIcons name="food-apple" size={24} color="white" />
+                        Diet
                     </Center>
                     <Spacer />
 
-                    <Center w='48%' h='20' bg="danger.300" rounded='lg' shadow='5'>
-                        400
+                    <Center w='48%' h='20' bg="tertiary.500" rounded='lg' shadow='5'>
+                        <MaterialIcons name="park" size={24} color="white" />
+                        Parks
                     </Center>
                 </Flex>
 
 
             </VStack>
+
 
         </Box>
     )
