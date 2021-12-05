@@ -11,11 +11,15 @@
 ### LEFT TO DO 
 
 - NOW
-    - Signup 
+    - Decide backend
+        - auth F
+        - database AW
+        - file storage AW 
+        
+- NEXT 
+    - Signup (working for both need to pick 1 db)
         1. Create user doc with firebase uid
             2. Set Zone to false on signup
-
-- NEXT 
     - Create Dog
         1. Input -> Store on type
         2. Store -> DogCard with useSelector
@@ -27,16 +31,24 @@
             - save duid  
         5. update user
             - push duid to owner doc
-        
+
+- LATER
     - Join Neighborhood Button
         1. Get location onPress
         2. reverse Geocode
         3. Save coorinates/address to db (user + dog)
-
-- LATER
-    - add location markers to explore page
+    - Explore Page
+        1. Add home marker to map
+        2. add dog markers in your zone
     - Fill Resources 
+        1. Make info page UI
+        2. pull data from websites to app 
+        3. seperate by breed when applicable 
     - Home/Feed layout - rough draft
+        1. design post 
+        2. post content structure 
+        3. upload post button
+        4. 
 
 
 ### ISSUES
