@@ -14,6 +14,10 @@ import {
 // FIREBASE
 import firebase from 'firebase/app'
 
+
+// AWdb
+import {createUserDoc} from '../../database'
+
 export default function Step3({ navigation }) {
 
     const [email, setEmail] = useState();
@@ -24,28 +28,27 @@ export default function Step3({ navigation }) {
 
     const onSignUp = () => {
 
-
-        if (password === confirm) {
+        (async () => {
             firebase.auth().createUserWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    // Signed in 
-                    var user = userCredential.user;
-                    // save user cred to redux
-                    finalStep(user, email, user.uid);
-                    // push final user to AppWrite db 
-
-
-                })
-                .catch((error) => {
-                    var errorMessage = error.message;
-                    setAlert(errorMessage);
-                });
-
-        }
-        else {
-            setAlert("Passwords do not match");
-
-        }
+                    .then((userCredential) => {
+                        // Signed in 
+                        console.log('welcome user')
+    
+                        var user = userCredential.user;
+                        console.log(user)
+    
+                        createUserDoc(user.uid, user.email);
+                        console.log('sent dog doc')
+    
+    
+                    })
+                    .catch((error) => {
+                        var errorMessage = error.message;
+                        setAlert(errorMessage);
+                    });
+        })();
+       
+       
 
     }
 

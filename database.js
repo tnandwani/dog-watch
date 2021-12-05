@@ -1,10 +1,9 @@
-// APPWRITE TEST
+// APPWRITE 
 import {
     Appwrite
 } from "appwrite";
 import {
-    appWriteID,
-    googleAPI
+    appWriteID, firebaseConfig
 } from './constants'
 
 // Init your Web SDK
@@ -12,25 +11,11 @@ const appwrite = new Appwrite();
 appwrite
     .setEndpoint('http://localhost/v1') // Your Appwrite Endpoint
     .setProject(appWriteID) // Your project ID
-;
+    ;
 
-// Register User
-export function createUser(email, pass) {
-
-    let promise = appwrite.account.create(email, pass);
-
-    promise.then(function (response) {
-        const r = response.message
-        console.log(r); // Success
-        return r
-    }, function (error) {
-        const e = error.message
-        console.log(e); // Failure
-        return e
+import firebase from 'firebase'
 
 
-    });
-}
 
 export async function uploadImage(imageURI) {
 
@@ -68,8 +53,46 @@ export async function uploadImage(imageURI) {
 }
 
 
-export function uploadDog(dog){
+export function uploadDog(dog) {
     //upload dog here
     console.log("Getting ready to upload the following")
     console.log(dog)
+}
+
+
+export function createUserDoc(uid, email) {
+
+
+    //upload dog here
+    console.log("Getting ready to create user")
+    console.log(uid);
+
+    const userDoc = {
+        uid: uid,
+        email: email,
+        zone: false
+
+    }
+
+    // FIREBASE METHOD
+    var db = firebase.firestore();
+
+    // db.collection("users").add(userDoc)
+    //     .then((docRef) => {
+    //         console.log("Document written with ID: ", docRef.id);
+    //     })
+    //     .catch((error) => {
+    //         console.error("Error adding document: ", error);
+    //     });
+
+
+    // APPWRITE METHOD
+
+    appwrite.database.createDocument('619f011dd6cc2', {uid: uid,email: email, zone: false}).
+        then(function (response) {
+            console.log(response); // Success
+        }, function (error) {
+            console.log(error); // Failure
+        });
+
 }

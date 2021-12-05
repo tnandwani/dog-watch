@@ -13,7 +13,7 @@
 - NOW
     - Signup 
         1. Create user doc with firebase uid
-        2. Set Zone to false on signup
+            2. Set Zone to false on signup
 
 - NEXT 
     - Create Dog
@@ -37,4 +37,16 @@
     - add location markers to explore page
     - Fill Resources 
     - Home/Feed layout - rough draft
-    
+
+
+### ISSUES
+
+- firebase vs AppWrite???
+    - Appwrite
+        - needs permissions for every read/write
+        - permissions tied to user object (cant use firebase with AW?)
+        - currently making users over firebase
+
+
+
+    - Firebase expensive and clunky

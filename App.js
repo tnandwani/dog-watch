@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import { NativeBaseProvider, Center, Spinner} from "native-base"
+import { NativeBaseProvider, Center, Spinner } from "native-base"
 import { Provider } from 'react-redux'
 import store from './redux/store'
-import {firebaseConfig, MyTheme} from './constants'
+import { firebaseConfig, MyTheme } from './constants'
 
 // FIREBASE
 import firebase from 'firebase/app'
@@ -58,52 +58,45 @@ export class App extends Component {
 
   render() {
     const { loggedIn, loaded } = this.state;
-    
+
     if (!loaded) {
       return (
         <NativeBaseProvider>
-        <Center flex={1} px="3">
-          <Spinner color="indigo.500"/>
+          <Center flex={1} px="3">
+            <Spinner color="indigo.500" />
 
           </Center>
         </NativeBaseProvider>
       )
     }
 
-    if (!loggedIn) {
-      return (
-
-        // NEW USER
-        <Provider store={store}>
-        <NativeBaseProvider>
-          <NavigationContainer theme={MyTheme}>
-            <Stack.Navigator initialRouteName="Landing">
-              <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false }} />
-              <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }}/>
-              <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }}/>
-              <Stack.Screen name="Create" component={CreateScreen} options={{ headerShown: false }}/>
-              <Stack.Screen name="Settings" component={SettingScreen} options={{ headerShown: false }} />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </NativeBaseProvider>
-        </Provider>
-
-      );
-    }
 
     return (
 
-      // RETURNING USER
       <Provider store={store}>
         <NativeBaseProvider>
+          {!loggedIn &&
+            <NavigationContainer theme={MyTheme}>
+              <Stack.Navigator initialRouteName="Landing">
+                <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="Create" component={CreateScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="Settings" component={SettingScreen} options={{ headerShown: false }} />
+              </Stack.Navigator>
+            </NavigationContainer>
 
-        <NavigationContainer theme={MyTheme} >
-          <Stack.Navigator initialRouteName="Main" >
-            <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
-            <Stack.Screen name="DogCreator" component={DogCreator} options={{ headerShown: false }} />
+          }
+          {loggedIn &&
+            <NavigationContainer theme={MyTheme} >
+              <Stack.Navigator initialRouteName="Main" >
+                <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
+                <Stack.Screen name="DogCreator" component={DogCreator} options={{ headerShown: false }} />
 
-          </Stack.Navigator>
-        </NavigationContainer>
+              </Stack.Navigator>
+            </NavigationContainer>
+          }
+
         </NativeBaseProvider>
 
 
