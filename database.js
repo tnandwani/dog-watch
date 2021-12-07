@@ -3,19 +3,129 @@ import {
     Appwrite
 } from "appwrite";
 import {
-    appWriteID, firebaseConfig
+    appWriteID
 } from './constants'
 
-// Init your Web SDK
+// init db
 const appwrite = new Appwrite();
 appwrite
     .setEndpoint('http://localhost/v1') // Your Appwrite Endpoint
     .setProject(appWriteID) // Your project ID
-    ;
-
-import firebase from 'firebase'
+;
 
 
+////////// USER FUNCTIONS 
+
+export async function getAccount(){
+    let promise = appwrite.account.get();
+
+    promise.then(function (response) {
+      console.log(response); // Success
+      return true
+    }, function (error) {
+      console.log(error); // Failure
+      return false
+    });
+
+}
+
+export function signOutUser() {
+    let promise = appwrite.account.deleteSessions();
+
+    promise.then(function (response) {
+        console.log(response); // Success
+
+    }, function (error) {
+        console.log(error); // Failure
+    });
+}
+
+export function signInUser(email, password, uid) {
+    let promise = appwrite.account.createSession(email, password);
+
+    promise.then(function (response) {
+        console.log(response); // Success
+        // Create User Doc
+        createUserDoc(uid, email);
+
+    }, function (error) {
+        console.log(error); // Failure
+    });
+}
+
+export function createUserAccount(email, password) {
+
+    // Create User
+    let promise = appwrite.account.create(email, password);
+    promise.then(function (response) {
+        console.log("created");
+        console.log(response); // Success
+        // Get UID 
+        const uid = response.$id
+
+
+        // Sign In
+        signInUser(email, password, uid)
+
+    }, function (error) {
+        console.log(error); // Failure
+    });
+}
+
+
+
+export function createUserDoc(uid, email) {
+
+    console.log("Getting ready to create user")
+    console.log(uid);
+
+    // push data to db 
+
+    appwrite.database.createDocument('619f011dd6cc2', {
+        uid: uid,
+        email: email,
+        zone: false
+    }).
+    then(function (response) {
+        console.log("doc made");
+        console.log(response); // Success
+
+        // push doc-id as user name
+        const userDocID = response.$id;
+        updateUserName(userDocID);
+
+    }, function (error) {
+        console.log(error); // Failure
+    });
+
+}
+
+export function updateUserName(userDocID) {
+
+    // sign in user
+
+
+    // update name
+
+    let promise = appwrite.account.updateName(userDocID);
+
+    promise.then(function (response) {
+        console.log("updated name");
+        console.log(response); // Success
+    }, function (error) {
+        console.log(error); // Failure
+    });
+
+}
+
+
+
+
+
+
+
+
+////////// DOG FUNCTIONS 
 
 export async function uploadImage(imageURI) {
 
@@ -50,49 +160,4 @@ export async function uploadImage(imageURI) {
         console.log(error); // Failure
         return (error.message)
     });
-}
-
-
-export function uploadDog(dog) {
-    //upload dog here
-    console.log("Getting ready to upload the following")
-    console.log(dog)
-}
-
-
-export function createUserDoc(uid, email) {
-
-
-    //upload dog here
-    console.log("Getting ready to create user")
-    console.log(uid);
-
-    const userDoc = {
-        uid: uid,
-        email: email,
-        zone: false
-
-    }
-
-    // FIREBASE METHOD
-    var db = firebase.firestore();
-
-    // db.collection("users").add(userDoc)
-    //     .then((docRef) => {
-    //         console.log("Document written with ID: ", docRef.id);
-    //     })
-    //     .catch((error) => {
-    //         console.error("Error adding document: ", error);
-    //     });
-
-
-    // APPWRITE METHOD
-
-    appwrite.database.createDocument('619f011dd6cc2', {uid: uid,email: email, zone: false}).
-        then(function (response) {
-            console.log(response); // Success
-        }, function (error) {
-            console.log(error); // Failure
-        });
-
 }

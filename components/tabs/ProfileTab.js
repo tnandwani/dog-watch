@@ -16,6 +16,7 @@ import {
     Divider,
     Heading
 } from "native-base"
+import { signOutUser } from '../../database';
 
 
 export default function ProfileTab({ navigation }) {
@@ -25,7 +26,7 @@ export default function ProfileTab({ navigation }) {
             <Button mt="5" height='20%' colorScheme="indigo" variant="outline" onPress={() => navigation.navigate("DogCreator")}> + Add Dog </Button>
 
             <Button my="4" colorScheme="indigo" _text={{ color: 'white' }} shadow="7"   > Join Neighborhood </Button>
-            <Button  colorScheme="orange" _text={{ color: 'white' }} onPress={() => firebase.auth().signOut()} > Sign Out</Button>
+            <Button  colorScheme="orange" _text={{ color: 'white' }} onPress={() => signOutUser()} > Sign Out</Button>
 
             <Divider my='5' thickness='2' />
             <Heading >Resources</Heading>

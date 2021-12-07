@@ -10,13 +10,11 @@ import {
     Button
 } from 'native-base';
 
-
-// FIREBASE
-import firebase from 'firebase/app'
-
-
 // AWdb
-import {createUserDoc} from '../../database'
+import {
+    createUserAccount, 
+    signOutUser
+} from '../../database'
 
 export default function Step3({ navigation }) {
 
@@ -28,27 +26,9 @@ export default function Step3({ navigation }) {
 
     const onSignUp = () => {
 
-        (async () => {
-            firebase.auth().createUserWithEmailAndPassword(email, password)
-                    .then((userCredential) => {
-                        // Signed in 
-                        console.log('welcome user')
-    
-                        var user = userCredential.user;
-                        console.log(user)
-    
-                        createUserDoc(user.uid, user.email);
-                        console.log('sent dog doc')
-    
-    
-                    })
-                    .catch((error) => {
-                        var errorMessage = error.message;
-                        setAlert(errorMessage);
-                    });
-        })();
-       
-       
+        signOutUser();
+        createUserAccount(email, password);
+
 
     }
 

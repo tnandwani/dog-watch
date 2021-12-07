@@ -8,6 +8,21 @@ import { firebaseConfig, MyTheme } from './constants'
 import firebase from 'firebase/app'
 const app = firebase.initializeApp(firebaseConfig);
 
+//AW
+import {
+  Appwrite
+} from "appwrite";
+
+import {
+  appWriteID
+} from './constants.js'
+
+const appwrite = new Appwrite();
+appwrite
+  .setEndpoint('http://localhost/v1') // Your Appwrite Endpoint
+  .setProject(appWriteID) // Your project ID
+  ;
+
 // NAVIGATION
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -26,8 +41,7 @@ import SettingScreen from './components/auth/steps/Step2'
 
 // VIEW COMPONENTS
 import DogCreator from './components/views/DogCreator' // holds user tabs 
-
-
+import { getAccount } from './database'
 
 
 
@@ -37,23 +51,53 @@ export class App extends Component {
     super()
     this.state = {
       loaded: false,
+      loggedIn: false
     }
+
+
   }
 
   componentDidMount() {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (!user) {
-        this.setState({
-          loggedIn: false,
-          loaded: true,
-        })
-      } else {
-        this.setState({
-          loggedIn: true,
-          loaded: true,
-        })
-      }
+
+    // get account once 
+    let status = appwrite.account.get();
+
+    status.then(function (response) {
+        console.log(response); // Success
+        return false
+    }, function (error) {
+        console.log(error); // Failure
+        return false
+    });
+
+    this.setState({
+      loggedIn: false,
+      loaded: true,
     })
+
+    // realtime method 
+    // let authListener = appwrite.subscribe('account', response => {
+    //   // Callback will be executed on all account events.
+    //   console.log("event");
+    //   console.log(response);
+    // });
+
+
+
+
+    // firebase.auth().onAuthStateChanged((user) => {
+    //   if (!user) {
+    //     this.setState({
+    //       loggedIn: false,
+    //       loaded: true,
+    //     })
+    //   } else {
+    //     this.setState({
+    //       loggedIn: true,
+    //       loaded: true,
+    //     })
+    //   }
+    // })
   }
 
   render() {

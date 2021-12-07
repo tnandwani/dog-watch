@@ -11,18 +11,9 @@
 ### LEFT TO DO 
 
 - NOW
-    - Signup 
-        1. Create User Account on AW
-        2. Get UID returned
-        3. Create user doc with fields
-            - uid = from server
-            - email = input
-            - zone = false
-            - dogs = []
-        4. Get db doc-id returned
-        5. Update user NAME as db doc-id
-        6. Create user session
-        7. Add Event lister for auth changes
+    - user status 
+        1. Create user session
+        2. Add Event lister for auth changes
  
 - NEXT 
 

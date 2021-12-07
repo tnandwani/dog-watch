@@ -30,7 +30,7 @@ export default function Main() {
             dispatch(saveUserAccount({ email, uid }))
 
         }
-    })
+    });
 
 
     return (
