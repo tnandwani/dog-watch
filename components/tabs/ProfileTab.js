@@ -1,5 +1,4 @@
 import React from 'react';
-import firebase from 'firebase';
 import { MaterialIcons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DogCard from './components/DogCard'

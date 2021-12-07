@@ -11,7 +11,7 @@ import {
     HStack
   } from 'native-base';
 
-import firebase from 'firebase'
+
 
 export default function Login({navigation}) {
     const [email, setEmail] = useState();

@@ -18,19 +18,6 @@ import ProfileTab from './tabs/ProfileTab'
 export default function Main() {
     const dispatch = useDispatch()
 
-    firebase.auth().onAuthStateChanged((user) => {
-        if (!user) {
-            // no user
-
-        } else {
-            // user here
-            console.log("welcome back " + user.email)
-            const email = user.email
-            const uid = user.uid
-            dispatch(saveUserAccount({ email, uid }))
-
-        }
-    });
 
 
     return (
