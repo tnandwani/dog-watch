@@ -11,15 +11,21 @@
 ### LEFT TO DO 
 
 - NOW
-    - Decide backend
-        - auth F
-        - database AW
-        - file storage AW 
-        
+    - Signup 
+        1. Create User Account on AW
+        2. Get UID returned
+        3. Create user doc with fields
+            - uid = from server
+            - email = input
+            - zone = false
+            - dogs = []
+        4. Get db doc-id returned
+        5. Update user NAME as db doc-id
+        6. Create user session
+        7. Add Event lister for auth changes
+ 
 - NEXT 
-    - Signup (working for both need to pick 1 db)
-        1. Create user doc with firebase uid
-            2. Set Zone to false on signup
+
     - Create Dog
         1. Input -> Store on type
         2. Store -> DogCard with useSelector
@@ -62,3 +68,9 @@
 
 
     - Firebase expensive and clunky
+
+
+Backend Needs
+- auth (email)
+    - sign in listener
+    - 
