@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
-import {  saveDogName } from '../../redux/slices/dogSlice'
+import { saveDogName } from '../../redux/slices/dogSlice'
 
-import DogCard from '../tabs/components/DogCard';
+import RawDogCard from './RawDogCard'
 
 import {
     Heading,
@@ -130,9 +130,12 @@ export default function DogCreator({ navigation }) {
 
             </VStack>
 
-            <Divider thickness="4" mt='4'/>
-            <Center  flex={1} >
-            <DogCard />
+            <Divider thickness="4" my='4' />
+
+            <RawDogCard />
+
+            <Center flex={1} >
+
 
                 <HStack space={2} mt='3'>
                     <Button variant="outline" colorScheme="indigo" onPress={() => navigation.goBack()}>
