@@ -7,7 +7,10 @@
 - Dog adoption page
 - Resources
 
+
 --------------------------------
+
+
 ### LEFT TO DO 
 
 # - NOW
@@ -15,7 +18,6 @@
         1. Create user session
         2. Add Event lister for auth changes
         3. Login functions update for AWdb
-
 # - NEXT
 
     - Create Dog
@@ -29,8 +31,7 @@
             - save duid  
         5. update user
             - push duid to owner doc
-
-# - LATWR
+# - LATER
     - Join Neighborhood Button
         1. Get location onPress
         2. reverse Geocode
@@ -47,10 +48,7 @@
         2. post content structure 
         3. upload post button
         4. 
-
-
-### ISSUES
-
+# - ISSUES
 - sign in not working real time 
 - need to update globalState on sign in 
 - need to fix login with firebase

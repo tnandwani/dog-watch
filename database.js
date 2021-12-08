@@ -6,6 +6,14 @@ import {
     appWriteID
 } from './constants'
 
+import {
+    saveUserAccount
+} from "./redux/slices/userSlice";
+
+import store from "./redux/store";
+
+
+
 // init db
 const appwrite = new Appwrite();
 appwrite
@@ -13,21 +21,12 @@ appwrite
     .setProject(appWriteID) // Your project ID
 ;
 
+////////// APP START
+
+
+
 
 ////////// USER FUNCTIONS 
-
-export async function getAccount(){
-    let promise = appwrite.account.get();
-
-    promise.then(function (response) {
-      console.log(response); // Success
-      return true
-    }, function (error) {
-      console.log(error); // Failure
-      return false
-    });
-
-}
 
 export function signOutUser() {
     let promise = appwrite.account.deleteSessions();
@@ -40,11 +39,26 @@ export function signOutUser() {
     });
 }
 
-export function signInUser(email, password, uid) {
+
+export function createUserAccount(email, password) {
+
+    // Create User
+    let promise = appwrite.account.create(email, password);
+    promise.then(function (response) {
+        // Get UID 
+        const uid = response.$id
+        // Sign In
+        signInNewUser(email, password, uid)
+
+    }, function (error) {
+        console.log(error); // Failure
+    });
+}
+
+export function signInNewUser(email, password, uid) {
     let promise = appwrite.account.createSession(email, password);
 
     promise.then(function (response) {
-        console.log(response); // Success
         // Create User Doc
         createUserDoc(uid, email);
 
@@ -52,26 +66,6 @@ export function signInUser(email, password, uid) {
         console.log(error); // Failure
     });
 }
-
-export function createUserAccount(email, password) {
-
-    // Create User
-    let promise = appwrite.account.create(email, password);
-    promise.then(function (response) {
-        console.log("created");
-        console.log(response); // Success
-        // Get UID 
-        const uid = response.$id
-
-
-        // Sign In
-        signInUser(email, password, uid)
-
-    }, function (error) {
-        console.log(error); // Failure
-    });
-}
-
 
 
 export function createUserDoc(uid, email) {
@@ -87,12 +81,9 @@ export function createUserDoc(uid, email) {
         zone: false
     }).
     then(function (response) {
-        console.log("doc made");
-        console.log(response); // Success
-
         // push doc-id as user name
         const userDocID = response.$id;
-        updateUserName(userDocID);
+        updateUserName(userDocID, uid, email);
 
     }, function (error) {
         console.log(error); // Failure
@@ -100,7 +91,7 @@ export function createUserDoc(uid, email) {
 
 }
 
-export function updateUserName(userDocID) {
+export function updateUserName(userDocID, uid, email) {
 
     // sign in user
 
@@ -110,8 +101,11 @@ export function updateUserName(userDocID) {
     let promise = appwrite.account.updateName(userDocID);
 
     promise.then(function (response) {
-        console.log("updated name");
-        console.log(response); // Success
+
+        // trigger redux state change
+
+        store.dispatch(saveUserAccount({email, uid}));
+
     }, function (error) {
         console.log(error); // Failure
     });
@@ -119,7 +113,29 @@ export function updateUserName(userDocID) {
 }
 
 
+export function signInUser(email, password, uid) {
+    let promise = appwrite.account.createSession(email, password);
 
+    promise.then(function (response) {
+        console.log(response); // Success
+
+    }, function (error) {
+        console.log(error); // Failure
+    });
+}
+
+export async function getAccount() {
+    let promise = appwrite.account.get();
+
+    promise.then(function (response) {
+        console.log(response); // Success
+        return true
+    }, function (error) {
+        console.log(error); // Failure
+        return false
+    });
+
+}
 
 
 
