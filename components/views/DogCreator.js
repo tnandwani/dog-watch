@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
-import * as ImagePicker from 'expo-image-picker';
-import { saveDogDetails } from '../../redux/slices/dogSlice'
-import { Platform } from 'react-native';
+import {  saveDogName } from '../../redux/slices/dogSlice'
 
 import DogCard from '../tabs/components/DogCard';
 
@@ -18,8 +16,7 @@ import {
     Select,
     CheckIcon,
     Box,
-    Divider,
-    Container
+    Divider
 } from 'native-base';
 
 export default function DogCreator({ navigation }) {
@@ -33,41 +30,12 @@ export default function DogCreator({ navigation }) {
 
     const dispatch = useDispatch()
 
-    // save data to redux
-    const saveStep = () => {
-        dispatch(saveDogDetails({ dogName, breed, age, gender, profileImage }))
-        navigation.navigate("Settings")
+    const updateName = (name) => {
+        setDogName(name);
+        dispatch(saveDogName(name));
     }
-
-
-    useEffect(() => {
-        (async () => {
-            if (Platform.OS !== 'web') {
-                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-                if (status !== 'granted') {
-                    alert('Sorry, we need camera roll permissions to make this work!');
-                }
-            }
-        })();
-    }, []);
-
-    const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-
-        console.log(result);
-
-        if (!result.cancelled) {
-            setProfileImage(result.uri);
-        }
-    };
-
     return (
-        <Container safeArea flex={1} p="2" w="90%" mx="auto" py="8">
+        <Box safeArea flex={1} p="2" w="90%" mx="auto" py="8">
             <Heading size="lg" color="coolGray.800" fontWeight="600">
                 Lets get started!
             </Heading>
@@ -82,7 +50,7 @@ export default function DogCreator({ navigation }) {
                         _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
                         Dog Name
                     </FormControl.Label>
-                    <Input placeholder='Dog Name' onChangeText={(value) => setDogName(value)} />
+                    <Input placeholder='Dog Name' onChangeText={(value) => updateName(value)} />
                 </FormControl>
                 <FormControl>
                     <FormControl.Label
@@ -162,7 +130,7 @@ export default function DogCreator({ navigation }) {
 
             </VStack>
 
-            <Divider thickness="2" my="5" />
+            <Divider thickness="4" mt='4'/>
             <Center  flex={1} >
             <DogCard />
 
@@ -178,6 +146,6 @@ export default function DogCreator({ navigation }) {
             </Center>
 
 
-        </Container>
+        </Box>
     )
 }

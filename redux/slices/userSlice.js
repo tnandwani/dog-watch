@@ -21,14 +21,24 @@ export const userSlice = createSlice({
       state.uid = action.payload.uid
       state.username = action.payload.name
     },
-    
+    saveUserDetails: (state, action) => {
+      state.email = action.payload.email
+      state.uid = action.payload.uid
+      state.username = action.payload.name
+      state.zone = action.payload.zone
+      state.dogs = action.payload.dogs
+
+    },
+
   },
 })
 
 // Action creators are generated for each case reducer function
 export const {
   saveUserAccount,
-  signInAccount
+  signInAccount,
+  saveUserDetails
+
 } = userSlice.actions
 
 export default userSlice.reducer

@@ -12,7 +12,7 @@ import {
 export const dogSlice = createSlice({
   name: 'dog',
   initialState: {
-    dogName: 'Milo',
+    dogName: '',
     breed: null,
     gender: null,
     age: null,
@@ -48,6 +48,9 @@ export const dogSlice = createSlice({
     saveDogPic: (state, action) => {
       state.profileImage = action.payload.photoID
     },
+    saveDogName: (state, action) => {
+      state.dogName = action.payload
+    },
 
   },
 })
@@ -57,7 +60,8 @@ export const {
   saveDogDetails,
   saveDogSettings,
   saveDogAccount,
-  saveDogPic
+  saveDogPic,
+  saveDogName
 } = dogSlice.actions
 
 export default dogSlice.reducer

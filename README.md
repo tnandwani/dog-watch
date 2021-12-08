@@ -14,8 +14,6 @@
 ### LEFT TO DO 
 
 # - NOW
-
-# - NEXT
     - Create Dog
         1. Input -> Store on type
         2. Store -> DogCard with useSelector
@@ -27,11 +25,13 @@
             - save duid  
         5. update user
             - push duid to owner doc
-# - LATER
+# - NEXT
     - Join Neighborhood Button
         1. Get location onPress
         2. reverse Geocode
         3. Save coorinates/address to db (user + dog)
+# - LATER
+
     - Explore Page
         1. Add home marker to map
         2. add dog markers in your zone

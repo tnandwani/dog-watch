@@ -9,12 +9,20 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeTab from './tabs/HomeTab'
 import ExploreTab from './tabs/ExploreTab'
 import ProfileTab from './tabs/ProfileTab'
+import { getUserDetails } from '../database';
 
 export default function Main() {
 
+    getUserDetails();
+    
     return (
         <Tab.Navigator >
-
+        <Tab.Screen name="Profile" component={ProfileTab} options={{
+                headerShown: true,
+                tabBarIcon: ({ color, size }) => (
+                    <MaterialIcons name="dog-side" color={color} size={size} />
+                )
+            }} />
             <Tab.Screen name="Home" component={HomeTab} options={{
                 headerShown: true,
                 tabBarIcon: ({ color, size }) => (
@@ -27,12 +35,7 @@ export default function Main() {
                     <MaterialIcons name="compass" color={color} size={size} />
                 )
             }} />
-            <Tab.Screen name="Profile" component={ProfileTab} options={{
-                headerShown: true,
-                tabBarIcon: ({ color, size }) => (
-                    <MaterialIcons name="dog-side" color={color} size={size} />
-                )
-            }} />
+    
         </Tab.Navigator>
     )
 }

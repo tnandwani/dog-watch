@@ -3,11 +3,13 @@ import {
     Appwrite
 } from "appwrite";
 import {
-    appWriteID
+    appWriteID,
+    usersCollection
 } from './constants'
 
-import {
+import userSlice, {
     saveUserAccount,
+    saveUserDetails,
     signInAccount
 } from "./redux/slices/userSlice";
 
@@ -26,7 +28,7 @@ appwrite
 
 getUserAccount();
 
-export function getUserAccount(){
+export function getUserAccount() {
 
     let promise = appwrite.account.get();
 
@@ -35,23 +37,27 @@ export function getUserAccount(){
         const uid = response.$id
         const email = response.email
         const name = response.name
-    
+
         store.dispatch(signInAccount({
             email,
             uid,
             name
         }))
-    
+
     }, function (error) {
         console.log(error); // Failure
     });
-    
+
 }
 
 ////////// USER FUNCTIONS 
 
 export function signOutUser() {
-    const {email, uid, name} = false;
+    const {
+        email,
+        uid,
+        name
+    } = false;
 
     store.dispatch(signInAccount({
         email,
@@ -158,15 +164,29 @@ export function signInUser(email, password) {
     });
 }
 
-export async function getAccount() {
-    let promise = appwrite.account.get();
+
+export function getUserDetails() {
+
+    // get username
+    const username = store.getState().user.username
+    console.log("getting file for " + username)
+    // get doc with Username
+    let promise = appwrite.database.getDocument(usersCollection, username);
 
     promise.then(function (response) {
-        console.log(response); // Success
-        return true
+        console.log("got doc"); // Failure
+
+        const userData = {
+            email: response.email,
+            uid: response.uid,
+            zone: response.zone,
+            dogs: response.dogs,
+            username: username
+        }
+        store.dispatch(saveUserDetails(userData));
+
     }, function (error) {
-        console.log(error); // Failure
-        return false
+        console.log("no doc found"); // Failure
     });
 
 }

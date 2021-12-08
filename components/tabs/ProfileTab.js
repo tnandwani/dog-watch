@@ -2,6 +2,7 @@ import React from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DogCard from './components/DogCard'
+import { useSelector, useDispatch } from 'react-redux'
 
 
 // UI 
@@ -19,6 +20,8 @@ import { signOutUser } from '../../database';
 
 
 export default function ProfileTab({ navigation }) {
+
+
     return (
         <Box m='3'>
             <DogCard />

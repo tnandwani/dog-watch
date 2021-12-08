@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { useSelector } from 'react-redux'
+
 
 
 import {
@@ -14,6 +16,9 @@ import {
 
 
 export default function DogCard() {
+
+    const dogName = useSelector((state) => state.dog.dogName)
+
     return (
         <Center w='100%'>
             <Box
@@ -48,7 +53,7 @@ export default function DogCard() {
                     <Box w='60%'>
                         <Stack p="4" space={3}>
                             <Heading size="md" ml="-1">
-                                Dog Name
+                               {dogName}
                             </Heading>
                             <Text
                                 fontSize="xs"
