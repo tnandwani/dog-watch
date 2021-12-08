@@ -3,52 +3,16 @@
 
 **Features**
 - Find my dog
+    - kinda like amber alert for dogs
 - Community Feed
+    - 
 - Dog adoption page
 - Resources
 
 
 --------------------------------
 
-
-### LEFT TO DO 
-
-# - NOW
-    - Create Dog
-        1. Input -> Store on type
-        2. Store -> DogCard with useSelector
-        3. upload photo 
-            - save uri
-        4. save dog to db
-            - push state
-            - push uri
-            - save duid  
-        5. update user
-            - push duid to owner doc
-# - NEXT
-    - Join Neighborhood Button
-        1. Get location onPress
-        2. reverse Geocode
-        3. Save coorinates/address to db (user + dog)
-# - LATER
-
-    - Explore Page
-        1. Add home marker to map
-        2. add dog markers in your zone
-# - FUTURE FATURES
-    - Fill Resources 
-        1. Make info page UI
-        2. pull data from websites to app 
-        3. seperate by breed when applicable 
-    - Home/Feed layout - rough draft
-        1. design post 
-        2. post content structure 
-        3. upload post button
-
-# - ISSUES
-
-
-### My FULL DEV PATH
+### My FULL DEV PATH (the story so far)
 
 2014 (3months)
 1. C++  
