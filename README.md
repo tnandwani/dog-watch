@@ -14,12 +14,9 @@
 ### LEFT TO DO 
 
 # - NOW
-    - user status 
-        1. Create user session
-        2. Add Event lister for auth changes
-        3. Login functions update for AWdb
-# - NEXT
+    - save full user details on main.js
 
+# - NEXT
     - Create Dog
         1. Input -> Store on type
         2. Store -> DogCard with useSelector
@@ -39,6 +36,7 @@
     - Explore Page
         1. Add home marker to map
         2. add dog markers in your zone
+# - FUTURE FATURES
     - Fill Resources 
         1. Make info page UI
         2. pull data from websites to app 
@@ -47,8 +45,24 @@
         1. design post 
         2. post content structure 
         3. upload post button
-        4. 
+
 # - ISSUES
-- sign in not working real time 
-- need to update globalState on sign in 
-- need to fix login with firebase
+
+
+
+### My FULL DEV PATH
+
+2014 (3months)
+1. C++  
+2015 (6month) DISCO IDEA APP - no file upload native
+2. Swift
+2017
+3. HTML/CSS
+4. Javascript 
+2019 
+5. React 
+2020 (3 months)
+6. PostgreSQL 
+7. R (R Studio)
+2021 
+8. React Native
