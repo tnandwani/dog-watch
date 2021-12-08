@@ -5,12 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { NativeBaseProvider, Center, Spinner } from "native-base"
 import { Provider } from 'react-redux'
 import store from './redux/store'
-import { firebaseConfig, MyTheme } from './constants'
-
-
-// FIREBASE
-import firebase from 'firebase/app'
-const app = firebase.initializeApp(firebaseConfig);
+import { MyTheme } from './constants'
 
 //AW
 import {

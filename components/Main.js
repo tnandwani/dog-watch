@@ -1,9 +1,4 @@
 import React from 'react'
-import firebase from 'firebase/app'
-
-// redux
-import { useDispatch } from 'react-redux'
-import { saveUserAccount } from '../redux/slices/userSlice'
 
 //ICONS
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -16,9 +11,6 @@ import ExploreTab from './tabs/ExploreTab'
 import ProfileTab from './tabs/ProfileTab'
 
 export default function Main() {
-    const dispatch = useDispatch()
-
-
 
     return (
         <Tab.Navigator >

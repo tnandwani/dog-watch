@@ -7,7 +7,8 @@ import {
 } from './constants'
 
 import {
-    saveUserAccount
+    saveUserAccount,
+    signInAccount
 } from "./redux/slices/userSlice";
 
 import store from "./redux/store";
@@ -23,12 +24,40 @@ appwrite
 
 ////////// APP START
 
+getUserAccount();
 
+export function getUserAccount(){
 
+    let promise = appwrite.account.get();
+
+    promise.then(function (response) {
+        console.log(response); // Success
+        const uid = response.$id
+        const email = response.email
+        const name = response.name
+    
+        store.dispatch(signInAccount({
+            email,
+            uid,
+            name
+        }))
+    
+    }, function (error) {
+        console.log(error); // Failure
+    });
+    
+}
 
 ////////// USER FUNCTIONS 
 
 export function signOutUser() {
+    const {email, uid, name} = false;
+
+    store.dispatch(signInAccount({
+        email,
+        uid,
+        name
+    }))
     let promise = appwrite.account.deleteSessions();
 
     promise.then(function (response) {
@@ -104,7 +133,10 @@ export function updateUserName(userDocID, uid, email) {
 
         // trigger redux state change
 
-        store.dispatch(saveUserAccount({email, uid}));
+        store.dispatch(saveUserAccount({
+            email,
+            uid
+        }));
 
     }, function (error) {
         console.log(error); // Failure
@@ -113,11 +145,13 @@ export function updateUserName(userDocID, uid, email) {
 }
 
 
-export function signInUser(email, password, uid) {
+export function signInUser(email, password) {
     let promise = appwrite.account.createSession(email, password);
 
     promise.then(function (response) {
         console.log(response); // Success
+        getUserAccount();
+
 
     }, function (error) {
         console.log(error); // Failure

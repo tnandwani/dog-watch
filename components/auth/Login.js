@@ -10,6 +10,7 @@ import {
     Button,
     HStack
   } from 'native-base';
+import { signInUser } from '../../database';
 
 
 
@@ -18,18 +19,6 @@ export default function Login({navigation}) {
     const [password, setPassword] = useState();
     const [alert, setAlert] = useState("'Must be atleast 6 characters.'");
 
-    const onSignUp = () => {
-
-        firebase.auth().signInWithEmailAndPassword(email, password)
-        .then((result) => {
-            console.log(result)
-        })
-        .catch((error) => {
-          console.log(error.message)
-
-          setAlert(error.message)
-        })
-    }
 
     return (
         <Box safeArea flex={1} p="2" py="8" w="90%" mx="auto">
@@ -72,7 +61,7 @@ export default function Login({navigation}) {
                   Forget Password?
                 </Link> */}
               </FormControl>
-              <Button mt="2" colorScheme="indigo"  onPress={() => onSignUp()}>
+              <Button mt="2" colorScheme="indigo"  onPress={() => signInUser(email, password)}>
                 Sign in
               </Button>
               <Button mt="2" variant = "outline"colorScheme="indigo"  onPress= {() => navigation.goBack()}>
