@@ -14,7 +14,6 @@
 ### LEFT TO DO 
 
 # - NOW
-    - save full user details on main.js
 
 # - NEXT
     - Create Dog
@@ -47,7 +46,6 @@
         3. upload post button
 
 # - ISSUES
-
 
 
 ### My FULL DEV PATH
