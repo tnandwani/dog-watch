@@ -1,8 +1,12 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+
+
 import { NativeBaseProvider, Center, Spinner } from "native-base"
 import { Provider } from 'react-redux'
 import store from './redux/store'
 import { firebaseConfig, MyTheme } from './constants'
+
 
 // FIREBASE
 import firebase from 'firebase/app'
@@ -41,112 +45,72 @@ import SettingScreen from './components/auth/steps/Step2'
 
 // VIEW COMPONENTS
 import DogCreator from './components/views/DogCreator' // holds user tabs 
-import { getAccount } from './database'
 
 
 
-export class App extends Component {
+export default function App() {
 
-  constructor(props) {
-    super()
-    this.state = {
-      loaded: false,
-      loggedIn: false
-    }
+  return (
 
-
-  }
-
-  componentDidMount() {
-
-    // get account once 
-    let status = appwrite.account.get();
-
-    status.then(function (response) {
-        console.log(response); // Success
-        return false
-    }, function (error) {
-        console.log(error); // Failure
-        return false
-    });
-
-    this.setState({
-      loggedIn: false,
-      loaded: true,
-    })
-
-    // realtime method 
-    // let authListener = appwrite.subscribe('account', response => {
-    //   // Callback will be executed on all account events.
-    //   console.log("event");
-    //   console.log(response);
-    // });
-
-
-
-
-    // firebase.auth().onAuthStateChanged((user) => {
-    //   if (!user) {
-    //     this.setState({
-    //       loggedIn: false,
-    //       loaded: true,
-    //     })
-    //   } else {
-    //     this.setState({
-    //       loggedIn: true,
-    //       loaded: true,
-    //     })
-    //   }
-    // })
-  }
-
-  render() {
-    const { loggedIn, loaded } = this.state;
-
-    if (!loaded) {
-      return (
-        <NativeBaseProvider>
-          <Center flex={1} px="3">
-            <Spinner color="indigo.500" />
-
-          </Center>
-        </NativeBaseProvider>
-      )
-    }
-
-
-    return (
-
-      <Provider store={store}>
-        <NativeBaseProvider>
-          {!loggedIn &&
-            <NavigationContainer theme={MyTheme}>
-              <Stack.Navigator initialRouteName="Landing">
-                <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="Create" component={CreateScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="Settings" component={SettingScreen} options={{ headerShown: false }} />
-              </Stack.Navigator>
-            </NavigationContainer>
-
-          }
-          {loggedIn &&
-            <NavigationContainer theme={MyTheme} >
-              <Stack.Navigator initialRouteName="Main" >
-                <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
-                <Stack.Screen name="DogCreator" component={DogCreator} options={{ headerShown: false }} />
-
-              </Stack.Navigator>
-            </NavigationContainer>
-          }
-
-        </NativeBaseProvider>
-
-
-      </Provider>
-    )
-  }
+    <Provider store={store}>
+      <AppContent />
+    </Provider>
+  )
 }
 
-export default App
+export function AppContent() {
+
+  const loggedIn = useSelector((state) => state.user.email)
+
+  const [loaded, setLoaded] = useState(false);
+
+
+  useEffect(() => {
+    (async () => {
+      //  APP LOADED
+      setLoaded(true)
+
+    })();
+  }, []);
+
+  return (
+
+    <NativeBaseProvider>
+
+      {/* LOADING SCREEN */}
+      {!loaded &&
+        <Center flex={1} px="3">
+          <Spinner color="indigo.500" />
+
+        </Center>
+      }
+
+      {/* NEW USER */}
+      {!loggedIn &&
+        <NavigationContainer theme={MyTheme}>
+          <Stack.Navigator initialRouteName="Landing">
+            <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="Create" component={CreateScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="Settings" component={SettingScreen} options={{ headerShown: false }} />
+          </Stack.Navigator>
+        </NavigationContainer>
+
+      }
+      {/* RETURNING USER */}
+
+      {loggedIn &&
+        <NavigationContainer theme={MyTheme} >
+          <Stack.Navigator initialRouteName="Main" >
+            <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="DogCreator" component={DogCreator} options={{ headerShown: false }} />
+
+          </Stack.Navigator>
+        </NavigationContainer>
+      }
+
+    </NativeBaseProvider>
+  )
+
+}
