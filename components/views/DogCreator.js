@@ -35,7 +35,7 @@ export default function DogCreator({ navigation }) {
     const [breed, setBreed] = useState();
     const [age, setAge] = useState();
     const [gender, setGender] = useState();
-    const [profileImage, setProfileImage] = useState("https://media.npr.org/assets/img/2021/04/27/prancer_wide-db59609b5bd96c9e56e4dfe32d198461197880c2.jpg?s=1400");
+    const [profileImage, setProfileImage] = useState("https://freesvg.org/img/Dog-Leash.png");
 
     const dispatch = useDispatch()
 
@@ -83,12 +83,9 @@ export default function DogCreator({ navigation }) {
         console.log(result);
 
         if (!result.cancelled) {
-            // DO somethign with image
+            // get URI
             const URI = result.uri
-            console.log("got pic ")
-            console.log(URI)
-            updateProfile(URI)
-            // setProfileImage(result.uri);
+            await setProfileImage(URI);
         }
     };
 

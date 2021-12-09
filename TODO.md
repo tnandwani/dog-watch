@@ -2,7 +2,7 @@
     - Create Dog
         1. Update redux onChangeText 
         2. upload photo 
-            - save uriß
+            - save uri
         3. save dog to db
             - push state
             - push uri

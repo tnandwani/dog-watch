@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 
+import { Image } from 'react-native';
+
 
 
 import {
     Box,
     Heading,
     AspectRatio,
-    Image,
     Text,
     Center,
     Stack,
@@ -20,11 +21,9 @@ export default function RawDogCard(props) {
     let dogName = useSelector((state) => state.rawDog.dogName)
     let breed = useSelector((state) => state.rawDog.breed)
     let age = useSelector((state) => state.rawDog.age)
-    let profileURI = useSelector((state) => state.rawDog.profileImage)
+    // let profileURI = useSelector((state) => state.rawDog.profileImage)
 
- 
-
-    // useEffect(() => { console.log(profileURI) }, [profileURI])
+    const [profileURI, setProfileURI] = useState("https://freesvg.org/img/Dog-Leash.png");
 
     return (
         <Center w='100%'>
@@ -49,18 +48,15 @@ export default function RawDogCard(props) {
                 <HStack w='100%'>
                     <Center w='30%'>
                         <AspectRatio w="100%" ratio={9 / 9}>
-                            <Image
-                                source={{
-                                    uri: profileURI,
-                                }}
-                                alt="image"
-                            />
+                        <Image
+          source={{ uri: props.image }}
+        />
                         </AspectRatio>
                     </Center>
                     <Box w='60%'>
                         <Stack p="4" space={3}>
                             <Heading size="md" ml="-1">
-                               {dogName}
+                                {dogName}
                             </Heading>
                             <Text
                                 fontSize="xs"
