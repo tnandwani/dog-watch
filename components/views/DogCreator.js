@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
-import { saveDogName } from '../../redux/slices/dogSlice'
+import * as ImagePicker from 'expo-image-picker';
+import { Platform } from 'react-native';
+
+import {  
+    saveDogName,
+    saveDogBreed,
+    saveDogAge,
+    saveDogGender,
+    saveDogPic
+} from '../../redux/slices/rawDogSlice'
 
 import RawDogCard from './RawDogCard'
 
@@ -26,14 +35,63 @@ export default function DogCreator({ navigation }) {
     const [breed, setBreed] = useState();
     const [age, setAge] = useState();
     const [gender, setGender] = useState();
-    const [profileImage, setProfileImage] = useState(null);
+    const [profileImage, setProfileImage] = useState("https://media.npr.org/assets/img/2021/04/27/prancer_wide-db59609b5bd96c9e56e4dfe32d198461197880c2.jpg?s=1400");
 
     const dispatch = useDispatch()
 
-    const updateName = (name) => {
-        setDogName(name);
-        dispatch(saveDogName(name));
+    const updateName = (n) => {
+        setDogName(n);
+        dispatch(saveDogName(n));
     }
+    const updateBreed = (b) => {
+        setBreed(b);
+        dispatch(saveDogBreed(b));
+    }
+    const updateAge = (a) => {
+        setAge(a);
+        dispatch(saveDogAge(a));
+    }
+    const updateGender = (g) => {
+        setGender(g);
+        dispatch(saveDogGender(g));
+    }
+    const updateProfile = (p) => {
+        setProfileImage(p);
+        dispatch(saveDogPic(p));
+    }
+
+    useEffect(() => {
+        (async () => {
+            if (Platform.OS !== 'web') {
+                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+                if (status !== 'granted') {
+                    alert('Sorry, we need camera roll permissions to make this work!');
+                }
+            }
+        })();
+    }, []);
+
+    const pickImage = async () => {
+
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        console.log(result);
+
+        if (!result.cancelled) {
+            // DO somethign with image
+            const URI = result.uri
+            console.log("got pic ")
+            console.log(URI)
+            updateProfile(URI)
+            // setProfileImage(result.uri);
+        }
+    };
+
     return (
         <Box safeArea flex={1} p="2" w="90%" mx="auto" py="8">
             <Heading size="lg" color="coolGray.800" fontWeight="600">
@@ -67,7 +125,7 @@ export default function DogCreator({ navigation }) {
                             endIcon: <CheckIcon size="5" />,
                         }}
                         mt={1}
-                        onValueChange={(value) => setBreed(value)}
+                        onValueChange={(value) => updateBreed(value)}
                     >
                         <Select.Item label="Poodle" value="Poodle" />
                         <Select.Item label="Pitbull" value="Pitbull" />
@@ -91,7 +149,7 @@ export default function DogCreator({ navigation }) {
                             endIcon: <CheckIcon size="5" />,
                         }}
                         mt={1}
-                        onValueChange={(value) => setGender(value)}
+                        onValueChange={(value) => updateGender(value)}
                     >
                         <Select.Item label="Male" value="M" />
                         <Select.Item label="Female" value="F" />
@@ -113,7 +171,7 @@ export default function DogCreator({ navigation }) {
                             endIcon: <CheckIcon size="5" />,
                         }}
                         mt={1}
-                        onValueChange={(value) => setAge(value)}
+                        onValueChange={(value) => updateAge(value)}
                     >
                         <Select.Item label="1" value="1" />
                         <Select.Item label="2" value="2" />
@@ -124,7 +182,7 @@ export default function DogCreator({ navigation }) {
                     </Select>
                 </FormControl>
 
-                <Button colorScheme="indigo" variant="outline"> Upload Image</Button>
+                <Button colorScheme="indigo" variant="outline" onPress={pickImage}> Upload Image</Button>
 
 
 
@@ -132,7 +190,7 @@ export default function DogCreator({ navigation }) {
 
             <Divider thickness="4" my='4' />
 
-            <RawDogCard />
+            <RawDogCard image = {profileImage}/>
 
             <Center flex={1} >
 

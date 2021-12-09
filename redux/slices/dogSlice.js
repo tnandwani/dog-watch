@@ -44,14 +44,7 @@ export const dogSlice = createSlice({
         uploadImage(state.profileImage);
 
       }
-    },
-    saveDogPic: (state, action) => {
-      state.profileImage = action.payload.photoID
-    },
-    saveDogName: (state, action) => {
-      state.dogName = action.payload
-    },
-
+    }
   },
 })
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 
 
@@ -15,9 +15,16 @@ import {
 } from 'native-base';
 
 
-export default function RawDogCard() {
+export default function RawDogCard(props) {
 
-    const dogName = useSelector((state) => state.dog.dogName)
+    let dogName = useSelector((state) => state.rawDog.dogName)
+    let breed = useSelector((state) => state.rawDog.breed)
+    let age = useSelector((state) => state.rawDog.age)
+    let profileURI = useSelector((state) => state.rawDog.profileImage)
+
+ 
+
+    // useEffect(() => { console.log(profileURI) }, [profileURI])
 
     return (
         <Center w='100%'>
@@ -44,7 +51,7 @@ export default function RawDogCard() {
                         <AspectRatio w="100%" ratio={9 / 9}>
                             <Image
                                 source={{
-                                    uri: "https://www.akc.org/wp-content/uploads/2016/06/German-Shepherd-Dog-laying-down-in-the-backyard-500x487.jpeg",
+                                    uri: profileURI,
                                 }}
                                 alt="image"
                             />
@@ -67,7 +74,7 @@ export default function RawDogCard() {
                                 ml="-0.5"
                                 mt="-1"
                             >
-                                Breed
+                                {breed}
                             </Text>
 
                             <Text fontWeight="400" my='-1'>
@@ -80,7 +87,7 @@ export default function RawDogCard() {
                                 }}
                                 fontWeight="300"
                             >
-                                6 Years Old
+                                {age} Years Old
                             </Text>
 
                         </Stack>

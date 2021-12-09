@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { saveDogDetails } from '../../../redux/slices/dogSlice'
 
 import * as ImagePicker from 'expo-image-picker';
-import { saveDogDetails } from '../../../redux/slices/dogSlice'
 import { Platform } from 'react-native';
 
 import {

@@ -10,13 +10,21 @@
 - Resources
 
 
+**STACK**
+- Expo (Platform/ Dev Dependencies)
+- React Native (Front End framework)
+- NativeBase (CSS Components)
+- AppWrite (Backend)
+
+
+
 --------------------------------
 
 ### My FULL DEV PATH (the story so far)
 
 2014 (3months)
 1. C++  
-2015 (6month) DISCO IDEA APP - no file upload native
+2015 (6month) 
 2. Swift
 2017
 3. HTML/CSS
