@@ -77,12 +77,7 @@ export default function HomeTab() {
     ]
     return (
 
-        <Box
-            w={{
-                base: "100%",
-                md: "25%",
-            }}
-        >
+        <Box>
             <Heading fontSize="xl" p="4" pb="3">
                 Your Neighborhood
             </Heading>
