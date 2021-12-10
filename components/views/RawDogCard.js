@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 
 import { Image } from 'react-native';
-
-
-
 import {
     Box,
     Heading,
@@ -17,13 +14,10 @@ import {
 
 
 export default function RawDogCard(props) {
-
     let dogName = useSelector((state) => state.rawDog.dogName)
     let breed = useSelector((state) => state.rawDog.breed)
     let age = useSelector((state) => state.rawDog.age)
-    // let profileURI = useSelector((state) => state.rawDog.profileImage)
-
-    const [profileURI, setProfileURI] = useState("https://freesvg.org/img/Dog-Leash.png");
+    let location = useSelector((state) => state.rawDog.location)
 
     return (
         <Center w='100%'>
@@ -74,7 +68,8 @@ export default function RawDogCard(props) {
                             </Text>
 
                             <Text fontWeight="400" my='-1'>
-                                Location
+                                {location.address}
+
                             </Text>
                             <Text
                                 color="coolGray.600"

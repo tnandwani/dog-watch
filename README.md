@@ -5,9 +5,8 @@
 - Find my dog
     - kinda like amber alert for dogs
 - Community Feed
-    - 
-- Dog adoption page
-- Resources
+    - based on zip code (dog instagrams)
+- Resources (pulled from online websites)
 
 
 **STACK**

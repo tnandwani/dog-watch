@@ -1,5 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { Image } from 'react-native';
 
 
 
@@ -7,7 +8,6 @@ import {
     Box,
     Heading,
     AspectRatio,
-    Image,
     Text,
     Center,
     Stack,
