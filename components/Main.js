@@ -9,12 +9,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeTab from './tabs/HomeTab'
 import ExploreTab from './tabs/ExploreTab'
 import ProfileTab from './tabs/ProfileTab'
-import { getUserDetails } from '../database';
 
 export default function Main() {
 
-    getUserDetails();
-    
     return (
         <Tab.Navigator >
         <Tab.Screen name="Profile" component={ProfileTab} options={{

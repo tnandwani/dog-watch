@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import * as ImagePicker from 'expo-image-picker';
 
@@ -36,6 +36,8 @@ import {
     Spacer,
     Spinner
 } from 'native-base';
+import { addDogtoUser, createDog, uploadImage } from '../../database';
+import { appWriteID } from '../../constants';
 
 export default function DogCreator({ navigation }) {
 
@@ -48,6 +50,7 @@ export default function DogCreator({ navigation }) {
 
     // owner
     const [contact, setContact] = useState();
+    const username = useSelector((state) => state.user.username)
 
     // location
     const [visibility, setVisibility] = useState();
@@ -165,6 +168,73 @@ export default function DogCreator({ navigation }) {
         })();
     }
 
+    const onPublish = () => {
+        // upload photo
+
+        let photoPromise = uploadImage(profileImage)
+
+        photoPromise.then(function (response) {
+
+            const photoID = response.$id
+            console.log("URI is"); // Success
+            console.log(photoID); // avatar URL 
+
+            // upload dog with URL
+            const PURI = 'http://localhost/v1/storage/files/' + photoID + '/view?project=' + appWriteID
+            console.log(PURI);
+
+
+            const dogData = {
+                dogName: dogName,
+                photo: PURI,
+                breed: breed,
+                age: age,
+                gender: gender,
+                contact: contact,
+                visibility: visibility,
+                zone: location.address,
+                coords: location.coords,
+                owner: username
+            }
+            // upload dogObject
+
+            let dogPromise = createDog(dogData);
+
+            dogPromise.then(function (response) {
+                console.log(response); // Success
+                let duid = response.$id
+
+                // add dog to list
+                let updatePromise = addDogtoUser(duid, username, PURI);
+
+                updatePromise.then(function (response) {
+                    console.log(response); // Success
+
+                    // finished adding dog
+
+                window.location.reload();
+
+                }, function (error) {
+                    console.log(error); // Failure
+                });
+
+
+
+
+            }, function (error) {
+                console.log(error); // Failure
+            });
+
+
+        }, function (error) {
+            console.log(error); // Failure
+        });
+
+
+
+        //update User
+    }
+
 
     return (
         <Box safeArea flex={1} p="2" w="90%" mx="auto" py="8">
@@ -185,7 +255,7 @@ export default function DogCreator({ navigation }) {
                     <Input placeholder='Dog Name' onChangeText={(value) => updateName(value)} />
                 </FormControl>
 
-               
+
                 <Flex
                     direction="row"
                     mt="1.5"
@@ -286,7 +356,7 @@ export default function DogCreator({ navigation }) {
                             }}
                             onValueChange={(value) => updateVisibility(value)}
                         >
-                            
+
                             <Select.Item label="Neighborhood" value="n" />
                             <Select.Item label="Private" value="p" />
 
@@ -305,10 +375,10 @@ export default function DogCreator({ navigation }) {
                 </FormControl>
 
                 <FormControl>
-                <Button mt="4" colorScheme="indigo" _text={{ color: 'white' }} shadow="7"  onPress={getLocation}  > Join Neighborhood </Button>
+                    <Button mt="4" colorScheme="indigo" _text={{ color: 'white' }} shadow="7" onPress={getLocation}  > Join Neighborhood </Button>
 
                     <FormControl.HelperText>
-                    {locationStatus}
+                        {locationStatus}
                     </FormControl.HelperText>
                 </FormControl>
 
@@ -330,7 +400,7 @@ export default function DogCreator({ navigation }) {
                     <Button variant="outline" colorScheme="indigo" onPress={() => navigation.goBack()}>
                         Cancel
                     </Button>
-                    <Button colorScheme="indigo" onPress={() => saveStep()}>
+                    <Button colorScheme="indigo" onPress={() => onPublish()}>
                         Create Dog Tag
                     </Button>
 

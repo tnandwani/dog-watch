@@ -4,10 +4,12 @@ import {
 } from "appwrite";
 import {
     appWriteID,
-    usersCollection
+    usersCollection,
+    dogsCollection
 } from './constants'
 
 import userSlice, {
+    saveDogCards,
     saveUserAccount,
     saveUserDetails,
     signInAccount
@@ -33,7 +35,6 @@ export function getUserAccount() {
     let promise = appwrite.account.get();
 
     promise.then(function (response) {
-        console.log(response); // Success
         const uid = response.$id
         const email = response.email
         const name = response.name
@@ -43,6 +44,8 @@ export function getUserAccount() {
             uid,
             name
         }))
+
+        getUserDetails(name);
 
     }, function (error) {
         console.log(error); // Failure
@@ -165,16 +168,13 @@ export function signInUser(email, password) {
 }
 
 
-export function getUserDetails() {
+export function getUserDetails(username) {
 
-    // get username
-    const username = store.getState().user.username
-    console.log("getting file for " + username)
     // get doc with Username
     let promise = appwrite.database.getDocument(usersCollection, username);
 
     promise.then(function (response) {
-        console.log("got doc"); // Failure
+        console.log("got user"); // Failure
 
         const userData = {
             email: response.email,
@@ -184,12 +184,15 @@ export function getUserDetails() {
             username: username
         }
         store.dispatch(saveUserDetails(userData));
+        unwrapDogs(response.dogs)
 
     }, function (error) {
-        console.log("no doc found"); // Failure
+        console.log("no user found"); // Failure
     });
 
 }
+
+
 
 
 
@@ -219,15 +222,72 @@ export async function uploadImage(imageURI) {
     //push to AW
     let promise = appwrite.storage.createFile(blob);
 
-    promise.then(function (response) {
+    return promise
 
-        const photoID = response.$id
-        console.log("response is"); // Success
-        console.log(photoID); // avatar URL
+    // promise.then(function (response) {
+
+    //     const photoID = response.$id
+    //     console.log("response is"); // Success
+    //     console.log(response); // avatar URL
+    //     return response
 
 
-    }, function (error) {
-        console.log(error); // Failure
-        return (error.message)
+    // }, function (error) {
+    //     console.log(error); // Failure
+    //     return (error.message)
+    // });
+}
+
+
+
+export function createDog(dogData) {
+
+    console.log("uploading:");
+    console.log(dogData);
+
+    let promise = appwrite.database.createDocument(dogsCollection, dogData);
+
+    return promise
+}
+
+export function addDogtoUser(duid, uid) {
+
+    // get current dog list
+
+    let dogArray = store.getState().user.dogs
+
+    dogArray = Object.assign([], dogArray)
+
+
+    if (dogArray.length < 1) {
+        dogArray = [duid]
+    } else {
+        dogArray.push(duid)
+    }
+
+    // add dog to user 
+    let promise = appwrite.database.updateDocument(usersCollection, uid, {
+        dogs: dogArray
     });
+
+    return promise;
+
+}
+
+export function unwrapDogs(dogs) {
+
+    dogs.map(dog => {
+        console.log("hi dog: " + dog);
+        appwrite.database.getDocument(dogsCollection, dog).
+        then(function (response) {
+            console.log(response); // Success
+            
+            store.dispatch(saveDogCards(response));
+    
+        }, function (error) {
+            console.log(error); // Failure
+            return
+        });     
+    })
+
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Image } from 'react-native';
 
@@ -15,9 +15,12 @@ import {
 } from 'native-base';
 
 
-export default function DogCard() {
+export default function DogCard(props) {
 
-    const dogName = useSelector((state) => state.dog.dogName)
+    useEffect(() => {
+        console.log(props)
+    }, []);
+
 
     return (
         <Center w='100%'>
@@ -44,16 +47,16 @@ export default function DogCard() {
                         <AspectRatio w="100%" ratio={9 / 9}>
                             <Image
                                 source={{
-                                    uri: "https://www.akc.org/wp-content/uploads/2016/06/German-Shepherd-Dog-laying-down-in-the-backyard-500x487.jpeg",
+                                    uri: props.dog.item.photo,
                                 }}
                                 alt="image"
                             />
                         </AspectRatio>
                     </Center>
-                    <Box w='60%'>
+                    <Box w='80%'>
                         <Stack p="4" space={3}>
                             <Heading size="md" ml="-1">
-                               {dogName}
+                                {props.dog.item.dogName}
                             </Heading>
                             <Text
                                 fontSize="xs"
@@ -67,11 +70,13 @@ export default function DogCard() {
                                 ml="-0.5"
                                 mt="-1"
                             >
-                                Breed
+                                {props.dog.item.breed}
+
                             </Text>
 
                             <Text fontWeight="400" my='-1'>
-                                Location
+                                {props.dog.item.zone}
+
                             </Text>
                             <Text
                                 color="coolGray.600"
@@ -80,7 +85,8 @@ export default function DogCard() {
                                 }}
                                 fontWeight="300"
                             >
-                                6 Years Old
+                                {props.dog.item.age}
+                                Years Old
                             </Text>
 
                         </Stack>

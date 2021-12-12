@@ -55,7 +55,8 @@ export default function App() {
 
 export function AppContent() {
 
-  const loggedIn = useSelector((state) => state.user.email)
+  let loggedIn = ""
+  loggedIn = useSelector((state) => state.user.email)
 
   const [loaded, setLoaded] = useState(false);
 

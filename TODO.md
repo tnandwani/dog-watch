@@ -1,18 +1,14 @@
 ### - NOW
-    - Create Dog
-        1. Update redux onChangeText 
-        2. upload photo 
-            - save uri
-        3. save dog to db
-            - push state
-            - push uri
-            - save duid  
-        4. update user
-            - push duid to owner doc
+    -  Profile Page
+        1. after saveUserDetails
+        2. forEach [duid] 
+        3. GetDocument
+        4. Add DogCard to dogCards [] (redux only)
+        
 
 ### - NEXT
     - Join Neighborhood Button
-        1. Get location onPressß
+        1. Get location onPress
         3. Save coorinates/address to db (user + dog)ß
     - Make Upwork profile
         - copy chris
@@ -30,6 +26,7 @@
 
 ## - ISSUES
     - no error warnings for auth
+    - show loading screen while signing in 
 
 ### - FUTURE FEATURES
     - Home/Feed layout - rough draft
