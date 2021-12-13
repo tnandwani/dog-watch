@@ -10,7 +10,8 @@ export const userSlice = createSlice({
     zone: false,
     username: null,
     dogs: [],
-    dogCards: []
+    dogCards: [],
+    status: 'loading'
   },
   reducers: {
     saveUserAccount: (state, action) => {
@@ -33,6 +34,9 @@ export const userSlice = createSlice({
     saveDogCards: (state, action) => {
       state.dogCards.push(action.payload)
     },
+    changeStatus: (state, action) => {
+      state.status = action.payload
+    },
 
   },
 })
@@ -42,7 +46,8 @@ export const {
   saveUserAccount,
   signInAccount,
   saveUserDetails,
-  saveDogCards
+  saveDogCards,
+  changeStatus
 
 } = userSlice.actions
 

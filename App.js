@@ -55,34 +55,21 @@ export default function App() {
 
 export function AppContent() {
 
-  let loggedIn = ""
-  loggedIn = useSelector((state) => state.user.email)
+  var status = useSelector((state) => state.user.status)
 
-  const [loaded, setLoaded] = useState(false);
-
-
-  useEffect(() => {
-    (async () => {
-      //  APP LOADED
-      setLoaded(true)
-
-    })();
-  }, []);
 
   return (
 
     <NativeBaseProvider>
-
-      {/* LOADING SCREEN */}
-      {!loaded &&
+    
+      {status == 'loading' &&
         <Center flex={1} px="3">
           <Spinner color="indigo.500" />
 
         </Center>
       }
 
-      {/* NEW USER */}
-      {!loggedIn &&
+      {status == 'new' &&
         <NavigationContainer theme={MyTheme}>
           <Stack.Navigator initialRouteName="Landing">
             <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false }} />
@@ -94,9 +81,8 @@ export function AppContent() {
         </NavigationContainer>
 
       }
-      {/* RETURNING USER */}
 
-      {loggedIn &&
+      {status == 'returning' &&
         <NavigationContainer theme={MyTheme} >
           <Stack.Navigator initialRouteName="Main" >
             <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />

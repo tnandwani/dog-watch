@@ -81,7 +81,7 @@ export default function HomeTab() {
             <Heading fontSize="xl" p="4" pb="3">
                 Your Neighborhood
             </Heading>
-            <FlatList
+            {/* <FlatList
                 data={data}
                 renderItem={({ item }) => (
                     <Box
@@ -175,7 +175,7 @@ export default function HomeTab() {
                     </Box>
                 )}
                 keyExtractor={(item) => item.id}
-            />
+            /> */}
         </Box>
 
     );

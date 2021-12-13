@@ -5,10 +5,12 @@ import {
 import {
     appWriteID,
     usersCollection,
-    dogsCollection
+    dogsCollection,
+    zoneCollection
 } from './constants'
 
 import userSlice, {
+    changeStatus,
     saveDogCards,
     saveUserAccount,
     saveUserDetails,
@@ -49,6 +51,7 @@ export function getUserAccount() {
 
     }, function (error) {
         console.log(error); // Failure
+        store.dispatch(changeStatus('new'))
     });
 
 }
@@ -71,6 +74,8 @@ export function signOutUser() {
 
     promise.then(function (response) {
         console.log(response); // Success
+        store.dispatch(changeStatus('new'))
+
 
     }, function (error) {
         console.log(error); // Failure
@@ -80,8 +85,23 @@ export function signOutUser() {
 
 export function createUserAccount(email, password) {
 
-    // Create User
+
+    // FIREBASE
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            // Signed in 
+            var user = userCredential.user;
+            // ...
+        })
+        .catch((error) => {
+            var errorCode = error.code;
+            // ..
+        });
+
+    // APPWRITE CREATE USER
     let promise = appwrite.account.create(email, password);
+
+
     promise.then(function (response) {
         // Get UID 
         const uid = response.$id
@@ -147,6 +167,9 @@ export function updateUserName(userDocID, uid, email) {
             uid
         }));
 
+        store.dispatch(changeStatus('returning'))
+
+
     }, function (error) {
         console.log(error); // Failure
     });
@@ -174,7 +197,7 @@ export function getUserDetails(username) {
     let promise = appwrite.database.getDocument(usersCollection, username);
 
     promise.then(function (response) {
-        console.log("got user"); // Failure
+        console.log(response); // Failure
 
         const userData = {
             email: response.email,
@@ -184,7 +207,14 @@ export function getUserDetails(username) {
             username: username
         }
         store.dispatch(saveUserDetails(userData));
-        unwrapDogs(response.dogs)
+
+        if (response.dogs.length > 0) {
+            unwrapDogs(response.dogs)
+
+        } else {
+            store.dispatch(changeStatus('returning'))
+
+        }
 
     }, function (error) {
         console.log("no user found"); // Failure
@@ -276,18 +306,32 @@ export function addDogtoUser(duid, uid) {
 
 export function unwrapDogs(dogs) {
 
-    dogs.map(dog => {
-        console.log("hi dog: " + dog);
-        appwrite.database.getDocument(dogsCollection, dog).
-        then(function (response) {
-            console.log(response); // Success
-            
-            store.dispatch(saveDogCards(response));
-    
-        }, function (error) {
-            console.log(error); // Failure
-            return
-        });     
-    })
+    if (dogs) {
+        dogs.map(dog => {
+            appwrite.database.getDocument(dogsCollection, dog).
+            then(function (response) {
+                console.log(response); // Success
+                store.dispatch(changeStatus('returning'))
+                store.dispatch(saveDogCards(response));
 
+            }, function (error) {
+                console.log(error); // Failure
+
+            });
+        })
+    }
+
+}
+
+
+export function getHomies(zone) {
+
+    console.log("getting homies")
+    let promise = appwrite.database.listDocuments(dogsCollection);
+
+    promise.then(function (response) {
+        console.log(response); // Success
+    }, function (error) {
+        console.log(error); // Failure
+    });
 }

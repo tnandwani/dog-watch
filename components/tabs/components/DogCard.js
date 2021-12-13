@@ -18,7 +18,8 @@ import {
 export default function DogCard(props) {
 
     useEffect(() => {
-        console.log(props)
+
+
     }, []);
 
 

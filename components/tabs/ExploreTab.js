@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
 import { StyleSheet, View, Dimensions, Platform } from 'react-native';
 import { Center } from "native-base"
+import { getHomies } from '../../database';
 
 const customStyling = [
   {
@@ -264,11 +267,19 @@ const customStyling = [
 ]
 
 export default function ExploreTab() {
+
+  var zone = useSelector((state) => state.user.zone)
+
+  useEffect(() => {
+    // 
+    getHomies(zone);
+  }, []);
+
   if (Platform.OS === 'web') {
     return (
-        <Center flex={1} px="3">
-          Not Available on Web
-        </Center>
+      <Center flex={1} px="3">
+        Not Available on Web
+      </Center>
     );
   }
   return (
