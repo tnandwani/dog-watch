@@ -36,8 +36,7 @@ import {
     Spacer,
     Spinner
 } from 'native-base';
-import { addDogtoUser, createDog, uploadImage } from '../../database';
-import { appWriteID } from '../../constants';
+import { startPublish } from '../../database';
 
 export default function DogCreator({ navigation }) {
 
@@ -50,7 +49,7 @@ export default function DogCreator({ navigation }) {
 
     // owner
     const [contact, setContact] = useState();
-    const username = useSelector((state) => state.user.username)
+    const uid = useSelector((state) => state.user.uid)
 
     // location
     const [visibility, setVisibility] = useState();
@@ -133,7 +132,7 @@ export default function DogCreator({ navigation }) {
 
             // get coords
             let currentPin = await Location.getCurrentPositionAsync({});
-            var currentAddress = "Needs Mobile Verification";
+            var currentAddress = "Unverified";
 
 
             // If not mobile get address
@@ -141,6 +140,9 @@ export default function DogCreator({ navigation }) {
                 // get address
                 let reveresResult = await Location.reverseGeocodeAsync(currentPin.coords, false)
                 currentAddress = reveresResult[0];
+                // get zipcode
+
+                // pass zipcode instead of full addess
             }
             else {
                 console.log("Web Mode")
@@ -154,7 +156,7 @@ export default function DogCreator({ navigation }) {
             // create new location object 
             let userLocation = {
                 coords: currentPin.coords,
-                address: currentAddress,
+                zone: currentAddress,
 
             }
             console.log(userLocation);
@@ -171,66 +173,9 @@ export default function DogCreator({ navigation }) {
     const onPublish = () => {
         // upload photo
 
-        let photoPromise = uploadImage(profileImage)
+        let uploadTask = startPublish(profileImage)
 
-        photoPromise.then(function (response) {
-
-            const photoID = response.$id
-            console.log("URI is"); // Success
-            console.log(photoID); // avatar URL 
-
-            // upload dog with URL
-            const PURI = 'http://localhost/v1/storage/files/' + photoID + '/view?project=' + appWriteID
-            console.log(PURI);
-
-
-            const dogData = {
-                dogName: dogName,
-                photo: PURI,
-                breed: breed,
-                age: age,
-                gender: gender,
-                contact: contact,
-                visibility: visibility,
-                zone: location.address,
-                coords: location.coords,
-                owner: username
-            }
-            // upload dogObject
-
-            let dogPromise = createDog(dogData);
-
-            dogPromise.then(function (response) {
-                console.log(response); // Success
-                let duid = response.$id
-
-                // add dog to list
-                let updatePromise = addDogtoUser(duid, username, PURI);
-
-                updatePromise.then(function (response) {
-                    console.log(response); // Success
-
-                    // finished adding dog
-
-                window.location.reload();
-
-                }, function (error) {
-                    console.log(error); // Failure
-                });
-
-
-
-
-            }, function (error) {
-                console.log(error); // Failure
-            });
-
-
-        }, function (error) {
-            console.log(error); // Failure
-        });
-
-
+ 
 
         //update User
     }

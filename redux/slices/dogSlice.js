@@ -2,12 +2,6 @@ import {
   createSlice
 } from '@reduxjs/toolkit'
 
-// APPWRITE ACTIONS
-import {
-  uploadImage,
-} from '../../database'
-
-
 
 export const dogSlice = createSlice({
   name: 'dog',
@@ -18,7 +12,8 @@ export const dogSlice = createSlice({
     age: null,
     visibility: null,
     profileImage: null,
-    location: null,
+    zone: null,
+    coords: null,
     owner: null,
     email: null,
     phoneNumber: null,
@@ -33,7 +28,8 @@ export const dogSlice = createSlice({
     },
     saveDogSettings: (state, action) => {
       state.visibility = action.payload.visibility
-      state.location = action.payload.location
+      state.zone = action.payload.location.zone
+      state.coords = action.payload.location.coords
       state.phoneNumber = action.payload.phoneNumber
 
     },

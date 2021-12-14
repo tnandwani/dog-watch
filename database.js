@@ -6,7 +6,8 @@ import {
     appWriteID,
     usersCollection,
     dogsCollection,
-    zoneCollection
+    zoneCollection,
+    firebaseConfig
 } from './constants'
 
 import userSlice, {
@@ -14,12 +15,21 @@ import userSlice, {
     saveDogCards,
     saveUserAccount,
     saveUserDetails,
-    signInAccount
+    signInAccount,
+    addDogtoUser
 } from "./redux/slices/userSlice";
 
 import store from "./redux/store";
 
+import firebase from "firebase";
+import {
+    saveDogPic, saveOwner
+} from "./redux/slices/rawDogSlice";
 
+const app = firebase.initializeApp(firebaseConfig);
+var db = firebase.firestore();
+var storage = firebase.storage();
+var storageRef = firebase.storage().ref();
 
 // init db
 const appwrite = new Appwrite();
@@ -30,31 +40,29 @@ appwrite
 
 ////////// APP START
 
-getUserAccount();
-
-export function getUserAccount() {
-
-    let promise = appwrite.account.get();
-
-    promise.then(function (response) {
-        const uid = response.$id
-        const email = response.email
-        const name = response.name
-
+firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/firebase.User
+        const uid = user.uid;
+        const email = user.email;
         store.dispatch(signInAccount({
             email,
-            uid,
-            name
+            uid
         }))
 
-        getUserDetails(name);
+        getUserDetails(uid);
 
-    }, function (error) {
-        console.log(error); // Failure
+
+        // ...
+    } else {
+        // User is signed out
+        // ...
         store.dispatch(changeStatus('new'))
-    });
 
-}
+    }
+});
+
 
 ////////// USER FUNCTIONS 
 
@@ -67,19 +75,12 @@ export function signOutUser() {
 
     store.dispatch(signInAccount({
         email,
-        uid,
-        name
+        uid
     }))
-    let promise = appwrite.account.deleteSessions();
 
-    promise.then(function (response) {
-        console.log(response); // Success
-        store.dispatch(changeStatus('new'))
+    firebase.auth().signOut();
+    store.dispatch(changeStatus('new'))
 
-
-    }, function (error) {
-        console.log(error); // Failure
-    });
 }
 
 
@@ -90,151 +91,134 @@ export function createUserAccount(email, password) {
     firebase.auth().createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
             // Signed in 
-            var user = userCredential.user;
-            // ...
+            // Get UID 
+            const uid = userCredential.user.uid
+
+            // Sign In
+            createUserDoc(email, uid)
         })
         .catch((error) => {
             var errorCode = error.code;
             // ..
         });
 
-    // APPWRITE CREATE USER
-    let promise = appwrite.account.create(email, password);
-
-
-    promise.then(function (response) {
-        // Get UID 
-        const uid = response.$id
-        // Sign In
-        signInNewUser(email, password, uid)
-
-    }, function (error) {
-        console.log(error); // Failure
-    });
 }
 
-export function signInNewUser(email, password, uid) {
-    let promise = appwrite.account.createSession(email, password);
-
-    promise.then(function (response) {
-        // Create User Doc
-        createUserDoc(uid, email);
-
-    }, function (error) {
-        console.log(error); // Failure
-    });
-}
-
-
-export function createUserDoc(uid, email) {
+export async function createUserDoc(email, uid) {
 
     console.log("Getting ready to create user")
     console.log(uid);
 
-    // push data to db 
+    // Add a new document in collection "cities"
+    db.collection("users").doc(uid).set({
+            uid: uid,
+            email: email,
+            zone: "Unverified",
+            dogs: []
+        })
+        .then(() => {
+            console.log("Created new user!");
+            // trigger redux state change
 
-    appwrite.database.createDocument('619f011dd6cc2', {
-        uid: uid,
-        email: email,
-        zone: false
-    }).
-    then(function (response) {
-        // push doc-id as user name
-        const userDocID = response.$id;
-        updateUserName(userDocID, uid, email);
+            store.dispatch(saveUserAccount({
+                email,
+                uid
+            }));
 
-    }, function (error) {
-        console.log(error); // Failure
-    });
-
-}
-
-export function updateUserName(userDocID, uid, email) {
-
-    // sign in user
-
-
-    // update name
-
-    let promise = appwrite.account.updateName(userDocID);
-
-    promise.then(function (response) {
-
-        // trigger redux state change
-
-        store.dispatch(saveUserAccount({
-            email,
-            uid
-        }));
-
-        store.dispatch(changeStatus('returning'))
+            store.dispatch(changeStatus('returning'))
+        })
+        .catch((error) => {
+            console.error("Error writing document: ", error);
+        });
 
 
-    }, function (error) {
-        console.log(error); // Failure
-    });
 
 }
 
 
 export function signInUser(email, password) {
-    let promise = appwrite.account.createSession(email, password);
 
-    promise.then(function (response) {
-        console.log(response); // Success
-        getUserAccount();
-
-
-    }, function (error) {
-        console.log(error); // Failure
-    });
+    firebase.auth().signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            // Signed in
+            var user = userCredential.user;
+            getUserDetails(user.uid);
+        })
+        .catch((error) => {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log(errorMessage)
+        });
 }
 
 
-export function getUserDetails(username) {
+export function getUserDetails(uid) {
 
-    // get doc with Username
-    let promise = appwrite.database.getDocument(usersCollection, username);
+    var docRef = db.collection("users").doc(uid);
 
-    promise.then(function (response) {
-        console.log(response); // Failure
+    docRef.get().then((doc) => {
+        if (doc.exists) {
+            let response = doc.data()
+            console.log("Welcome back User", response);
+            const userData = {
+                email: response.email,
+                uid: response.uid,
+                zone: response.zone,
+                dogs: response.dogs,
+            }
+            store.dispatch(saveUserDetails(userData));
 
-        const userData = {
-            email: response.email,
-            uid: response.uid,
-            zone: response.zone,
-            dogs: response.dogs,
-            username: username
-        }
-        store.dispatch(saveUserDetails(userData));
+            if (response.dogs.length > 0) {
+                unwrapDogs(response.dogs)
 
-        if (response.dogs.length > 0) {
-            unwrapDogs(response.dogs)
+            } else {
+                store.dispatch(changeStatus('returning'))
 
+            }
         } else {
-            store.dispatch(changeStatus('returning'))
-
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
         }
-
-    }, function (error) {
-        console.log("no user found"); // Failure
+    }).catch((error) => {
+        console.log("Error getting document:", error);
     });
 
+
+    // db.collection("users").doc(uid).get().then((doc) => {
+    //     if (doc.exists) {
+    //         const response = doc.data()
+    //         console.log("Document data:", doc.data());
+    //         const userData = {
+    //             email: response.email,
+    //             uid: response.uid,
+    //             zone: response.zone,
+    //             dogs: response.dogs,
+    //         }
+    //         store.dispatch(saveUserDetails(userData));
+
+    //         if (response.dogs.length > 0) {
+    //             unwrapDogs(response.dogs)
+
+    //         } else {
+    //             store.dispatch(changeStatus('returning'))
+
+    //         }
+    //     } else {
+    //         // doc.data() will be undefined in this case
+    //         console.log("No such document!");
+    //     }
+    // }).catch((error) => {
+    //     console.log("Error getting document:", error);
+    // });
+
+
 }
-
-
-
-
 
 
 
 ////////// DOG FUNCTIONS 
 
-export async function uploadImage(imageURI) {
-
-
-    console.log("in uploader");
-    // create binary blob file 
+export async function startPublish(imageURI) {
     const blob = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.onload = function () {
@@ -249,75 +233,133 @@ export async function uploadImage(imageURI) {
         xhr.send(null);
     });
 
-    //push to AW
-    let promise = appwrite.storage.createFile(blob);
+    // get user uid
+    const uid = store.getState().user.uid
+    store.dispatch(saveOwner(uid))
 
-    return promise
+    // get rawDog state
+    const rawDog = store.getState().rawDog
 
-    // promise.then(function (response) {
+    // upload rawDog
+    console.log("going to post", rawDog)
 
-    //     const photoID = response.$id
-    //     console.log("response is"); // Success
-    //     console.log(response); // avatar URL
-    //     return response
+    // Add a new document with a generated id.
+
+    db.collection("dogs").add(rawDog).then((docRef) => {
+            // get duid
+            const duid = docRef.id
+            console.log("Created Dog Doc: ", duid);
+
+            // add duid to user dog list 
+            store.dispatch(addDogtoUser(duid))
+
+            // get new list 
+            const newList = store.getState().user.dogs
+
+            // post new dog list 
+            var userRef = db.collection("users").doc(uid);
+            userRef.update({
+                    dogs: newList
+                })
+                .then(() => {
+                    console.log("Updated dog list!");
+
+                })
+                .catch((error) => {
+                    // The document probably doesn't exist.
+                    console.error("Error updating document: ", error);
+                });
+
+     
+            // upload image with duid 
+            storageRef.child('profileImages/' + uid + '.jpg').put(blob).then((response) => {
+                console.log("uploaded dog");
+
+                response.ref.getDownloadURL().then((PURI) => {
+
+                    // add profileURL to rawDOG document
+                    var dogRef = db.collection("dogs").doc(duid);
+                    var PURITask = dogRef.update({
+                            profileImage: PURI
+                        })
+                        .then(() => {
+                            console.log("added dog URL");
+                            window.location.reload();
+
+                        })
+                        .catch((error) => {
+                            // The document probably doesn't exist.
+                            console.error("Error updating document: ", error);
+                        });
 
 
-    // }, function (error) {
-    //     console.log(error); // Failure
-    //     return (error.message)
-    // });
+                    // add profileURL to user??? 
+
+
+                }).catch((error) => {
+                    console.log(error)
+                })
+            }).catch((error) => {
+                // The document probably doesn't exist.
+                console.error("photo upload errror", error);
+            });
+
+
+        })
+        .catch((error) => {
+            console.error("Error adding document: ", error);
+        });
+
+
 }
 
 
 
-export function createDog(dogData) {
+// export async function createDog(dogData) {
 
-    console.log("uploading:");
-    console.log(dogData);
+//     console.log("uploading:");
+//     console.log(dogData);
 
-    let promise = appwrite.database.createDocument(dogsCollection, dogData);
+//     // Add a new document with a generated id.
+//     let promise = db.collection("dogs").add(dogData)
 
-    return promise
-}
+//     promise.then((data) => {
+//         if (data) {
+//             console.log("Document data:", data);
+//             // store.dispatch(changeStatus('returning'))
+//             // store.dispatch(saveDogCards(doc.data()));
+//         } else {
+//             // doc.data() will be undefined in this case
+//             console.log("No such document!");
+//         }
+//     })
 
-export function addDogtoUser(duid, uid) {
+//     return promise
+// }
 
-    // get current dog list
-
-    let dogArray = store.getState().user.dogs
-
-    dogArray = Object.assign([], dogArray)
-
-
-    if (dogArray.length < 1) {
-        dogArray = [duid]
-    } else {
-        dogArray.push(duid)
-    }
-
-    // add dog to user 
-    let promise = appwrite.database.updateDocument(usersCollection, uid, {
-        dogs: dogArray
-    });
-
-    return promise;
-
-}
 
 export function unwrapDogs(dogs) {
 
     if (dogs) {
         dogs.map(dog => {
-            appwrite.database.getDocument(dogsCollection, dog).
-            then(function (response) {
-                console.log(response); // Success
-                store.dispatch(changeStatus('returning'))
-                store.dispatch(saveDogCards(response));
+            var docRef = db.collection("dogs").doc(dog);
 
-            }, function (error) {
-                console.log(error); // Failure
+            docRef.get().then((doc) => {
+                if (doc.exists) {
+                    console.log("Document data:", doc.data());
+                    store.dispatch(saveDogCards(doc.data()));
+                    store.dispatch(changeStatus('returning'))
 
+                } else {
+                    // doc.data() will be undefined in this case
+                    console.log("No such document!");
+                    store.dispatch(changeStatus('returning'))
+
+                }
+            }).catch((error) => {
+                console.log("Error getting document:", error);
             });
+
         })
     }
 
@@ -326,12 +368,17 @@ export function unwrapDogs(dogs) {
 
 export function getHomies(zone) {
 
-    console.log("getting homies")
-    let promise = appwrite.database.listDocuments(dogsCollection);
+    console.log("getting homies in", zone);
 
-    promise.then(function (response) {
-        console.log(response); // Success
-    }, function (error) {
-        console.log(error); // Failure
+    db.collection("dogs").where("zone", "==", zone)
+    .get()
+    .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data());
+        });
+    })
+    .catch((error) => {
+        console.log("Error getting documents: ", error);
     });
 }

@@ -190,3 +190,66 @@ firebase.auth().onAuthStateChanged((user) => {
 
     }
 });
+
+
+
+
+
+
+function publish(){
+    uploadTask.then((response) => {
+         console.log("task response:", response)
+         const urlp = response.ref.getDownloadURL()
+         let PURI = await urlp;
+         console.log("URI is"); // Success
+         console.log(PURI); // avatar URL 
+
+         const dogData = {
+             dogName: dogName,
+             photo: PURI,
+             breed: breed,
+             age: age,
+             gender: gender,
+             contact: contact,
+             visibility: visibility,
+             zone: location.address,
+             coords: location.coords,
+             owner: uid
+         }
+         // upload dogObject
+
+         let dogPromise = createDog(dogData);
+
+         dogPromise.then((response) => {
+             console.log("response:", response)
+             console.log(response); // Success
+             let duid = response.id
+
+             // add dog to list
+             let updatePromise = addDogtoUser(duid, uid, PURI);
+
+             updatePromise.then(function (response) {
+                 console.log("response:", response)
+
+                 // finished adding dog
+
+                 window.location.reload();
+
+             }, function (error) {
+                 console.log(error); // Failure
+             });
+
+
+
+
+         }, function (error) {
+             console.log(error); // Failure
+         });
+
+
+     }, function (error) {
+         console.log(error); // Failure
+     });
+
+
+}

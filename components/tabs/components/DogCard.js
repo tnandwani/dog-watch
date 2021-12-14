@@ -22,7 +22,6 @@ export default function DogCard(props) {
 
     }, []);
 
-
     return (
         <Center w='100%'>
             <Box
@@ -48,7 +47,7 @@ export default function DogCard(props) {
                         <AspectRatio w="100%" ratio={9 / 9}>
                             <Image
                                 source={{
-                                    uri: props.dog.item.photo,
+                                    uri: props.dog.item.profileImage,
                                 }}
                                 alt="image"
                             />
@@ -86,8 +85,8 @@ export default function DogCard(props) {
                                 }}
                                 fontWeight="300"
                             >
-                                {props.dog.item.age}
-                                Years Old
+                                {props.dog.item.age + " Years Old"}
+                                 
                             </Text>
 
                         </Stack>

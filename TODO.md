@@ -1,7 +1,5 @@
 ### - NOW
-    - Switch back to Firebase
-    -   12ish promises in AWdb
-    
+    - check google doc
 
 ### - NEXT
     - Explore Page

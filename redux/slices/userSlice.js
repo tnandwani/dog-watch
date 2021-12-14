@@ -7,7 +7,7 @@ export const userSlice = createSlice({
   initialState: {
     email: null,
     uid: null,
-    zone: false,
+    zone: "Unverified",
     username: null,
     dogs: [],
     dogCards: [],
@@ -37,7 +37,11 @@ export const userSlice = createSlice({
     changeStatus: (state, action) => {
       state.status = action.payload
     },
-
+    addDogtoUser: (state, action) => {
+      console.log(action)
+      state.dogs.push(action.payload)
+    }
+    
   },
 })
 
@@ -47,7 +51,8 @@ export const {
   signInAccount,
   saveUserDetails,
   saveDogCards,
-  changeStatus
+  changeStatus,
+  addDogtoUser
 
 } = userSlice.actions
 

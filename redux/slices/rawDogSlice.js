@@ -3,7 +3,7 @@ import {
 } from '@reduxjs/toolkit'
 
 export const rawDogSlice = createSlice({
-  name: 'dog',
+  name: 'rawDog',
   initialState: {
     dogName: 'Test',
     breed: null,
@@ -11,16 +11,14 @@ export const rawDogSlice = createSlice({
     age: null,
     visibility: null,
     profileImage: "https://ggsc.s3.amazonaws.com/images/uploads/The_Science-Backed_Benefits_of_Being_a_Dog_Owner.jpg",
-    location: {
-      coords: "Location",
-      address: "City"
-    },
+    coords: null,
+    zone: "Unverified",
     owner: null,
     email: null,
     contact: null,
   },
 
-  
+
   reducers: {
     saveDogName: (state, action) => {
       state.dogName = action.payload
@@ -44,7 +42,11 @@ export const rawDogSlice = createSlice({
       state.contact = action.payload
     },
     saveLocation: (state, action) => {
-      state.location = action.payload
+      state.zone = action.payload.zone
+      state.coords = action.payload.coords
+    },
+    saveOwner: (state, action) => {
+      state.owner = action.payload
     }
 
   },
@@ -59,7 +61,8 @@ export const {
   saveDogPic,
   saveVisibility,
   saveContact,
-  saveLocation
+  saveLocation,
+  saveOwner
 
 } = rawDogSlice.actions
 

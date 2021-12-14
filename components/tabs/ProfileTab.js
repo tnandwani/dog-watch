@@ -36,7 +36,7 @@ export default function ProfileTab({ navigation }) {
                 </Box>
             )
             }
-                keyExtractor={(dog) => dog.$id}
+                keyExtractor={(dog) => dog.profileImage}
             />
             <Button mt="5" colorScheme="indigo" variant="outline" onPress={() => navigation.navigate("DogCreator")}> + Add Dog </Button>
 
