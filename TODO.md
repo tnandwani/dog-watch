@@ -1,12 +1,21 @@
 ### - NOW
-  - Explore Page
-        1. Add home marker to map
-        2. add dog markers in your zone
+    - Mark as lost
+        1. Connect Firebase Cloud Message
+        2. Send Message Objecy
+            - topic 
+            - duid
+            - dogCard
+        3. Subscribe user to topic = zone
+        4. onMessage -> push notifcations
+
 ### - NEXT
+    - Edit Dog Cards
+        1. Add preferences
+        
+### - AFTER BETA LAUNCH 
     - Dog Adoption
         1. Adopt Tab
         2. Upload Dog with verfied agency
-### - LATER
     - Fill Resources 
         1. Make info page UI
         2. pull data from websites to app 
