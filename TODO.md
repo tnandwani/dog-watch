@@ -7,11 +7,12 @@
             - dogCard
         3. Subscribe user to topic = zone
         4. onMessage -> push notifcations
-
+        
 ### - NEXT
+
     - Edit Dog Cards
         1. Add preferences
-        
+
 ### - AFTER BETA LAUNCH 
     - Dog Adoption
         1. Adopt Tab
@@ -29,6 +30,11 @@
 ## - ISSUES
     - no error warnings for auth
     - disable Join Neighborhood on web for dog creator
+    - photo permission on button
+    - Get location on explore
+    - Mobile breaks on location
+
+
 
 ### - FUTURE FEATURES
     - Home/Feed layout - rough draft

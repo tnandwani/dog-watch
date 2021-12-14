@@ -9,6 +9,7 @@ export const exploreSlice = createSlice({
     dogTags: [],
     myCoords: null,
     myZone: null,
+    vapidToken: null
   },
   reducers: {
     saveCoords: (state, action) => {
@@ -20,6 +21,9 @@ export const exploreSlice = createSlice({
     addTag: (state, action) => {
       state.dogTags.push(action.payload);
     },
+    updateVapid: (state, action) => {
+      state.vapidToken = action.payload
+    },
 
 
   },
@@ -29,7 +33,8 @@ export const exploreSlice = createSlice({
 export const {
   saveCoords,
   saveZone,
-  addTag
+  addTag,
+  updateVapid
 } = exploreSlice.actions
 
 export default exploreSlice.reducer

@@ -1,16 +1,21 @@
-// APPWRITE 
+// FIREBASE
 import {
-    Appwrite
-} from "appwrite";
-import {
-    appWriteID,
-    usersCollection,
-    dogsCollection,
-    zoneCollection,
-    firebaseConfig
+    firebaseConfig,
+    vapidKey
 } from './constants'
+import store from "./redux/store";
+import firebase from "firebase";
 
-import userSlice, {
+const app = firebase.initializeApp(firebaseConfig);
+
+var db = firebase.firestore();
+var storageRef = firebase.storage().ref();
+const analytics = firebase.analytics();
+const messaging = firebase.messaging();
+
+
+// REDUX
+import {
     changeStatus,
     saveDogCards,
     saveUserAccount,
@@ -18,33 +23,52 @@ import userSlice, {
     signInAccount,
     addDogtoUser
 } from "./redux/slices/userSlice";
-
-import store from "./redux/store";
-
-import firebase from "firebase";
 import {
-    saveDogPic, saveOwner
+    saveDogPic,
+    saveOwner
 } from "./redux/slices/rawDogSlice";
-import { saveCoords, saveZone, addTag } from "./redux/slices/exploreSlice";
-
-const app = firebase.initializeApp(firebaseConfig);
-var db = firebase.firestore();
-var storage = firebase.storage();
-var storageRef = firebase.storage().ref();
-
-// init db
-const appwrite = new Appwrite();
-appwrite
-    .setEndpoint('http://localhost/v1') // Your Appwrite Endpoint
-    .setProject(appWriteID) // Your project ID
-;
+import {
+    saveCoords,
+    saveZone,
+    addTag,
+    updateVapid
+} from "./redux/slices/exploreSlice";
 
 ////////// APP START
 
+export function getNotifications() {
+
+    // Get registration token. Initially this makes a network call, once retrieved
+    // subsequent calls to getToken will return from cache.
+    messaging.getToken({
+        vapidKey: vapidKey
+    }).then((currentToken) => {
+        if (currentToken) {
+            // Send the token to your server and update the UI if necessary
+            store.dispatch(updateVapid(token))
+            // Handle incoming messages. Called when:
+            // - a message is received while the app has focus
+            // - the user clicks on an app notification created by a service worker
+            //   `messaging.onBackgroundMessage` handler.
+            messaging.onMessage((payload) => {
+                console.log('Message received. ', payload);
+                // ...
+            });
+        } else {
+            // Show permission request UI
+            console.log('No registration token available. Request permission to generate one.');
+            // ...
+        }
+    }).catch((err) => {
+        console.log('An error occurred while retrieving token. ', err);
+        // ...
+    });
+}
+
+
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
+        analytics.logEvent("logged in")
         const uid = user.uid;
         const email = user.email;
         store.dispatch(signInAccount({
@@ -53,6 +77,9 @@ firebase.auth().onAuthStateChanged((user) => {
         }))
 
         getUserDetails(uid);
+        getNotifications();
+
+
 
 
         // ...
@@ -99,7 +126,10 @@ export function createUserAccount(email, password) {
             createUserDoc(email, uid)
         })
         .catch((error) => {
-            var errorCode = error.code;
+            analytics.logEvent("error: creating user");
+            analytics.logEvent(error.message);
+
+
             // ..
         });
 
@@ -110,7 +140,7 @@ export async function createUserDoc(email, uid) {
     console.log("Getting ready to create user")
     console.log(uid);
 
-    // Add a new document in collection "cities"
+    // creatubg user doc
     db.collection("users").doc(uid).set({
             uid: uid,
             email: email,
@@ -130,9 +160,9 @@ export async function createUserDoc(email, uid) {
         })
         .catch((error) => {
             console.error("Error writing document: ", error);
+            analytics.logEvent("error: creater user doc");
+
         });
-
-
 
 }
 
@@ -148,7 +178,9 @@ export function signInUser(email, password) {
         .catch((error) => {
             var errorCode = error.code;
             var errorMessage = error.message;
-            console.log(errorMessage)
+            console.log(errorMessage);
+            analytics.logEvent("error: signing in");
+
         });
 }
 
@@ -180,39 +212,16 @@ export function getUserDetails(uid) {
         } else {
             // doc.data() will be undefined in this case
             console.log("No such document!");
+            analytics.logEvent("error: user doc does not exist");
+
         }
     }).catch((error) => {
-        console.log("Error getting document:", error);
+        console.log("Error getting User:", error);
+        analytics.logEvent("error: could download user doc");
+        analytics.logEvent(error.message);
+
+
     });
-
-
-    // db.collection("users").doc(uid).get().then((doc) => {
-    //     if (doc.exists) {
-    //         const response = doc.data()
-    //         console.log("Document data:", doc.data());
-    //         const userData = {
-    //             email: response.email,
-    //             uid: response.uid,
-    //             zone: response.zone,
-    //             dogs: response.dogs,
-    //         }
-    //         store.dispatch(saveUserDetails(userData));
-
-    //         if (response.dogs.length > 0) {
-    //             unwrapDogs(response.dogs)
-
-    //         } else {
-    //             store.dispatch(changeStatus('returning'))
-
-    //         }
-    //     } else {
-    //         // doc.data() will be undefined in this case
-    //         console.log("No such document!");
-    //     }
-    // }).catch((error) => {
-    //     console.log("Error getting document:", error);
-    // });
-
 
 }
 
@@ -221,6 +230,9 @@ export function getUserDetails(uid) {
 ////////// DOG FUNCTIONS 
 
 export async function startPublish(imageURI) {
+
+    analytics.logEvent('started to create dog');
+
     const blob = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.onload = function () {
@@ -246,7 +258,6 @@ export async function startPublish(imageURI) {
     console.log("going to post", rawDog)
 
     // Add a new document with a generated id.
-
     db.collection("dogs").add(rawDog).then((docRef) => {
             // get duid
             const duid = docRef.id
@@ -270,9 +281,11 @@ export async function startPublish(imageURI) {
                 .catch((error) => {
                     // The document probably doesn't exist.
                     console.error("Error updating document: ", error);
+                    analytics.logEvent("error: adding dog to user list");
+
                 });
 
-     
+
             // upload image with duid 
             storageRef.child('profileImages/' + uid + '.jpg').put(blob).then((response) => {
                 console.log("uploaded dog");
@@ -291,6 +304,7 @@ export async function startPublish(imageURI) {
                         })
                         .catch((error) => {
                             // The document probably doesn't exist.
+                            analytics.logEvent("error: could not update profile URL to dogs");
                             console.error("Error updating document: ", error);
                         });
 
@@ -300,44 +314,27 @@ export async function startPublish(imageURI) {
 
                 }).catch((error) => {
                     console.log(error)
+                    analytics.logEvent("error: could not DL profile URL");
+
                 })
             }).catch((error) => {
                 // The document probably doesn't exist.
                 console.error("photo upload errror", error);
+                analytics.logEvent("error: photo upload error");
+
             });
 
 
         })
         .catch((error) => {
             console.error("Error adding document: ", error);
+            analytics.logEvent("error: creating dog");
+
         });
 
 
 }
 
-
-
-// export async function createDog(dogData) {
-
-//     console.log("uploading:");
-//     console.log(dogData);
-
-//     // Add a new document with a generated id.
-//     let promise = db.collection("dogs").add(dogData)
-
-//     promise.then((data) => {
-//         if (data) {
-//             console.log("Document data:", data);
-//             // store.dispatch(changeStatus('returning'))
-//             // store.dispatch(saveDogCards(doc.data()));
-//         } else {
-//             // doc.data() will be undefined in this case
-//             console.log("No such document!");
-//         }
-//     })
-
-//     return promise
-// }
 
 
 export function unwrapDogs(dogs) {
@@ -358,10 +355,14 @@ export function unwrapDogs(dogs) {
                     // doc.data() will be undefined in this case
                     console.log("No such document!");
                     store.dispatch(changeStatus('returning'))
+                    analytics.logEvent("error: dog file not found");
+
 
                 }
             }).catch((error) => {
                 console.log("Error getting document:", error);
+                analytics.logEvent("error: unwrap dog error");
+
             });
 
         })
@@ -373,27 +374,30 @@ export function unwrapDogs(dogs) {
 export function getHomies(zone) {
 
     console.log("getting homies in", zone);
+    analytics.logEvent('getting tags');
 
     db.collection("dogs").where("zone", "==", zone)
-    .get()
-    .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            const dog = doc.data()
-            console.log("Found Dog => ", dog);
-            // createTag
+        .get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                const dog = doc.data()
+                console.log("Found Dog => ", dog);
+                // createTag
 
-            const tag = {
-                id: doc.id,
-                coords: dog.coords,
-                zone: dog.zone
-            }
-            store.dispatch(addTag(tag))
+                const tag = {
+                    id: doc.id,
+                    coords: dog.coords,
+                    zone: dog.zone
+                }
+                store.dispatch(addTag(tag))
 
-         
+
+            });
+        })
+        .catch((error) => {
+            console.log("Error getting documents: ", error);
+            analytics.logEvent("error: loading zone homies");
+
         });
-    })
-    .catch((error) => {
-        console.log("Error getting documents: ", error);
-    });
 }
