@@ -165,6 +165,7 @@ export default function DogCreator({ navigation }) {
             setLocation(userLocation);
             setLocationStatus("Location Received")
             dispatch(saveLocation(userLocation));
+            
 
 
         })();

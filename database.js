@@ -25,6 +25,7 @@ import firebase from "firebase";
 import {
     saveDogPic, saveOwner
 } from "./redux/slices/rawDogSlice";
+import { saveCoords, saveZone, addTag } from "./redux/slices/exploreSlice";
 
 const app = firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
@@ -167,6 +168,7 @@ export function getUserDetails(uid) {
                 dogs: response.dogs,
             }
             store.dispatch(saveUserDetails(userData));
+            store.dispatch(saveZone(response.zone))
 
             if (response.dogs.length > 0) {
                 unwrapDogs(response.dogs)
@@ -349,6 +351,8 @@ export function unwrapDogs(dogs) {
                     console.log("Document data:", doc.data());
                     store.dispatch(saveDogCards(doc.data()));
                     store.dispatch(changeStatus('returning'))
+                    store.dispatch(saveCoords(doc.data().coords))
+
 
                 } else {
                     // doc.data() will be undefined in this case
@@ -375,7 +379,18 @@ export function getHomies(zone) {
     .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, " => ", doc.data());
+            const dog = doc.data()
+            console.log("Found Dog => ", dog);
+            // createTag
+
+            const tag = {
+                id: doc.id,
+                coords: dog.coords,
+                zone: dog.zone
+            }
+            store.dispatch(addTag(tag))
+
+         
         });
     })
     .catch((error) => {

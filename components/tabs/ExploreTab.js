@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
+import { Marker } from 'react-native-maps';
+
 import { StyleSheet, View, Dimensions, Platform } from 'react-native';
 import { Center } from "native-base"
 import { getHomies } from '../../database';
@@ -269,6 +271,7 @@ const customStyling = [
 export default function ExploreTab() {
 
   var zone = useSelector((state) => state.user.zone)
+  var dogTags = useSelector((state) => state.explore.dogTags)
 
   useEffect(() => {
     // 
@@ -296,8 +299,16 @@ export default function ExploreTab() {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
-
-      />
+      >
+        {dogTags.map((marker, index) => (
+          <Marker
+            key={index}
+            coordinate={marker.coords}
+            title={marker.id}
+            description={marker.id}
+          />
+        ))}
+      </MapView>
     </View>
   );
 }

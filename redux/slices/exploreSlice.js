@@ -17,6 +17,9 @@ export const exploreSlice = createSlice({
     saveZone: (state, action) => {
       state.myZone = action.payload
     },
+    addTag: (state, action) => {
+      state.dogTags.push(action.payload);
+    },
 
 
   },
@@ -25,7 +28,8 @@ export const exploreSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
   saveCoords,
-  saveZone
+  saveZone,
+  addTag
 } = exploreSlice.actions
 
 export default exploreSlice.reducer

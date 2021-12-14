@@ -1,10 +1,8 @@
 ### - NOW
-    - check google doc
-
-### - NEXT
-    - Explore Page
+  - Explore Page
         1. Add home marker to map
         2. add dog markers in your zone
+### - NEXT
     - Dog Adoption
         1. Adopt Tab
         2. Upload Dog with verfied agency
