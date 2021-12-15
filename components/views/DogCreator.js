@@ -342,7 +342,7 @@ export default function DogCreator({ navigation }) {
                     </Button>
                     <Button colorScheme="indigo" onPress={() =>navigation.navigate("Personality")
 }>
-                        Personality
+                        Add Personality
                     </Button>
 
                 </HStack>

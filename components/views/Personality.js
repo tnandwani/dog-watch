@@ -43,22 +43,25 @@ export default function Personality({ navigation }) {
     let [training, setTraining] = useState()
     let [bio, setBio] = useState()
 
+    let [isFinished, setIsFinished] = useState(true)
 
-    useEffect(() => {
-        // do on mount things
+    let verify = () => {
+        console.log("isFinished", people, otherDogs,sharing, energy, training)
 
-    }, []);
+        if (people && otherDogs && sharing && energy && training && isFinished) {
+            setIsFinished(false)
+        }
+        
+    }
 
+    verify();
 
     const onPublish = () => {
 
         // update personality redux
-
-
-        dispatch(savePersonality({people, otherDogs, sharing, energy,sn, training, bio}));
+        dispatch(savePersonality({ people, otherDogs, sharing, energy, sn, training, bio }));
 
         // upload photo
-
         // let uploadTask = startPublish(profileImage)
 
     }
@@ -83,7 +86,6 @@ export default function Personality({ navigation }) {
                     </FormControl.Label>
                     <Slider
                         defaultValue={0}
-                        value={people}
                         colorScheme='indigo'
                         minValue={0}
                         maxValue={100}
@@ -100,6 +102,7 @@ export default function Personality({ navigation }) {
                             <Icon as={FontAwesome5} name="dog" color="black" size="sm" />
                         </Slider.Thumb>
                     </Slider>
+
                 </FormControl>
                 <FormControl>
                     <FormControl.Label
@@ -113,7 +116,6 @@ export default function Personality({ navigation }) {
                         maxValue={100}
                         accessibilityLabel="hello world"
                         step={10}
-                        value={otherDogs}
                         onChangeEnd={(v) => {
                             setOtherDogs(v);
                         }}
@@ -122,7 +124,9 @@ export default function Personality({ navigation }) {
                             <Slider.FilledTrack />
                         </Slider.Track>
 
-                        <Slider.Thumb />
+                        <Slider.Thumb borderWidth="0" bg="transparent">
+                            <Icon as={FontAwesome5} name="dog" color="black" size="sm" />
+                        </Slider.Thumb>
                     </Slider>
                 </FormControl>
                 <FormControl>
@@ -137,7 +141,6 @@ export default function Personality({ navigation }) {
                         maxValue={100}
                         accessibilityLabel="hello world"
                         step={10}
-                        value={sharing}
                         onChangeEnd={(v) => {
                             setSharing(v);
                         }}
@@ -162,7 +165,6 @@ export default function Personality({ navigation }) {
                         maxValue={100}
                         accessibilityLabel="hello world"
                         step={10}
-                        value={energy}
                         onChangeEnd={(v) => {
                             setEnergy(v);
                         }}
@@ -171,7 +173,9 @@ export default function Personality({ navigation }) {
                             <Slider.FilledTrack />
                         </Slider.Track>
 
-                        <Slider.Thumb />
+                        <Slider.Thumb borderWidth="0" bg="transparent">
+                            <Icon as={FontAwesome5} name="dog" color="black" size="sm" />
+                        </Slider.Thumb>
                     </Slider>
                 </FormControl>
                 <FormControl>
@@ -186,7 +190,6 @@ export default function Personality({ navigation }) {
                         maxValue={100}
                         accessibilityLabel="hello world"
                         step={10}
-                        value={training}
                         onChangeEnd={(v) => {
                             setTraining(v);
                         }}
@@ -195,16 +198,18 @@ export default function Personality({ navigation }) {
                             <Slider.FilledTrack />
                         </Slider.Track>
 
-                        <Slider.Thumb />
+                        <Slider.Thumb borderWidth="0" bg="transparent">
+                            <Icon as={FontAwesome5} name="dog" color="black" size="sm" />
+                        </Slider.Thumb>
                     </Slider>
                 </FormControl>
-               
+
                 <FormControl>
                     <FormControl.Label
                         _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
                         Spay or Neutered?
                     </FormControl.Label>
-                    <Switch colorScheme="indigo" size="lg"  isChecked = {sn} onToggle={(v) => {console.log(v); setSn(v)}}/>
+                    <Switch colorScheme="indigo" size="lg" isChecked={sn} onToggle={(v) => { console.log(v); setSn(v) }} />
                 </FormControl>
                 <FormControl>
                     <FormControl.Label
@@ -231,7 +236,9 @@ export default function Personality({ navigation }) {
                     <Button variant="outline" colorScheme="indigo" onPress={() => navigation.goBack()}>
                         Back
                     </Button>
-                    <Button colorScheme="indigo" onPress={() => onPublish()}>
+                    <Button colorScheme="indigo"
+                        isDisabled={isFinished}
+                        onPress={() => onPublish()}>
                         Finish
                     </Button>
 
