@@ -40,6 +40,8 @@ export function getNotifications() {
 
     // Get registration token. Initially this makes a network call, once retrieved
     // subsequent calls to getToken will return from cache.
+
+    messaging.
     messaging.getToken({
         vapidKey: vapidKey
     }).then((currentToken) => {
@@ -47,8 +49,7 @@ export function getNotifications() {
             // Send the token to your server and update the UI if necessary
             store.dispatch(updateVapid(token))
             // Handle incoming messages. Called when:
-            // - a message is received while the app has focus
-            // - the user clicks on an app notification created by a service worker
+        
             //   `messaging.onBackgroundMessage` handler.
             messaging.onMessage((payload) => {
                 console.log('Message received. ', payload);

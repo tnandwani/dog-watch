@@ -1,26 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
+// Notifications
+import Constants from 'expo-constants';
+import * as Notifications from 'expo-notifications';
 
 import { NativeBaseProvider, Center, Spinner } from "native-base"
 import { Provider } from 'react-redux'
 import store from './redux/store'
 import { MyTheme } from './constants'
-
-//AW
-import {
-  Appwrite
-} from "appwrite";
-
-import {
-  appWriteID
-} from './constants.js'
-
-const appwrite = new Appwrite();
-appwrite
-  .setEndpoint('http://localhost/v1') // Your Appwrite Endpoint
-  .setProject(appWriteID) // Your project ID
-  ;
 
 // NAVIGATION
 import { NavigationContainer } from '@react-navigation/native';
@@ -41,8 +29,6 @@ import SettingScreen from './components/auth/steps/Step2'
 // VIEW COMPONENTS
 import DogCreator from './components/views/DogCreator' // holds user tabs 
 
-
-
 export default function App() {
 
   return (
@@ -57,11 +43,10 @@ export function AppContent() {
 
   var status = useSelector((state) => state.user.status)
 
-
   return (
 
     <NativeBaseProvider>
-    
+  
       {status == 'loading' &&
         <Center flex={1} px="3">
           <Spinner color="indigo.500" />
