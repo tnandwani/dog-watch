@@ -10,8 +10,6 @@ const app = firebase.initializeApp(firebaseConfig);
 
 var db = firebase.firestore();
 var storageRef = firebase.storage().ref();
-const analytics = firebase.analytics();
-const messaging = firebase.messaging();
 
 
 // REDUX
@@ -36,40 +34,9 @@ import {
 
 ////////// APP START
 
-export function getNotifications() {
-
-    // Get registration token. Initially this makes a network call, once retrieved
-    // subsequent calls to getToken will return from cache.
-
-    messaging.
-    messaging.getToken({
-        vapidKey: vapidKey
-    }).then((currentToken) => {
-        if (currentToken) {
-            // Send the token to your server and update the UI if necessary
-            store.dispatch(updateVapid(token))
-            // Handle incoming messages. Called when:
-        
-            //   `messaging.onBackgroundMessage` handler.
-            messaging.onMessage((payload) => {
-                console.log('Message received. ', payload);
-                // ...
-            });
-        } else {
-            // Show permission request UI
-            console.log('No registration token available. Request permission to generate one.');
-            // ...
-        }
-    }).catch((err) => {
-        console.log('An error occurred while retrieving token. ', err);
-        // ...
-    });
-}
-
 
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-        analytics.logEvent("logged in")
         const uid = user.uid;
         const email = user.email;
         store.dispatch(signInAccount({
@@ -78,7 +45,6 @@ firebase.auth().onAuthStateChanged((user) => {
         }))
 
         getUserDetails(uid);
-        getNotifications();
 
 
 
@@ -127,8 +93,8 @@ export function createUserAccount(email, password) {
             createUserDoc(email, uid)
         })
         .catch((error) => {
-            analytics.logEvent("error: creating user");
-            analytics.logEvent(error.message);
+            // analytics.logEvent("error: creating user");
+            // analytics.logEvent(error.message);
 
 
             // ..
@@ -161,7 +127,7 @@ export async function createUserDoc(email, uid) {
         })
         .catch((error) => {
             console.error("Error writing document: ", error);
-            analytics.logEvent("error: creater user doc");
+            // analytics.logEvent("error: creater user doc");
 
         });
 
@@ -180,7 +146,7 @@ export function signInUser(email, password) {
             var errorCode = error.code;
             var errorMessage = error.message;
             console.log(errorMessage);
-            analytics.logEvent("error: signing in");
+            // analytics.logEvent("error: signing in");
 
         });
 }
@@ -213,13 +179,13 @@ export function getUserDetails(uid) {
         } else {
             // doc.data() will be undefined in this case
             console.log("No such document!");
-            analytics.logEvent("error: user doc does not exist");
+            // analytics.logEvent("error: user doc does not exist");
 
         }
     }).catch((error) => {
         console.log("Error getting User:", error);
-        analytics.logEvent("error: could download user doc");
-        analytics.logEvent(error.message);
+        // analytics.logEvent("error: could download user doc");
+        // analytics.logEvent(error.message);
 
 
     });
@@ -232,7 +198,7 @@ export function getUserDetails(uid) {
 
 export async function startPublish(imageURI) {
 
-    analytics.logEvent('started to create dog');
+    // analytics.logEvent('started to create dog');
 
     const blob = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
@@ -282,7 +248,7 @@ export async function startPublish(imageURI) {
                 .catch((error) => {
                     // The document probably doesn't exist.
                     console.error("Error updating document: ", error);
-                    analytics.logEvent("error: adding dog to user list");
+                    // analytics.logEvent("error: adding dog to user list");
 
                 });
 
@@ -305,7 +271,7 @@ export async function startPublish(imageURI) {
                         })
                         .catch((error) => {
                             // The document probably doesn't exist.
-                            analytics.logEvent("error: could not update profile URL to dogs");
+                            // analytics.logEvent("error: could not update profile URL to dogs");
                             console.error("Error updating document: ", error);
                         });
 
@@ -315,13 +281,13 @@ export async function startPublish(imageURI) {
 
                 }).catch((error) => {
                     console.log(error)
-                    analytics.logEvent("error: could not DL profile URL");
+                    // analytics.logEvent("error: could not DL profile URL");
 
                 })
             }).catch((error) => {
                 // The document probably doesn't exist.
                 console.error("photo upload errror", error);
-                analytics.logEvent("error: photo upload error");
+                // analytics.logEvent("error: photo upload error");
 
             });
 
@@ -329,7 +295,7 @@ export async function startPublish(imageURI) {
         })
         .catch((error) => {
             console.error("Error adding document: ", error);
-            analytics.logEvent("error: creating dog");
+            // analytics.logEvent("error: creating dog");
 
         });
 
@@ -356,13 +322,13 @@ export function unwrapDogs(dogs) {
                     // doc.data() will be undefined in this case
                     console.log("No such document!");
                     store.dispatch(changeStatus('returning'))
-                    analytics.logEvent("error: dog file not found");
+                    // analytics.logEvent("error: dog file not found");
 
 
                 }
             }).catch((error) => {
                 console.log("Error getting document:", error);
-                analytics.logEvent("error: unwrap dog error");
+                // analytics.logEvent("error: unwrap dog error");
 
             });
 
@@ -375,7 +341,7 @@ export function unwrapDogs(dogs) {
 export function getHomies(zone) {
 
     console.log("getting homies in", zone);
-    analytics.logEvent('getting tags');
+    // analytics.logEvent('getting tags');
 
     db.collection("dogs").where("zone", "==", zone)
         .get()
@@ -398,7 +364,7 @@ export function getHomies(zone) {
         })
         .catch((error) => {
             console.log("Error getting documents: ", error);
-            analytics.logEvent("error: loading zone homies");
+            // analytics.logEvent("error: loading zone homies");
 
         });
 }

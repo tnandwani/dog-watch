@@ -1,12 +1,9 @@
 ### - NOW
-    - Mark as lost
-        1. Connect Firebase Cloud Message
-        2. Send Message Objecy
-            - topic 
-            - duid
-            - dogCard
-        3. Subscribe user to topic = zone
-        4. onMessage -> push notifcations
+    - Push Notifications (Lost Dog)
+        1. Connect to Expo Notifications
+        2. Make listener 
+        3. Make Alert Button
+    - Need to add analytics for mobile 
         
 ### - NEXT
 
