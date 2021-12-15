@@ -10,16 +10,26 @@ export const rawDogSlice = createSlice({
     gender: null,
     age: null,
     visibility: null,
-    profileImage: "https://ggsc.s3.amazonaws.com/images/uploads/The_Science-Backed_Benefits_of_Being_a_Dog_Owner.jpg",
+    profileImage: "https://freesvg.org/img/Dog-Leash.png",
     coords: null,
     zone: "Unverified",
     owner: null,
     email: null,
     contact: null,
+    personality: {
+      people: null,
+      otherDogs: null,
+      sharing: null,
+      energy: null,
+      sn: null,
+      training: null,
+      bio: null
+    }
   },
 
 
   reducers: {
+    // dog details
     saveDogName: (state, action) => {
       state.dogName = action.payload
     },
@@ -47,7 +57,12 @@ export const rawDogSlice = createSlice({
     },
     saveOwner: (state, action) => {
       state.owner = action.payload
-    }
+    },
+
+    // personality 
+    savePersonality: (state, action) => {
+      state.personality = action.payload
+    },
 
   },
 })
@@ -62,7 +77,8 @@ export const {
   saveVisibility,
   saveContact,
   saveLocation,
-  saveOwner
+  saveOwner,
+  savePersonality
 
 } = rawDogSlice.actions
 

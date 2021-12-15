@@ -37,6 +37,7 @@ import {
     Spinner
 } from 'native-base';
 import { startPublish } from '../../database';
+import { saveDogPic } from '../../redux/slices/rawDogSlice';
 
 export default function DogCreator({ navigation }) {
 
@@ -111,7 +112,9 @@ export default function DogCreator({ navigation }) {
         if (!result.cancelled) {
             // get URI
             const URI = result.uri
-            await setProfileImage(URI);
+            setProfileImage(URI);
+            store.dispatch(saveDogPic(profileImage));
+
         }
     };
 
@@ -171,15 +174,6 @@ export default function DogCreator({ navigation }) {
         })();
     }
 
-    const onPublish = () => {
-        // upload photo
-
-        let uploadTask = startPublish(profileImage)
-
- 
-
-        //update User
-    }
 
 
     return (
@@ -321,7 +315,7 @@ export default function DogCreator({ navigation }) {
                 </FormControl>
 
                 <FormControl>
-                    <Button mt="4" colorScheme="indigo" _text={{ color: 'white' }} shadow="7" onPress={getLocation}  > Join Neighborhood </Button>
+                    <Button mt="4" colorScheme="indigo" _text={{ color: 'white' }} shadow="7" onPress={getLocation}  > Mark Home </Button>
 
                     <FormControl.HelperText>
                         {locationStatus}
@@ -346,8 +340,9 @@ export default function DogCreator({ navigation }) {
                     <Button variant="outline" colorScheme="indigo" onPress={() => navigation.goBack()}>
                         Cancel
                     </Button>
-                    <Button colorScheme="indigo" onPress={() => onPublish()}>
-                        Create Dog Tag
+                    <Button colorScheme="indigo" onPress={() =>navigation.navigate("Personality")
+}>
+                        Personality
                     </Button>
 
                 </HStack>

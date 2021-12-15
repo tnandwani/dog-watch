@@ -28,6 +28,7 @@ import SettingScreen from './components/auth/steps/Step2'
 
 // VIEW COMPONENTS
 import DogCreator from './components/views/DogCreator' // holds user tabs 
+import Personality from './components/views/Personality';
 
 
 
@@ -74,6 +75,7 @@ export function AppContent() {
           <Stack.Navigator initialRouteName="Main" >
             <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
             <Stack.Screen name="DogCreator" component={DogCreator} options={{ headerShown: false }} />
+            <Stack.Screen name="Personality" component={Personality} options={{ headerShown: false }} />
 
           </Stack.Navigator>
         </NavigationContainer>
