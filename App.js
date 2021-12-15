@@ -8,7 +8,7 @@ import * as Notifications from 'expo-notifications';
 import { NativeBaseProvider, Center, Spinner } from "native-base"
 import { Provider } from 'react-redux'
 import store from './redux/store'
-import { MyTheme } from './constants'
+import { firebaseConfig, MyTheme } from './constants'
 
 // NAVIGATION
 import { NavigationContainer } from '@react-navigation/native';
@@ -29,6 +29,8 @@ import SettingScreen from './components/auth/steps/Step2'
 // VIEW COMPONENTS
 import DogCreator from './components/views/DogCreator' // holds user tabs 
 
+
+
 export default function App() {
 
   return (
@@ -46,7 +48,7 @@ export function AppContent() {
   return (
 
     <NativeBaseProvider>
-  
+
       {status == 'loading' &&
         <Center flex={1} px="3">
           <Spinner color="indigo.500" />

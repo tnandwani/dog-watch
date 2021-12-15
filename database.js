@@ -4,10 +4,10 @@ import {
     vapidKey
 } from './constants'
 import store from "./redux/store";
+
 import firebase from "firebase";
 
 const app = firebase.initializeApp(firebaseConfig);
-
 var db = firebase.firestore();
 var storageRef = firebase.storage().ref();
 

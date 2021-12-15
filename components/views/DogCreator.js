@@ -18,7 +18,7 @@ import {
     saveLocation
 } from '../../redux/slices/rawDogSlice'
 
-import RawDogCard from './RawDogCard'
+import RawDogCard from '../widgets/RawDogCard'
 
 import {
     Heading,
