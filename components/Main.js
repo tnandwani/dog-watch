@@ -9,11 +9,20 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeTab from './tabs/HomeTab'
 import ExploreTab from './tabs/ExploreTab'
 import ProfileTab from './tabs/ProfileTab'
+import { setScreenAnalytics } from '../database';
 
 export default function Main() {
 
     return (
-        <Tab.Navigator >
+        <Tab.Navigator  screenListeners={{
+            state: (e) => {
+                // Do something with the state
+                let screen = e.data.state
+                let currentScreen =  screen.routes[screen.index].name
+                setScreenAnalytics(currentScreen);
+                
+              }
+        }}>
         <Tab.Screen name="Profile" component={ProfileTab} options={{
                 headerShown: true,
                 tabBarIcon: ({ color, size }) => (

@@ -33,7 +33,11 @@ initializeApp(firebaseConfig)
 
 // analytics
 // import * as Analytics from 'expo-firebase-analytics';
-import { getAnalytics, logEvent } from "firebase/analytics";
+import { 
+    getAnalytics, 
+    logEvent,
+    setCurrentScreen    
+} from "firebase/analytics";
 
 const analytics = getAnalytics();
 
@@ -217,6 +221,12 @@ export async function getUserDetails(uid) {
 
 }
 
+export function setScreenAnalytics(screenName){
+    console.log('state changed', screenName);
+    setCurrentScreen(analytics, screenName,{
+        firebaseScreen: screenName
+    } )
+}
 
 
 ////////// DOG FUNCTIONS 
