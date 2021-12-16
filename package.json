@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@react-native-community/masked-view": "0.1.10",
+    "@react-native-firebase/analytics": "^14.0.1",
     "@react-native-picker/picker": "2.1.0",
     "@react-navigation/bottom-tabs": "^6.0.9",
     "@react-navigation/native": "^6.0.4",
@@ -23,7 +24,7 @@
     "expo-location": "~13.0.4",
     "expo-notifications": "~0.13.3",
     "expo-status-bar": "~1.1.0",
-    "firebase": "8.2.3",
+    "firebase": "^9.6.1",
     "native-base": "^3.2.1",
     "react": "17.0.1",
     "react-dom": "17.0.1",

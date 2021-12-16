@@ -1,6 +1,5 @@
 ### - NOW
-    - Edit Dog Personality
-        1. Add preferences
+    - edit dog buttoswitcn
     - Analytics cross platform
 
 ### - NEXT

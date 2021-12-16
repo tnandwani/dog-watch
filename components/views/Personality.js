@@ -41,7 +41,7 @@ export default function Personality({ navigation }) {
     let [energy, setEnergy] = useState()
     let [sn, setSn] = useState(true)
     let [training, setTraining] = useState()
-    let [bio, setBio] = useState()
+    let [bio, setBio] = useState("")
 
     let [isFinished, setIsFinished] = useState(true)
 
@@ -62,7 +62,7 @@ export default function Personality({ navigation }) {
         dispatch(savePersonality({ people, otherDogs, sharing, energy, sn, training, bio }));
 
         // upload photo
-        // let uploadTask = startPublish(profileImage)
+        let uploadTask = startPublish(profileImage)
 
     }
 

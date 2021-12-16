@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
-// Notifications
-import Constants from 'expo-constants';
-import * as Notifications from 'expo-notifications';
-
 import { NativeBaseProvider, Center, Spinner } from "native-base"
 import { Provider } from 'react-redux'
 import store from './redux/store'
-import { firebaseConfig, MyTheme } from './constants'
+import {MyTheme } from './constants'
 
 // NAVIGATION
 import { NavigationContainer } from '@react-navigation/native';

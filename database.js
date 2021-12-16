@@ -4,12 +4,16 @@ import {
     vapidKey
 } from './constants'
 import store from "./redux/store";
-
 import firebase from "firebase";
+// import * as Analytics from 'expo-firebase-analytics';
+// import { initializeApp } from 'firebase/app';
 
+// initializeApp(firebaseConfig);
 const app = firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
 var storageRef = firebase.storage().ref();
+
+
 
 
 // REDUX
@@ -45,11 +49,10 @@ firebase.auth().onAuthStateChanged((user) => {
         }))
 
         getUserDetails(uid);
-
-
-
-
+        Analytics.logEvent('signed in by expo')
         // ...
+
+
     } else {
         // User is signed out
         // ...
@@ -196,10 +199,37 @@ export function getUserDetails(uid) {
 
 ////////// DOG FUNCTIONS 
 
+
+export async function compressImage(imageURI) {
+
+    // convert to convas
+    const img = new Image();
+    img.src = blob;
+    img.onload = function (ev) {
+        window.URL.revokeObjectURL(blob); // release memory
+        // Use the img
+        const canvas = document.createElement('canvas');
+        canvas.width = 500;
+        canvas.height = 500;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, 500, 500);
+
+        // compress
+        canvas.toBlob(function (cblob) {
+            // Handle the compressed image
+            console.log("blob", blob)
+            console.log("c blob", cblob)
+
+            return cblob
+        }, 'image/jpeg', 0.8);
+
+    };
+
+}
 export async function startPublish(imageURI) {
 
-    // analytics.logEvent('started to create dog');
-
+    // convert to Blob
     const blob = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.onload = function () {
@@ -255,7 +285,7 @@ export async function startPublish(imageURI) {
 
             // upload image with duid 
             storageRef.child('profileImages/' + uid + '.jpg').put(blob).then((response) => {
-                console.log("uploaded dog");
+                console.log("uploaded dog photo");
 
                 response.ref.getDownloadURL().then((PURI) => {
 

@@ -36,7 +36,6 @@ import {
     Spacer,
     Spinner
 } from 'native-base';
-import { startPublish } from '../../database';
 import { saveDogPic } from '../../redux/slices/rawDogSlice';
 
 export default function DogCreator({ navigation }) {
@@ -112,8 +111,9 @@ export default function DogCreator({ navigation }) {
         if (!result.cancelled) {
             // get URI
             const URI = result.uri
+            
             setProfileImage(URI);
-            store.dispatch(saveDogPic(profileImage));
+            dispatch(saveDogPic(URI));
 
         }
     };
