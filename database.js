@@ -1,22 +1,11 @@
-// FIREBASE
+// keys and consts
 import {
     firebaseConfig,
     vapidKey
-} from './constants'
-import store from "./redux/store";
-import firebase from "firebase";
-// import * as Analytics from 'expo-firebase-analytics';
-// import { initializeApp } from 'firebase/app';
-
-// initializeApp(firebaseConfig);
-const app = firebase.initializeApp(firebaseConfig);
-var db = firebase.firestore();
-var storageRef = firebase.storage().ref();
-
-
-
+} from './constants';
 
 // REDUX
+import store from "./redux/store";
 import {
     changeStatus,
     saveDogCards,
@@ -36,30 +25,73 @@ import {
     updateVapid
 } from "./redux/slices/exploreSlice";
 
+// EXPO FIREBASE
+import {
+    initializeApp
+} from 'firebase/app';
+initializeApp(firebaseConfig)
+
+// analytics
+// import * as Analytics from 'expo-firebase-analytics';
+import { getAnalytics, logEvent } from "firebase/analytics";
+
+const analytics = getAnalytics();
+
+// auth 
+import {
+    getAuth,
+    onAuthStateChanged,
+    createUserWithEmailAndPassword,
+    signOut
+} from 'firebase/auth';
+
+const auth = getAuth();
+
+// firestore
+import {
+    getFirestore,
+    collection,
+    setDoc,
+    doc,
+    addDoc,
+    getDocs,
+    getDoc
+} from 'firebase/firestore';
+const db = getFirestore();
+
+// storage
+import {
+    getDownloadURL,
+    getStorage,
+    ref
+} from "firebase/storage";
+const storage = getStorage();
+
+
+
+
+
 ////////// APP START
 
 
-firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
+// Listen for authentication state to change.
+onAuthStateChanged(auth, user => {
+    if (user != null) {
+        console.log('We are authenticated now!');
         const uid = user.uid;
         const email = user.email;
         store.dispatch(signInAccount({
             email,
             uid
         }))
-
         getUserDetails(uid);
-        Analytics.logEvent('signed in by expo')
-        // ...
-
-
-    } else {
-        // User is signed out
-        // ...
-        store.dispatch(changeStatus('new'))
+        logEvent(analytics, 'EXPO SIGNED IN ;)');        // ...
 
     }
+
+    // Do other things
 });
+
 
 
 ////////// USER FUNCTIONS 
@@ -76,7 +108,7 @@ export function signOutUser() {
         uid
     }))
 
-    firebase.auth().signOut();
+    signOut(auth);
     store.dispatch(changeStatus('new'))
 
 }
@@ -86,7 +118,7 @@ export function createUserAccount(email, password) {
 
 
     // FIREBASE
-    firebase.auth().createUserWithEmailAndPassword(email, password)
+    createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             // Signed in 
             // Get UID 
@@ -111,35 +143,32 @@ export async function createUserDoc(email, uid) {
     console.log(uid);
 
     // creatubg user doc
-    db.collection("users").doc(uid).set({
+
+    try {
+        const docRef = await addDoc(collection(db, "users"), {
             uid: uid,
             email: email,
             zone: "Unverified",
             dogs: []
-        })
-        .then(() => {
-            console.log("Created new user!");
-            // trigger redux state change
-
-            store.dispatch(saveUserAccount({
-                email,
-                uid
-            }));
-
-            store.dispatch(changeStatus('returning'))
-        })
-        .catch((error) => {
-            console.error("Error writing document: ", error);
-            // analytics.logEvent("error: creater user doc");
-
         });
+        console.log("Document written with ID: ", docRef.id);
+        store.dispatch(saveUserAccount({
+            email,
+            uid
+        }));
+
+        store.dispatch(changeStatus('returning'))
+
+    } catch (e) {
+        console.error("Error adding document: ", e);
+    }
 
 }
 
 
 export function signInUser(email, password) {
 
-    firebase.auth().signInWithEmailAndPassword(email, password)
+    signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             // Signed in
             var user = userCredential.user;
@@ -155,43 +184,36 @@ export function signInUser(email, password) {
 }
 
 
-export function getUserDetails(uid) {
+export async function getUserDetails(uid) {
 
-    var docRef = db.collection("users").doc(uid);
+    const docRef = doc(db, "users", uid);
+    const docSnap = await getDoc(docRef);
 
-    docRef.get().then((doc) => {
-        if (doc.exists) {
-            let response = doc.data()
-            console.log("Welcome back User", response);
-            const userData = {
-                email: response.email,
-                uid: response.uid,
-                zone: response.zone,
-                dogs: response.dogs,
-            }
-            store.dispatch(saveUserDetails(userData));
-            store.dispatch(saveZone(response.zone))
+    if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data());
+        let response = docSnap.data()
+        console.log("Welcome back User", response);
+        const userData = {
+            email: response.email,
+            uid: response.uid,
+            zone: response.zone,
+            dogs: response.dogs,
+        }
+        store.dispatch(saveUserDetails(userData));
+        store.dispatch(saveZone(response.zone))
 
-            if (response.dogs.length > 0) {
-                unwrapDogs(response.dogs)
+        if (response.dogs.length > 0) {
+            unwrapDogs(response.dogs)
 
-            } else {
-                store.dispatch(changeStatus('returning'))
-
-            }
         } else {
-            // doc.data() will be undefined in this case
-            console.log("No such document!");
-            // analytics.logEvent("error: user doc does not exist");
+            store.dispatch(changeStatus('returning'))
 
         }
-    }).catch((error) => {
-        console.log("Error getting User:", error);
-        // analytics.logEvent("error: could download user doc");
-        // analytics.logEvent(error.message);
+    } else {
+        // doc.data() will be undefined in this case
+        console.log("No such user!");
+    }
 
-
-    });
 
 }
 
@@ -254,113 +276,92 @@ export async function startPublish(imageURI) {
     // upload rawDog
     console.log("going to post", rawDog)
 
+
+
     // Add a new document with a generated id.
-    db.collection("dogs").add(rawDog).then((docRef) => {
-            // get duid
-            const duid = docRef.id
-            console.log("Created Dog Doc: ", duid);
-
-            // add duid to user dog list 
-            store.dispatch(addDogtoUser(duid))
-
-            // get new list 
-            const newList = store.getState().user.dogs
-
-            // post new dog list 
-            var userRef = db.collection("users").doc(uid);
-            userRef.update({
-                    dogs: newList
-                })
-                .then(() => {
-                    console.log("Updated dog list!");
-
-                })
-                .catch((error) => {
-                    // The document probably doesn't exist.
-                    console.error("Error updating document: ", error);
-                    // analytics.logEvent("error: adding dog to user list");
-
-                });
 
 
-            // upload image with duid 
-            storageRef.child('profileImages/' + uid + '.jpg').put(blob).then((response) => {
-                console.log("uploaded dog photo");
+    try {
+        const docRef = await addDoc(collection(db, "dogs"), rawDog);
+        console.log("Document written with ID: ", docRef.id);
+        // get duid
+        const duid = docRef.id
+        console.log("Created Dog Doc: ", duid);
 
-                response.ref.getDownloadURL().then((PURI) => {
+        // add duid to user dog list 
+        store.dispatch(addDogtoUser(duid))
 
-                    // add profileURL to rawDOG document
-                    var dogRef = db.collection("dogs").doc(duid);
-                    var PURITask = dogRef.update({
-                            profileImage: PURI
-                        })
-                        .then(() => {
-                            console.log("added dog URL");
-                            window.location.reload();
+        // get new list 
+        const newList = store.getState().user.dogs
 
-                        })
-                        .catch((error) => {
-                            // The document probably doesn't exist.
-                            // analytics.logEvent("error: could not update profile URL to dogs");
-                            console.error("Error updating document: ", error);
-                        });
+        // post new dog list 
+        const userRef = doc(db, "users", uid);
 
-
-                    // add profileURL to user??? 
+        // Set the "capital" field of the city 'DC'
+        await updateDoc(washingtonRef, {
+            dogs: newList
+        });
 
 
-                }).catch((error) => {
-                    console.log(error)
-                    // analytics.logEvent("error: could not DL profile URL");
+        const storageRef = ref(storage, 'profileImages/' + duid + '.jpg');
+        // 'file' comes from the Blob or File API
+        uploadBytes(storageRef, blob).then((snapshot) => {
+            console.log('Uploaded a blob or file!');
 
-                })
-            }).catch((error) => {
-                // The document probably doesn't exist.
-                console.error("photo upload errror", error);
-                // analytics.logEvent("error: photo upload error");
+            getDownloadURL(snapshot.ref).then((PURI) => {
+                console.log('File available at', PURI);
+                // add profileURL to rawDOG document
+
+                const dogRef = doc(db, "dogs", duid);
+                updateDoc(dogRef, {
+                    profileImage: PURI
+                }).then(() => {
+                        console.log("added dog URL");
+                        window.location.reload();
+
+                    }
+
+                );
 
             });
-
-
+        }).catch((error) => {
+            console.log(error)
         })
-        .catch((error) => {
-            console.error("Error adding document: ", error);
-            // analytics.logEvent("error: creating dog");
 
-        });
+    } catch (e) {
+        console.error("Error adding document: ", e);
+    }
+
 
 
 }
 
 
 
-export function unwrapDogs(dogs) {
+export async function unwrapDogs(dogs) {
 
     if (dogs) {
         dogs.map(dog => {
-            var docRef = db.collection("dogs").doc(dog);
+            const docRef = doc(db, "dogs", dog);
+            getDoc(docRef).then((docSnap) => {
+                    if (docSnap.exists()) {
+                        console.log("Document data:", docSnap.data());
 
-            docRef.get().then((doc) => {
-                if (doc.exists) {
-                    console.log("Document data:", doc.data());
-                    store.dispatch(saveDogCards(doc.data()));
-                    store.dispatch(changeStatus('returning'))
-                    store.dispatch(saveCoords(doc.data().coords))
+                        let dogData = docSnap.data()
+                        console.log("Document data:", dogData);
+                        store.dispatch(saveDogCards(dogData));
+                        store.dispatch(changeStatus('returning'))
+                        store.dispatch(saveCoords(dogData.coords))
+                    } else {
+                        // doc.data() will be undefined in this case
+                        console.log("No such document!");
+                    }
 
+                })
+                .catch((error) => {
+                    console.log("Error getting document:", error);
 
-                } else {
-                    // doc.data() will be undefined in this case
-                    console.log("No such document!");
-                    store.dispatch(changeStatus('returning'))
-                    // analytics.logEvent("error: dog file not found");
-
-
-                }
-            }).catch((error) => {
-                console.log("Error getting document:", error);
-                // analytics.logEvent("error: unwrap dog error");
-
-            });
+                })
 
         })
     }
