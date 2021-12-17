@@ -59,8 +59,9 @@ import {
     addDoc,
     getDocs,
     getDoc,
-    query, 
-    where
+    query,
+    where,
+    updateDoc
 } from 'firebase/firestore';
 const db = getFirestore();
 
@@ -68,11 +69,10 @@ const db = getFirestore();
 import {
     getDownloadURL,
     getStorage,
+    uploadBytes,
     ref
 } from "firebase/storage";
 const storage = getStorage();
-
-
 
 
 
@@ -191,11 +191,12 @@ export function signInUser(email, password) {
 
 export async function getUserDetails(uid) {
 
+    console.log('getting user');
     const docRef = doc(db, "users", uid);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-        console.log("Document data:", docSnap.data());
+        console.log("Welcome Back User:", docSnap.data().uid);
         let response = docSnap.data()
         console.log("Welcome back User", response);
         const userData = {
@@ -222,7 +223,7 @@ export async function getUserDetails(uid) {
 
 }
 
-export function setScreenAnalytics(screenName){
+export function setScreenAnalytics(screenName) {
     console.log('state changed', screenName);
     // setCurrentScreen(analytics, screenName,{
     //     firebaseScreen: screenName
@@ -260,7 +261,7 @@ export async function compressImage(imageURI) {
     };
 
 }
-export async function startPublish(imageURI) {
+export async function startPublish(imageURI, navigation) {
 
     // convert to Blob
     const blob = await new Promise((resolve, reject) => {
@@ -293,51 +294,52 @@ export async function startPublish(imageURI) {
 
 
     try {
-        const docRef = await addDoc(collection(db, "dogs"), rawDog);
-        console.log("Document written with ID: ", docRef.id);
-        // get duid
-        const duid = docRef.id
-        console.log("Created Dog Doc: ", duid);
+        addDoc(collection(db, "dogs"), rawDog).then((docRef) => {
+            console.log("Document written with ID: ", docRef.id);
+            // get duid
+            const duid = docRef.id
+            console.log("Created Dog Doc: ", duid);
 
-        // add duid to user dog list 
-        store.dispatch(addDogtoUser(duid))
+            // add duid to user dog list 
+            store.dispatch(addDogtoUser(duid))
 
-        // get new list 
-        const newList = store.getState().user.dogs
+            // get new list 
+            const newList = store.getState().user.dogs
 
-        // post new dog list 
-        const userRef = doc(db, "users", uid);
+            // post new dog list 
+            const userRef = doc(db, "users", uid);
+            updateDoc(userRef, {
+                dogs: newList
+            }).then(() => {
+                // update file
+                const storageRef = ref(storage, 'profileImages/' + duid + '.jpg');
+                // 'file' comes from the Blob or File API
+                uploadBytes(storageRef, blob).then((snapshot) => {
+                    console.log('Uploaded a blob or file!');
 
-        // Set the "capital" field of the city 'DC'
-        await updateDoc(washingtonRef, {
-            dogs: newList
-        });
+                    getDownloadURL(snapshot.ref).then((PURI) => {
+                        console.log('File available at', PURI);
+                        // add profileURL to rawDOG document
 
+                        const dogRef = doc(db, "dogs", duid);
+                        updateDoc(dogRef, {
+                            profileImage: PURI
+                        }).then(() => {
+                                console.log("added dog URL");
+                                navigation.navigate('Profile');
 
-        const storageRef = ref(storage, 'profileImages/' + duid + '.jpg');
-        // 'file' comes from the Blob or File API
-        uploadBytes(storageRef, blob).then((snapshot) => {
-            console.log('Uploaded a blob or file!');
+                            }
 
-            getDownloadURL(snapshot.ref).then((PURI) => {
-                console.log('File available at', PURI);
-                // add profileURL to rawDOG document
+                        );
 
-                const dogRef = doc(db, "dogs", duid);
-                updateDoc(dogRef, {
-                    profileImage: PURI
-                }).then(() => {
-                        console.log("added dog URL");
-                        window.location.reload();
-
-                    }
-
-                );
-
-            });
-        }).catch((error) => {
-            console.log(error)
+                    });
+                }).catch((error) => {
+                    console.log(error)
+                })
+            })
         })
+
+
 
     } catch (e) {
         console.error("Error adding document: ", e);
@@ -350,31 +352,34 @@ export async function startPublish(imageURI) {
 
 
 export async function unwrapDogs(dogs) {
+    const dogCards = store.getState().user.dogCards
+
 
     if (dogs) {
-        dogs.map(dog => {
-            const docRef = doc(db, "dogs", dog);
-            getDoc(docRef).then((docSnap) => {
-                    if (docSnap.exists()) {
-                        console.log("Document data:", docSnap.data());
+        if (dogCards.length != dogs.length) {
+            dogs.map(dog => {
+                const docRef = doc(db, "dogs", dog);
+                getDoc(docRef).then((docSnap) => {
+                        if (docSnap.exists()) {
+                            let dogData = docSnap.data()
+                            store.dispatch(saveDogCards(dogData));
+                            store.dispatch(changeStatus('returning'))
+                            store.dispatch(saveCoords(dogData.coords))
+                        } else {
+                            // doc.data() will be undefined in this case
+                            console.log("No such document!");
+                        }
 
-                        let dogData = docSnap.data()
-                        console.log("Document data:", dogData);
-                        store.dispatch(saveDogCards(dogData));
-                        store.dispatch(changeStatus('returning'))
-                        store.dispatch(saveCoords(dogData.coords))
-                    } else {
-                        // doc.data() will be undefined in this case
-                        console.log("No such document!");
-                    }
+                    })
+                    .catch((error) => {
+                        console.log("Error getting document:", error);
 
-                })
-                .catch((error) => {
-                    console.log("Error getting document:", error);
+                    })
 
-                })
+            })
+        }
 
-        })
+
     }
 
 }
@@ -394,16 +399,18 @@ export async function getHomies(zone) {
         // doc.data() is never undefined for query doc snapshots
         console.log(doc.id, " => ", doc.data());
         const dog = doc.data()
-                console.log("Found Dog => ", dog);
-                // createTag
+        console.log("Found Dog => ", dog);
+        // createTag
 
-                const tag = {
-                    id: doc.id,
-                    coords: dog.coords,
-                    zone: dog.zone
-                }
-                store.dispatch(addTag(tag))
-      });
+        const tag = {
+            id: doc.id,
+            coords: dog.coords,
+            zone: dog.zone
+        }
+        store.dispatch(addTag(tag))
+    });
+
+
 
 
 }

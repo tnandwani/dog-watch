@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
+
 import { Image } from 'react-native';
-
-
-
 import {
     Box,
     Heading,
@@ -15,12 +13,15 @@ import {
 } from 'native-base';
 
 
-export default function DogCard(props) {
+export default function RawDogCard(props) {
+    let dogName = useSelector((state) => state.rawDog.dogName)
+    let breed = useSelector((state) => state.rawDog.breed)
+    let age = useSelector((state) => state.rawDog.age)
+    let zone = useSelector((state) => state.rawDog.zone)
 
-    useEffect(() => {
-
-
-    }, []);
+    if (!zone.city){
+        zone.city = "City"
+    }
 
     return (
         <Center w='100%'>
@@ -45,18 +46,15 @@ export default function DogCard(props) {
                 <HStack w='100%'>
                     <Center w='30%'>
                         <AspectRatio w="100%" ratio={9 / 9}>
-                            <Image
-                                source={{
-                                    uri: props.dog.item.profileImage,
-                                }}
-                                alt="image"
-                            />
+                        <Image
+          source={{ uri: props.image }}
+        />
                         </AspectRatio>
                     </Center>
-                    <Box w='80%'>
+                    <Box w='60%'>
                         <Stack p="4" space={3}>
                             <Heading size="md" ml="-1">
-                                {props.dog.item.dogName}
+                                {dogName}
                             </Heading>
                             <Text
                                 fontSize="xs"
@@ -70,12 +68,11 @@ export default function DogCard(props) {
                                 ml="-0.5"
                                 mt="-1"
                             >
-                                {props.dog.item.breed}
-
+                                {breed}
                             </Text>
 
                             <Text fontWeight="400" my='-1'>
-                                {props.dog.item.zone}
+                                {/* {zone.city} */}
 
                             </Text>
                             <Text
@@ -85,8 +82,7 @@ export default function DogCard(props) {
                                 }}
                                 fontWeight="300"
                             >
-                                {props.dog.item.age + " Years Old"}
-                                 
+                                {age} Years Old
                             </Text>
 
                         </Stack>

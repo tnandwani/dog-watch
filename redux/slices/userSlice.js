@@ -32,16 +32,24 @@ export const userSlice = createSlice({
 
     },
     saveDogCards: (state, action) => {
-      state.dogCards.push(action.payload)
+      if (!state.dogCards.includes(action.payload)) {
+        state.dogCards.push(action.payload)
+      }
+      console.log("dog cards are: ", state.dogCards)
+
     },
     changeStatus: (state, action) => {
       state.status = action.payload
     },
     addDogtoUser: (state, action) => {
       console.log(action)
-      state.dogs.push(action.payload)
+      // check if dog is in array 
+      if (!state.dogs.includes(action.payload)) {
+        state.dogs.push(action.payload)
+      }
+      console.log("dog list is: ", state.dogs)
     }
-    
+
   },
 })
 

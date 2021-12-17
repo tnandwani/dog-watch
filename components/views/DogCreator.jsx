@@ -159,7 +159,7 @@ export default function DogCreator({ navigation }) {
             // create new location object 
             let userLocation = {
                 coords: currentPin.coords,
-                zone: currentAddress,
+                zone: currentAddress.postalCode,
 
             }
             console.log(userLocation);

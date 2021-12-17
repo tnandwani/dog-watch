@@ -62,7 +62,7 @@ export default function Personality({ navigation }) {
         dispatch(savePersonality({ people, otherDogs, sharing, energy, sn, training, bio }));
 
         // upload photo
-        let uploadTask = startPublish(profileImage)
+        let uploadTask = startPublish(profileImage, navigation)
 
     }
 

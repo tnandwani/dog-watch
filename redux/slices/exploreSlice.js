@@ -20,6 +20,7 @@ export const exploreSlice = createSlice({
     },
     addTag: (state, action) => {
       state.dogTags.push(action.payload);
+      console.log("dog Tags:",state.dogTags)
     },
     updateVapid: (state, action) => {
       state.vapidToken = action.payload
