@@ -31,15 +31,14 @@ import {
 } from 'firebase/app';
 initializeApp(firebaseConfig)
 
-// analytics
-// import * as Analytics from 'expo-firebase-analytics';
-import { 
-    getAnalytics, 
-    logEvent,
-    setCurrentScreen    
-} from "firebase/analytics";
+// // analytics
+// import { 
+//     getAnalytics, 
+//     logEvent,
+//     setCurrentScreen    
+// } from "firebase/analytics";
 
-const analytics = getAnalytics();
+// const analytics = getAnalytics();
 
 // auth 
 import {
@@ -59,7 +58,9 @@ import {
     doc,
     addDoc,
     getDocs,
-    getDoc
+    getDoc,
+    query, 
+    where
 } from 'firebase/firestore';
 const db = getFirestore();
 
@@ -89,7 +90,7 @@ onAuthStateChanged(auth, user => {
             uid
         }))
         getUserDetails(uid);
-        logEvent(analytics, 'EXPO SIGNED IN ;)');        // ...
+        // logEvent(analytics, 'EXPO SIGNED IN ;)');        // ...
 
     }
 
@@ -223,9 +224,9 @@ export async function getUserDetails(uid) {
 
 export function setScreenAnalytics(screenName){
     console.log('state changed', screenName);
-    setCurrentScreen(analytics, screenName,{
-        firebaseScreen: screenName
-    } )
+    // setCurrentScreen(analytics, screenName,{
+    //     firebaseScreen: screenName
+    // } )
 }
 
 
@@ -379,17 +380,20 @@ export async function unwrapDogs(dogs) {
 }
 
 
-export function getHomies(zone) {
+export async function getHomies(zone) {
 
     console.log("getting homies in", zone);
     // analytics.logEvent('getting tags');
 
-    db.collection("dogs").where("zone", "==", zone)
-        .get()
-        .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                // doc.data() is never undefined for query doc snapshots
-                const dog = doc.data()
+
+    const q = query(collection(db, "dogs"), where("zone", "==", zone));
+
+    const querySnapshot = await getDocs(q);
+
+    querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+        const dog = doc.data()
                 console.log("Found Dog => ", dog);
                 // createTag
 
@@ -399,13 +403,7 @@ export function getHomies(zone) {
                     zone: dog.zone
                 }
                 store.dispatch(addTag(tag))
+      });
 
 
-            });
-        })
-        .catch((error) => {
-            console.log("Error getting documents: ", error);
-            // analytics.logEvent("error: loading zone homies");
-
-        });
 }
