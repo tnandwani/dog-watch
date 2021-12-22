@@ -22,7 +22,6 @@ export default function DogCard(props) {
         rounded="lg"
         overflow="hidden"
         borderColor="coolGray.200"
-        borderWidth="1"
         _dark={{
           borderColor: "coolGray.600",
           backgroundColor: "gray.700",
@@ -36,22 +35,22 @@ export default function DogCard(props) {
         }}
       >
         <HStack w="100%">
-          <Center w="35%">
-            <AspectRatio w="100%" ratio={9 / 9}>
+          <Center w="25%">
+            <AspectRatio w="115%" ratio={9 / 9}>
               <Image
                 source={{
                   uri: props.dog.item.profileImage,
                 }}
                 alt="image"
               />
-            </AspectRatio>{" "}
-          </Center>{" "}
-          <Box w="75%">
-            <Stack p="4" space={3}>
+            </AspectRatio>
+          </Center>
+          <Box w="80%" ml ='3'>
+            <Stack p="4" space={2}>
               <Heading size="md" ml="-1">
-                {" "}
-                {props.dog.item.dogName}{" "}
-              </Heading>{" "}
+
+                {props.dog.item.dogName}
+              </Heading>
               <Text
                 fontSize="xs"
                 _light={{
@@ -64,13 +63,10 @@ export default function DogCard(props) {
                 ml="-0.5"
                 mt="-1"
               >
-                {" "}
+ 
                 {props.dog.item.breed}
               </Text>
-              <Text fontWeight="400" my="-1">
-                {" "}
-                {props.dog.item.zone}
-              </Text>{" "}
+       
               <Text
                 color="coolGray.600"
                 _dark={{
@@ -78,13 +74,13 @@ export default function DogCard(props) {
                 }}
                 fontWeight="300"
               >
-                {" "}
+
                 {props.dog.item.age + " Years Old"}
               </Text>
-            </Stack>{" "}
+            </Stack>
           </Box>
-        </HStack>{" "}
-      </Box>{" "}
+        </HStack>
+      </Box>
     </Center>
   );
 }

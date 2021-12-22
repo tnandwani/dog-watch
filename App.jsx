@@ -51,22 +51,22 @@ export function AppContent() {
               options={{
                 headerShown: false,
               }}
-            />{" "}
+            />
             <Stack.Screen
               name="Login"
               component={LoginScreen}
               options={{
                 headerShown: false,
               }}
-            />{" "}
+            />
             <Stack.Screen
               name="Create"
               component={CreateScreen}
               options={{
                 headerShown: false,
               }}
-            />{" "}
-          </Stack.Navigator>{" "}
+            />
+          </Stack.Navigator>
         </NavigationContainer>
       )}
 
@@ -79,14 +79,14 @@ export function AppContent() {
               options={{
                 headerShown: false,
               }}
-            />{" "}
+            />
             <Stack.Screen
               name="DogCreator"
               component={DogCreator}
               options={{
                 headerShown: false,
               }}
-            />{" "}
+            />
             <Stack.Screen
               name="Personality"
               component={Personality}
@@ -94,7 +94,7 @@ export function AppContent() {
                 headerShown: false,
               }}
             />
-          </Stack.Navigator>{" "}
+          </Stack.Navigator>
         </NavigationContainer>
       )}
     </NativeBaseProvider>

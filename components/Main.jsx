@@ -23,25 +23,25 @@ export default function Main() {
                 
               }
         }}>
-     
-            <Tab.Screen name="Home" component={HomeTab} options={{
+            <Tab.Screen name="Profile" component={ProfileTab} options={{
+                headerShown: true,
+                tabBarIcon: ({ color, size }) => (
+                    <MaterialIcons name="dog-side" color={color} size={size} />
+                )
+            }} />
+            {/* <Tab.Screen name="Home" component={HomeTab} options={{
                 headerShown: true,
                 tabBarIcon: ({ color, size }) => (
                     <MaterialIcons name="home" color={color} size={size} />
                 )
-            }} />
+            }} /> */}
             <Tab.Screen name="Explore" component={ExploreTab} options={{
                 headerShown: true,
                 tabBarIcon: ({ color, size }) => (
                     <MaterialIcons name="compass" color={color} size={size} />
                 )
             }} />
-               <Tab.Screen name="Profile" component={ProfileTab} options={{
-                headerShown: true,
-                tabBarIcon: ({ color, size }) => (
-                    <MaterialIcons name="dog-side" color={color} size={size} />
-                )
-            }} />
+             
     
         </Tab.Navigator>
     )

@@ -19,9 +19,6 @@ export default function RawDogCard(props) {
     let age = useSelector((state) => state.rawDog.age)
     let zone = useSelector((state) => state.rawDog.zone)
 
-    if (!zone.city){
-        zone.city = "City"
-    }
 
     return (
         <Center w='100%'>
@@ -82,7 +79,7 @@ export default function RawDogCard(props) {
                                 }}
                                 fontWeight="300"
                             >
-                                {age} Years Old
+                                {age + ' Years Old'} 
                             </Text>
 
                         </Stack>

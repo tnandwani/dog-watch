@@ -111,7 +111,7 @@ export default function DogCreator({ navigation }) {
         if (!result.cancelled) {
             // get URI
             const URI = result.uri
-            
+
             setProfileImage(URI);
             dispatch(saveDogPic(URI));
 
@@ -122,6 +122,10 @@ export default function DogCreator({ navigation }) {
         console.log("getting location");
 
         (async () => {
+
+            // get API key for web created accounts - too expensive for only web
+            // Location.setGoogleApiKey(googleAPI)
+
             setLocationStatus(<Spinner color="indigo.500" />);
             if (Platform.OS === 'android' && !Constants.isDevice) {
                 setErrorMessage('Oops, this will not work on Snack in an Android emulator. Try it on your device!');
@@ -135,31 +139,25 @@ export default function DogCreator({ navigation }) {
 
             // get coords
             let currentPin = await Location.getCurrentPositionAsync({});
-            var currentAddress = "Unverified";
-
+            let userZone = "Unverified"
 
             // If not mobile get address
             if (Platform.OS !== 'web') {
                 // get address
                 let reveresResult = await Location.reverseGeocodeAsync(currentPin.coords, false)
-                currentAddress = reveresResult[0];
-                // get zipcode
+                userZone = reveresResult[0].postalCode;
 
-                // pass zipcode instead of full addess
             }
             else {
                 console.log("Web Mode")
-                // get API key for web created accounts - too expensive for only web
-                // Location.setGoogleApiKey(googleAPI)
-                // let reveresResult = await Location.reverseGeocodeAsync(currentPin.coords, false)
-                // currentAddress = reveresResult[0];
             }
 
 
             // create new location object 
             let userLocation = {
-                coords: currentPin.coords,
-                zone: currentAddress.postalCode,
+                latitude: currentPin.coords.latitude,
+                longitude: currentPin.coords.longitude,
+                zone: userZone,
 
             }
             console.log(userLocation);
@@ -168,7 +166,7 @@ export default function DogCreator({ navigation }) {
             setLocation(userLocation);
             setLocationStatus("Location Received")
             dispatch(saveLocation(userLocation));
-            
+
 
 
         })();
@@ -340,8 +338,8 @@ export default function DogCreator({ navigation }) {
                     <Button variant="outline" colorScheme="indigo" onPress={() => navigation.goBack()}>
                         Cancel
                     </Button>
-                    <Button colorScheme="indigo" onPress={() =>navigation.navigate("Personality")
-}>
+                    <Button colorScheme="indigo" onPress={() => navigation.navigate("Personality")
+                    }>
                         Add Personality
                     </Button>
 

@@ -1,7 +1,6 @@
 // keys and consts
 import {
-    firebaseConfig,
-    vapidKey
+    firebaseConfig
 } from './constants';
 
 // REDUX
@@ -15,35 +14,25 @@ import {
     addDogtoUser
 } from "./redux/slices/userSlice";
 import {
-    saveDogPic,
     saveOwner
 } from "./redux/slices/rawDogSlice";
 import {
-    saveCoords,
-    saveZone,
     addTag,
-    updateVapid
+    emptyTag,
+    updateLoading,
 } from "./redux/slices/exploreSlice";
 
-// EXPO FIREBASE
+// FIREBASE
 import {
     initializeApp
 } from 'firebase/app';
 initializeApp(firebaseConfig)
 
-// // analytics
-// import { 
-//     getAnalytics, 
-//     logEvent,
-//     setCurrentScreen    
-// } from "firebase/analytics";
-
-// const analytics = getAnalytics();
-
 // auth 
 import {
     getAuth,
     onAuthStateChanged,
+    signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     signOut
 } from 'firebase/auth';
@@ -55,13 +44,13 @@ import {
     getFirestore,
     collection,
     setDoc,
-    doc,
     addDoc,
     getDocs,
     getDoc,
     query,
     where,
-    updateDoc
+    updateDoc,
+    doc
 } from 'firebase/firestore';
 const db = getFirestore();
 
@@ -74,6 +63,14 @@ import {
 } from "firebase/storage";
 const storage = getStorage();
 
+// // analytics
+// import { 
+//     getAnalytics, 
+//     logEvent,
+//     setCurrentScreen    
+// } from "firebase/analytics";
+
+// const analytics = getAnalytics();
 
 
 ////////// APP START
@@ -91,6 +88,9 @@ onAuthStateChanged(auth, user => {
         }))
         getUserDetails(uid);
         // logEvent(analytics, 'EXPO SIGNED IN ;)');        // ...
+
+    } else {
+        store.dispatch(changeStatus('new'))
 
     }
 
@@ -144,19 +144,16 @@ export function createUserAccount(email, password) {
 
 export async function createUserDoc(email, uid) {
 
-    console.log("Getting ready to create user")
-    console.log(uid);
-
     // creatubg user doc
 
     try {
-        const docRef = await addDoc(collection(db, "users"), {
+        const docRef = await setDoc(doc(db, "users", uid), {
             uid: uid,
             email: email,
             zone: "Unverified",
             dogs: []
         });
-        console.log("Document written with ID: ", docRef.id);
+        console.log("Created User with ID: ", docRef.id);
         store.dispatch(saveUserAccount({
             email,
             uid
@@ -191,30 +188,22 @@ export function signInUser(email, password) {
 
 export async function getUserDetails(uid) {
 
-    console.log('getting user');
     const docRef = doc(db, "users", uid);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-        console.log("Welcome Back User:", docSnap.data().uid);
         let response = docSnap.data()
         console.log("Welcome back User", response);
-        const userData = {
-            email: response.email,
-            uid: response.uid,
-            zone: response.zone,
-            dogs: response.dogs,
-        }
-        store.dispatch(saveUserDetails(userData));
-        store.dispatch(saveZone(response.zone))
+        store.dispatch(saveUserDetails(response));
+        store.dispatch(changeStatus('returning'))
 
-        if (response.dogs.length > 0) {
-            unwrapDogs(response.dogs)
+        // if (response.dogs.length > 0) {
+        //     unwrapDogs(response.dogs)
 
-        } else {
-            store.dispatch(changeStatus('returning'))
+        // } else {
+        //     store.dispatch(changeStatus('returning'))
 
-        }
+        // }
     } else {
         // doc.data() will be undefined in this case
         console.log("No such user!");
@@ -270,7 +259,6 @@ export async function startPublish(imageURI, navigation) {
             resolve(xhr.response);
         };
         xhr.onerror = function (e) {
-            console.log(e);
             reject(new TypeError("Network request failed"));
         };
         xhr.responseType = "blob";
@@ -286,7 +274,7 @@ export async function startPublish(imageURI, navigation) {
     const rawDog = store.getState().rawDog
 
     // upload rawDog
-    console.log("going to post", rawDog)
+    console.log("STARTING TO CREATE DOG", rawDog)
 
 
 
@@ -294,22 +282,25 @@ export async function startPublish(imageURI, navigation) {
 
 
     try {
-        addDoc(collection(db, "dogs"), rawDog).then((docRef) => {
-            console.log("Document written with ID: ", docRef.id);
-            // get duid
+        addDoc(collection(db, "dogs"), rawDog).then((docRef) => { // get duid
             const duid = docRef.id
-            console.log("Created Dog Doc: ", duid);
+            console.log("Created dog with duid: ", duid);
+
 
             // add duid to user dog list 
-            store.dispatch(addDogtoUser(duid))
+            store.dispatch(addDogtoUser(rawDog))
 
             // get new list 
             const newList = store.getState().user.dogs
 
-            // post new dog list 
+            // post new dog list + update coords
             const userRef = doc(db, "users", uid);
             updateDoc(userRef, {
-                dogs: newList
+                dogs: newList,
+                zone: rawDog.zone,
+                longitude: rawDog.longitude,
+                latitude: rawDog.latitude,
+
             }).then(() => {
                 // update file
                 const storageRef = ref(storage, 'profileImages/' + duid + '.jpg');
@@ -323,7 +314,8 @@ export async function startPublish(imageURI, navigation) {
 
                         const dogRef = doc(db, "dogs", duid);
                         updateDoc(dogRef, {
-                            profileImage: PURI
+                            profileImage: PURI,
+                            duid: duid
                         }).then(() => {
                                 console.log("added dog URL");
                                 navigation.navigate('Profile');
@@ -346,14 +338,13 @@ export async function startPublish(imageURI, navigation) {
     }
 
 
-
 }
 
 
 
 export async function unwrapDogs(dogs) {
-    const dogCards = store.getState().user.dogCards
 
+    const dogCards = store.getState().user.dogCards
 
     if (dogs) {
         if (dogCards.length != dogs.length) {
@@ -364,7 +355,6 @@ export async function unwrapDogs(dogs) {
                             let dogData = docSnap.data()
                             store.dispatch(saveDogCards(dogData));
                             store.dispatch(changeStatus('returning'))
-                            store.dispatch(saveCoords(dogData.coords))
                         } else {
                             // doc.data() will be undefined in this case
                             console.log("No such document!");
@@ -377,40 +367,82 @@ export async function unwrapDogs(dogs) {
                     })
 
             })
+        } else {
+            console.log('diff sizes')
+            store.dispatch(changeStatus('returning'))
+
         }
 
 
     }
+    console.log('empty')
+    store.dispatch(changeStatus('returning'))
+
+
 
 }
 
 
-export async function getHomies(zone) {
+export async function compareTask(lat, long) {
+    console.log("starting compare");
 
-    console.log("getting homies in", zone);
-    // analytics.logEvent('getting tags');
+    const dogsRef = collection(db, "dogs");
 
+    // create bubble zone query
+    const latQ = query(dogsRef, where("latitude", ">=", lat - 0.15), where("latitude", "<=", lat + 0.15));
+    const longQ = query(dogsRef, where("longitude", ">=", long - 0.15), where("longitude", "<=", long + 0.15));
 
-    const q = query(collection(db, "dogs"), where("zone", "==", zone));
+    const latSnapshot = await getDocs(latQ);
+    const longSnapshot = await getDocs(longQ);
 
-    const querySnapshot = await getDocs(q);
+    let latArray = [];
+    let longArray = [];
 
-    querySnapshot.forEach((doc) => {
+    latSnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
-        const dog = doc.data()
-        console.log("Found Dog => ", dog);
-        // createTag
+        latArray.push(doc.data())
+    });
 
-        const tag = {
-            id: doc.id,
-            coords: dog.coords,
-            zone: dog.zone
-        }
-        store.dispatch(addTag(tag))
+    longSnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        longArray.push(doc.data())
     });
 
 
+    const bubbleArray = latArray.filter(a => longArray.some(b => a.duid === b.duid));
+
+    console.log("return bubble", bubbleArray);
+    store.dispatch(updateLoading(false));
+
+    return bubbleArray;
+}
+
+export async function getHomies(lat, long) {
+
+    console.log("getting homies in", );
+    // analytics.logEvent('getting tags');
+
+
+    var bubbleTask = compareTask(lat, long);
+
+    bubbleTask.then((response) => {
+
+        console.log("response from compare: ")
+        console.log(response);
+
+        response.forEach((dog) => {
+            store.dispatch(addTag(dog))
+        })
+
+        // if (bubbleArray.length < 1) {
+        //     store.dispatch(emptyTag())
+        // } else {
+        //     bubbleArray.forEach((dog) => {
+        //         store.dispatch(addTag(dog))
+        //     })
+        // }
+
+    })
 
 
 }

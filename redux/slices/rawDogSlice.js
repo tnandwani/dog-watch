@@ -11,7 +11,8 @@ export const rawDogSlice = createSlice({
     age: null,
     visibility: null,
     profileImage: "https://freesvg.org/img/Dog-Leash.png",
-    coords: null,
+    latitude: null,
+    longitude: null,
     zone: "Unverified",
     owner: null,
     email: null,
@@ -53,12 +54,12 @@ export const rawDogSlice = createSlice({
     },
     saveLocation: (state, action) => {
       state.zone = action.payload.zone
-      state.coords = action.payload.coords
+      state.longitude = action.payload.longitude
+      state.latitude = action.payload.latitude
     },
     saveOwner: (state, action) => {
       state.owner = action.payload
     },
-
     // personality 
     savePersonality: (state, action) => {
       state.personality = action.payload

@@ -7,6 +7,8 @@ export const userSlice = createSlice({
   initialState: {
     email: null,
     uid: null,
+    latitude: null,
+    longitude: null,
     zone: "Unverified",
     username: null,
     dogs: [],
@@ -26,8 +28,9 @@ export const userSlice = createSlice({
     saveUserDetails: (state, action) => {
       state.email = action.payload.email
       state.uid = action.payload.uid
-      state.username = action.payload.username
       state.zone = action.payload.zone
+      state.latitude = action.payload.latitude
+      state.longitude = action.payload.longitude
       state.dogs = action.payload.dogs
 
     },
@@ -35,19 +38,17 @@ export const userSlice = createSlice({
       if (!state.dogCards.includes(action.payload)) {
         state.dogCards.push(action.payload)
       }
-      console.log("dog cards are: ", state.dogCards)
 
     },
     changeStatus: (state, action) => {
       state.status = action.payload
     },
     addDogtoUser: (state, action) => {
-      console.log(action)
       // check if dog is in array 
       if (!state.dogs.includes(action.payload)) {
         state.dogs.push(action.payload)
       }
-      console.log("dog list is: ", state.dogs)
+      console.log("users dog list is: ", state.dogs)
     }
 
   },

@@ -6,6 +6,7 @@ import {
 export const exploreSlice = createSlice({
   name: 'explore',
   initialState: {
+    loading: true,
     dogTags: [],
     myCoords: null,
     myZone: null,
@@ -19,8 +20,14 @@ export const exploreSlice = createSlice({
       state.myZone = action.payload
     },
     addTag: (state, action) => {
-      state.dogTags.push(action.payload);
-      console.log("dog Tags:",state.dogTags)
+      console.log("adding Tag", action.payload)
+      if (action.payload.duid) {
+        state.dogTags.push(action.payload)
+
+      }
+    },
+    updateLoading: (state, action) => {
+      state.loading = action.payload
     },
     updateVapid: (state, action) => {
       state.vapidToken = action.payload
@@ -35,7 +42,8 @@ export const {
   saveCoords,
   saveZone,
   addTag,
-  updateVapid
+  updateVapid,
+  updateLoading
 } = exploreSlice.actions
 
 export default exploreSlice.reducer
