@@ -7,7 +7,6 @@ import userSlice from './slices/userSlice'
 export default configureStore({
   reducer: {
     user: userSlice,
-    dog: dogSlice,
     rawDog: rawDogSlice,
     explore: exploreSlice
   },

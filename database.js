@@ -15,6 +15,7 @@ import {
     saveUserAccount,
     saveUserDetails,
     signInAccount,
+    markLostDog,
     addDogtoUser
 } from "./redux/slices/userSlice";
 import {
@@ -334,21 +335,6 @@ export async function getHomies(lat, long) {
 }
 
 
-export function markLost(duid, EContact) {
-
-    const dogRef = doc(db, "dogs", duid);
-    updateDoc(dogRef, {
-        lost: true,
-        contact: EContact
-    }).then(() => {
-        console.log("added dog URL");
-        navigation.navigate('Profile');
-
-    });
-
-
-}
-
 
 export async function startPublish(imageURI, navigation) {
 
@@ -409,6 +395,7 @@ export async function startPublish(imageURI, navigation) {
                         latitude: readyDog.latitude,
                     }).then((resp) => {
                         console.log("finished creating dog")
+                        navigation.navigate('Profile')
 
                     })
                 })
@@ -420,5 +407,41 @@ export async function startPublish(imageURI, navigation) {
     }).catch((error) => {
         console.log(error)
     })
+
+}
+
+
+export function markLost(duid, EContact, index) {
+
+    // mark in DOGS
+    const dogRef = doc(db, "dogs", duid);
+    updateDoc(dogRef, {
+        lost: true,
+        contact: EContact
+    }).then(() => {
+        console.log("marked public dog as lost");
+    });
+
+
+    // send changes to redux 
+    store.dispatch(markLostDog({
+        index,
+        EContact
+    }))
+
+    // const newList = get old list of user.dogs
+    const newDogList = store.getState().user.dogs
+    const uid = store.getState().user.uid
+
+    console.log("new list is: ", newDogList)
+
+    // post newList
+    // mark in DOGS
+    const usersRef = doc(db, "users", uid);
+    updateDoc(usersRef, {
+        dogs: newDogList,
+    }).then(() => {
+        console.log("marked personal dog as lost");
+    });
 
 }

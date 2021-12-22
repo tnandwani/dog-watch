@@ -28,66 +28,102 @@ export default function DogCard(props) {
 
   const [EContact, setEContact] = useState();
 
-  console.log("props", props)
-
-
   useEffect(() => { }, []);
 
   const confirm = () => {
 
-    console.log("contact is", EContact)
-    console.log("duid is ", props.dog.item.duid)
-
     // update db 
-    markLost(props.dog.item.duid, EContact).then((resp) => {
-      // close modal
-      setShowModal(false)
-    })
+    markLost(props.dog.item.duid, EContact, props.dog.index);
 
+    // close modal
+    setShowModal(false)
 
 
   }
   return (
     <Center w="100%">
 
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-        <Modal.Content maxWidth="400px">
-          <Modal.CloseButton />
-          <Modal.Header colorScheme='red.500'>Mark Dog as Lost</Modal.Header>
-          <Modal.Body>
-            <FormControl isRequired>
-              <FormControl.Label>Emergency Contact</FormControl.Label>
-              <Input onChangeText={(value) => setEContact(value)} />
-              <FormControl.HelperText>
-                Are you sure you want to mark your dog as lost?
-              </FormControl.HelperText>
-            </FormControl>
+      {/* emergency ON */}
 
-          </Modal.Body>
-          <Modal.Footer>
-            <Button.Group space={2}>
-              <Button
-                variant="outline"
-                colorScheme="indigo"
-                onPress={() => {
-                  setShowModal(false)
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                colorScheme="red"
-                onPress={() => {
-                  confirm();
-                }}
-              >
-                Confirm
-              </Button>
-            </Button.Group>
-          </Modal.Footer>
-        </Modal.Content>
-      </Modal>
+      {(!props.dog.item.lost) && 
+        <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+          <Modal.Content maxWidth="400px">
+            <Modal.CloseButton />
+            <Modal.Header colorScheme='red.500'>Mark Dog as Lost</Modal.Header>
+            <Modal.Body>
+              <FormControl isRequired>
+                <FormControl.Label>Emergency Contact</FormControl.Label>
+                <Input onChangeText={(value) => setEContact(value)} />
+                <FormControl.HelperText>
+                  Are you sure you want to mark your dog as lost?
+                </FormControl.HelperText>
+              </FormControl>
 
+            </Modal.Body>
+            <Modal.Footer>
+              <Button.Group space={2}>
+                <Button
+                  variant="outline"
+                  colorScheme="indigo"
+                  onPress={() => {
+                    setShowModal(false)
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  colorScheme="red"
+                  onPress={() => {
+                    confirm();
+                  }}
+                >
+                  Confirm
+                </Button>
+              </Button.Group>
+            </Modal.Footer>
+          </Modal.Content>
+        </Modal>
+      }
+      {(props.dog.item.lost) &&
+        <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+          <Modal.Content maxWidth="400px">
+            <Modal.CloseButton />
+            <Modal.Header colorScheme='emerald.500'>Mark Dog as Found</Modal.Header>
+            <Modal.Body>
+              <FormControl isRequired>
+                <FormControl.Label>Emergency Contact</FormControl.Label>
+                <Input onChangeText={(value) => setEContact(value)} />
+                <FormControl.HelperText>
+                  Are you sure you want to mark your dog as found?
+                </FormControl.HelperText>
+              </FormControl>
+
+            </Modal.Body>
+            <Modal.Footer>
+              <Button.Group space={2}>
+                <Button
+                  variant="outline"
+                  colorScheme="indigo"
+                  onPress={() => {
+                    setShowModal(false)
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  colorScheme="emerald"
+                  onPress={() => {
+                    confirm();
+                  }}
+                >
+                  Confirm
+                </Button>
+              </Button.Group>
+            </Modal.Footer>
+          </Modal.Content>
+        </Modal>
+      }
+   
       <Box
         w="100%"
         rounded="lg"
