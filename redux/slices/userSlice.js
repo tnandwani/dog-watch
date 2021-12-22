@@ -49,7 +49,14 @@ export const userSlice = createSlice({
         state.dogs.push(action.payload)
       }
       console.log("users dog list is: ", state.dogs)
-    }
+    },
+    markLostDog: (state, action) => {
+      console.log("redux change at index: " , action.payload)
+      console.log(state.dogs[action.payload.index])
+      state.dogs[action.payload.index].lost = true
+      state.dogs[action.payload.index].contact = action.payload.EContact
+
+    },
 
   },
 })
@@ -61,7 +68,8 @@ export const {
   saveUserDetails,
   saveDogCards,
   changeStatus,
-  addDogtoUser
+  addDogtoUser,
+  markLostDog
 
 } = userSlice.actions
 
