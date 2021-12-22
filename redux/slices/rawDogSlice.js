@@ -6,7 +6,9 @@ export const rawDogSlice = createSlice({
   name: 'rawDog',
   initialState: {
     dogName: 'Test',
+    duid: null,
     breed: null,
+    lost: false,
     gender: null,
     age: null,
     visibility: null,
@@ -64,6 +66,9 @@ export const rawDogSlice = createSlice({
     savePersonality: (state, action) => {
       state.personality = action.payload
     },
+    createDUID: (state, action) => {
+      state.duid = action.payload
+    },
 
   },
 })
@@ -79,7 +84,8 @@ export const {
   saveContact,
   saveLocation,
   saveOwner,
-  savePersonality
+  savePersonality,
+  createDUID
 
 } = rawDogSlice.actions
 

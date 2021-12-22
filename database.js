@@ -3,6 +3,10 @@ import {
     firebaseConfig
 } from './constants';
 
+import {
+    v4 as uuidv4
+} from 'uuid';
+
 // REDUX
 import store from "./redux/store";
 import {
@@ -14,6 +18,7 @@ import {
     addDogtoUser
 } from "./redux/slices/userSlice";
 import {
+    createDUID,
     saveOwner
 } from "./redux/slices/rawDogSlice";
 import {
@@ -24,7 +29,7 @@ import {
 
 // FIREBASE
 import {
-    initializeApp
+    initializeApp,
 } from 'firebase/app';
 initializeApp(firebaseConfig)
 
@@ -59,8 +64,11 @@ import {
     getDownloadURL,
     getStorage,
     uploadBytes,
-    ref
+    ref,
 } from "firebase/storage";
+import {
+    saveDogPic
+} from './redux/slices/rawDogSlice';
 const storage = getStorage();
 
 // // analytics
@@ -192,8 +200,7 @@ export async function getUserDetails(uid) {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-        let response = docSnap.data()
-        console.log("Welcome back User", response);
+        let response = docSnap.data();
         store.dispatch(saveUserDetails(response));
         store.dispatch(changeStatus('returning'))
 
@@ -221,126 +228,6 @@ export function setScreenAnalytics(screenName) {
 
 
 ////////// DOG FUNCTIONS 
-
-
-export async function compressImage(imageURI) {
-
-    // convert to convas
-    const img = new Image();
-    img.src = blob;
-    img.onload = function (ev) {
-        window.URL.revokeObjectURL(blob); // release memory
-        // Use the img
-        const canvas = document.createElement('canvas');
-        canvas.width = 500;
-        canvas.height = 500;
-
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, 500, 500);
-
-        // compress
-        canvas.toBlob(function (cblob) {
-            // Handle the compressed image
-            console.log("blob", blob)
-            console.log("c blob", cblob)
-
-            return cblob
-        }, 'image/jpeg', 0.8);
-
-    };
-
-}
-export async function startPublish(imageURI, navigation) {
-
-    // convert to Blob
-    const blob = await new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.onload = function () {
-            resolve(xhr.response);
-        };
-        xhr.onerror = function (e) {
-            reject(new TypeError("Network request failed"));
-        };
-        xhr.responseType = "blob";
-        xhr.open("GET", imageURI, true);
-        xhr.send(null);
-    });
-
-    // get user uid
-    const uid = store.getState().user.uid
-    store.dispatch(saveOwner(uid))
-
-    // get rawDog state
-    const rawDog = store.getState().rawDog
-
-    // upload rawDog
-    console.log("STARTING TO CREATE DOG", rawDog)
-
-
-
-    // Add a new document with a generated id.
-
-
-    try {
-        addDoc(collection(db, "dogs"), rawDog).then((docRef) => { // get duid
-            const duid = docRef.id
-            console.log("Created dog with duid: ", duid);
-
-
-            // add duid to user dog list 
-            store.dispatch(addDogtoUser(rawDog))
-
-            // get new list 
-            const newList = store.getState().user.dogs
-
-            // post new dog list + update coords
-            const userRef = doc(db, "users", uid);
-            updateDoc(userRef, {
-                dogs: newList,
-                zone: rawDog.zone,
-                longitude: rawDog.longitude,
-                latitude: rawDog.latitude,
-
-            }).then(() => {
-                // update file
-                const storageRef = ref(storage, 'profileImages/' + duid + '.jpg');
-                // 'file' comes from the Blob or File API
-                uploadBytes(storageRef, blob).then((snapshot) => {
-                    console.log('Uploaded a blob or file!');
-
-                    getDownloadURL(snapshot.ref).then((PURI) => {
-                        console.log('File available at', PURI);
-                        // add profileURL to rawDOG document
-
-                        const dogRef = doc(db, "dogs", duid);
-                        updateDoc(dogRef, {
-                            profileImage: PURI,
-                            duid: duid
-                        }).then(() => {
-                                console.log("added dog URL");
-                                navigation.navigate('Profile');
-
-                            }
-
-                        );
-
-                    });
-                }).catch((error) => {
-                    console.log(error)
-                })
-            })
-        })
-
-
-
-    } catch (e) {
-        console.error("Error adding document: ", e);
-    }
-
-
-}
-
-
 
 export async function unwrapDogs(dogs) {
 
@@ -444,5 +331,94 @@ export async function getHomies(lat, long) {
 
     })
 
+}
+
+
+export function markLost(duid, EContact) {
+
+    const dogRef = doc(db, "dogs", duid);
+    updateDoc(dogRef, {
+        lost: true,
+        contact: EContact
+    }).then(() => {
+        console.log("added dog URL");
+        navigation.navigate('Profile');
+
+    });
+
+
+}
+
+
+export async function startPublish(imageURI, navigation) {
+
+    // get owner
+    const uid = store.getState().user.uid
+    store.dispatch(saveOwner(uid))
+
+    // create dog duid 
+    const duid = uuidv4();
+
+    // add duid to redux
+    store.dispatch(createDUID(duid));
+
+    // convert image to blob
+    const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+            resolve(xhr.response);
+        };
+        xhr.onerror = function (e) {
+            reject(new TypeError("Network request failed"));
+        };
+        xhr.responseType = "blob";
+        xhr.open("GET", imageURI, true);
+        xhr.send(null);
+    });
+
+    // upload dog photo with duid 
+    const storageRef = ref(storage, 'profileImages/' + duid + '.jpg');
+    uploadBytes(storageRef, blob).then((snapshot) => {
+        console.log('Uploaded a blob or file!');
+
+        // get download URL
+        getDownloadURL(snapshot.ref).then((PURI) => {
+            console.log('File available at', PURI);
+
+            // add url to redux
+            store.dispatch(saveDogPic(PURI))
+
+            const readyDog = store.getState().rawDog
+            // upload readyDog to dogs/
+
+            setDoc(doc(db, "dogs", duid), readyDog)
+                .then((resp) => {
+
+                    // add readyDog to user.dogs redux 
+                    store.dispatch(addDogtoUser(readyDog))
+
+                    // get list with new dog
+                    const newList = store.getState().user.dogs
+
+                    // post new dog list + update coords
+                    const userRef = doc(db, "users", uid);
+                    updateDoc(userRef, {
+                        dogs: newList,
+                        zone: readyDog.zone,
+                        longitude: readyDog.longitude,
+                        latitude: readyDog.latitude,
+                    }).then((resp) => {
+                        console.log("finished creating dog")
+
+                    })
+                })
+                .catch((err) => {
+
+                })
+
+        });
+    }).catch((error) => {
+        console.log(error)
+    })
 
 }

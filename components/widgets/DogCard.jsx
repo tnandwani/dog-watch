@@ -10,13 +10,84 @@ import {
   Center,
   Stack,
   HStack,
+  VStack,
+  IconButton,
+  Button,
+  Modal,
+  FormControl,
+  Input,
 } from "native-base";
 
-export default function DogCard(props) {
-  useEffect(() => {}, []);
+import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { markLost } from "../../database";
 
+
+export default function DogCard(props) {
+
+  const [showModal, setShowModal] = useState(false)
+
+  const [EContact, setEContact] = useState();
+
+  console.log("props", props)
+
+
+  useEffect(() => { }, []);
+
+  const confirm = () => {
+
+    console.log("contact is", EContact)
+    console.log("duid is ", props.dog.item.duid)
+
+    // update db 
+    markLost(props.dog.item.duid, EContact).then((resp) => {
+      // close modal
+      setShowModal(false)
+    })
+
+
+
+  }
   return (
     <Center w="100%">
+
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+        <Modal.Content maxWidth="400px">
+          <Modal.CloseButton />
+          <Modal.Header colorScheme='red.500'>Mark Dog as Lost</Modal.Header>
+          <Modal.Body>
+            <FormControl isRequired>
+              <FormControl.Label>Emergency Contact</FormControl.Label>
+              <Input onChangeText={(value) => setEContact(value)} />
+              <FormControl.HelperText>
+                Are you sure you want to mark your dog as lost?
+              </FormControl.HelperText>
+            </FormControl>
+
+          </Modal.Body>
+          <Modal.Footer>
+            <Button.Group space={2}>
+              <Button
+                variant="outline"
+                colorScheme="indigo"
+                onPress={() => {
+                  setShowModal(false)
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                colorScheme="red"
+                onPress={() => {
+                  confirm();
+                }}
+              >
+                Confirm
+              </Button>
+            </Button.Group>
+          </Modal.Footer>
+        </Modal.Content>
+      </Modal>
+
       <Box
         w="100%"
         rounded="lg"
@@ -45,7 +116,7 @@ export default function DogCard(props) {
               />
             </AspectRatio>
           </Center>
-          <Box w="80%" ml ='3'>
+          <Box w="55%" ml='3'>
             <Stack p="4" space={2}>
               <Heading size="md" ml="-1">
 
@@ -63,10 +134,10 @@ export default function DogCard(props) {
                 ml="-0.5"
                 mt="-1"
               >
- 
+
                 {props.dog.item.breed}
               </Text>
-       
+
               <Text
                 color="coolGray.600"
                 _dark={{
@@ -78,6 +149,35 @@ export default function DogCard(props) {
                 {props.dog.item.age + " Years Old"}
               </Text>
             </Stack>
+          </Box>
+          <Box w="20%" mr='3' mt='2'>
+            <Center>
+              <VStack space={5} alignItems="space-between">
+
+                <Box>
+                  <IconButton
+                    onPress={() => setShowModal(true)}
+                    _icon={{
+                      as: MaterialCommunityIcons,
+                      name: "bell-alert",
+                      size: 'sm',
+                      color: 'red.400'
+                    }}
+                  />
+                </Box>
+                <Box>
+                  <IconButton
+                    _icon={{
+                      as: MaterialIcons,
+                      name: "edit",
+                      size: 'sm',
+                    }}
+                  />
+                </Box>
+
+
+              </VStack>
+            </Center>
           </Box>
         </HStack>
       </Box>

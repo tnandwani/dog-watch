@@ -255,3 +255,123 @@ function publish() {
 
 
 }
+
+
+export async function oldPublish(imageURI, navigation) {
+
+    // convert to Blob
+    const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+            resolve(xhr.response);
+        };
+        xhr.onerror = function (e) {
+            reject(new TypeError("Network request failed"));
+        };
+        xhr.responseType = "blob";
+        xhr.open("GET", imageURI, true);
+        xhr.send(null);
+    });
+
+    // get user uid
+    const uid = store.getState().user.uid
+    store.dispatch(saveOwner(uid))
+
+    // get rawDog state
+    const rawDog = store.getState().rawDog
+
+    // upload rawDog
+    console.log("STARTING TO CREATE DOG", rawDog)
+
+
+
+    // Add a new document with a generated id.
+
+
+    try {
+        addDoc(collection(db, "dogs"), rawDog).then((docRef) => { // get duid
+            const duid = docRef.id
+            console.log("Created dog with duid: ", duid);
+
+
+            // add duid to user dog list 
+            store.dispatch(addDogtoUser(rawDog))
+
+            // get new list 
+            const newList = store.getState().user.dogs
+
+            // post new dog list + update coords
+            const userRef = doc(db, "users", uid);
+            updateDoc(userRef, {
+                dogs: newList,
+                zone: rawDog.zone,
+                longitude: rawDog.longitude,
+                latitude: rawDog.latitude,
+
+            }).then(() => {
+                // update file
+                const storageRef = ref(storage, 'profileImages/' + duid + '.jpg');
+                // 'file' comes from the Blob or File API
+                uploadBytes(storageRef, blob).then((snapshot) => {
+                    console.log('Uploaded a blob or file!');
+
+                    getDownloadURL(snapshot.ref).then((PURI) => {
+                        console.log('File available at', PURI);
+                        // add profileURL to rawDOG document
+
+                        const dogRef = doc(db, "dogs", duid);
+                        updateDoc(dogRef, {
+                            profileImage: PURI,
+                            duid: duid
+                        }).then(() => {
+                                console.log("added dog URL");
+                                navigation.navigate('Profile');
+
+                            }
+
+                        );
+
+                    });
+                }).catch((error) => {
+                    console.log(error)
+                })
+            })
+        })
+
+
+
+    } catch (e) {
+        console.error("Error adding document: ", e);
+    }
+
+
+}
+
+
+export async function compressImage(imageURI) {
+
+    // convert to convas
+    const img = new Image();
+    img.src = blob;
+    img.onload = function (ev) {
+        window.URL.revokeObjectURL(blob); // release memory
+        // Use the img
+        const canvas = document.createElement('canvas');
+        canvas.width = 500;
+        canvas.height = 500;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, 500, 500);
+
+        // compress
+        canvas.toBlob(function (cblob) {
+            // Handle the compressed image
+            console.log("blob", blob)
+            console.log("c blob", cblob)
+
+            return cblob
+        }, 'image/jpeg', 0.8);
+
+    };
+
+}
