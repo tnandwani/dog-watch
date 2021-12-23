@@ -18,6 +18,7 @@ export default function ProfileTab({ navigation }) {
 
     const dogCards = useSelector((state) => state.user.dogs)
     const uid = useSelector((state) => state.user.uid)
+    const pushToken = useSelector((state) => state.explore.pushToken)
 
 
     return (
@@ -40,7 +41,7 @@ export default function ProfileTab({ navigation }) {
 
             <Button colorScheme="orange" mt='4' _text={{ color: 'white' }} onPress={() => signOutUser()} > Sign Out</Button>
 
-
+            {pushToken}
       
 
         </Box>

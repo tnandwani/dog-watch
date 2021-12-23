@@ -1,29 +1,30 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-
+// UI
+import React from 'react';
 import { NativeBaseProvider, Center, Spinner } from "native-base";
-import { Provider } from "react-redux";
-import store from "./redux/store";
 import { MyTheme } from "./constants";
+
+// REDUX
+import { useSelector, Provider} from "react-redux";
+import store from "./redux/store";
 
 // NAVIGATION
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 const Stack = createStackNavigator();
-
-// SCREENS
-// MAIN
-import MainScreen from "./components/Main";
 // LANDING
 import LandingScreen from "./components/auth/Landing";
 import LoginScreen from "./components/auth/Login";
 import CreateScreen from "./components/auth/Create";
-
+// TAB HOLDER
+import MainScreen from "./components/Main";
 // VIEW COMPONENTS
 import DogCreator from "./components/views/DogCreator"; // holds user tabs
 import Personality from "./components/views/Personality";
 
+
+
 export default function App() {
+
   return (
     <Provider store={store}>
       <AppContent />
@@ -33,6 +34,7 @@ export default function App() {
 
 export function AppContent() {
   var status = useSelector((state) => state.user.status);
+
 
   return (
     <NativeBaseProvider>

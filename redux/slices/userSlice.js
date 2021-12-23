@@ -38,7 +38,6 @@ export const userSlice = createSlice({
       if (!state.dogCards.includes(action.payload)) {
         state.dogCards.push(action.payload)
       }
-
     },
     changeStatus: (state, action) => {
       state.status = action.payload
@@ -51,10 +50,14 @@ export const userSlice = createSlice({
       console.log("users dog list is: ", state.dogs)
     },
     markLostDog: (state, action) => {
-      console.log("redux change at index: " , action.payload)
-      console.log(state.dogs[action.payload.index])
       state.dogs[action.payload.index].lost = true
       state.dogs[action.payload.index].contact = action.payload.EContact
+    },
+    updateLocation: (state, action) => {
+      console.log("attempt to locate:", action.payload)
+      state.zone = action.payload.zone
+      state.latitude = action.payload.coords.latitude
+      state.longitude = action.payload.coords.longitude
 
     },
 
@@ -69,7 +72,8 @@ export const {
   saveDogCards,
   changeStatus,
   addDogtoUser,
-  markLostDog
+  markLostDog,
+  updateLocation
 
 } = userSlice.actions
 

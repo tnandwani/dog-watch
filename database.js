@@ -444,4 +444,24 @@ export function markLost(duid, EContact, index) {
         console.log("marked personal dog as lost");
     });
 
+
+    // send out push notifications 
+
+
+}
+
+
+export function updateFireLocation(location) {
+    // post new dog list + update coords
+    const uid = store.getState().user.uid
+
+    const userRef = doc(db, "users", uid);
+    updateDoc(userRef, {
+        zone: location.zone,
+        longitude: location.coords.longitude,
+        latitude: location.coords.latitude,
+    }).then(() => {
+        console.log("finished creating dog")
+
+    })
 }

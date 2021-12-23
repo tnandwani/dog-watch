@@ -4,23 +4,35 @@ import { useSelector, useDispatch } from "react-redux";
 // maps
 import MapView, { PROVIDER_GOOGLE, Circle } from "react-native-maps";
 import { Marker } from "react-native-maps";
+// expo location
+import Constants from 'expo-constants';
+import * as Location from 'expo-location';
+
 
 import { StyleSheet, View, Dimensions, Platform } from "react-native";
-import { getHomies } from "../../database";
+import { getHomies, updateFireLocation } from "../../database";
 import { mapStyling } from "../../constants";
 import DogCard from '../widgets/DogCard'
 
 import { Box, Button, Center, FlatList, Heading, Spinner } from "native-base";
+import { updateLocation } from "../../redux/slices/userSlice";
 
 export default function ExploreTab() {
 
   let user = useSelector((state) => state.user);
   let dogTags = useSelector((state) => state.explore.dogTags);
   let loading = useSelector((state) => state.explore.loading);
+  const [locationStatus, setLocationStatus] = useState('');
 
+  const dispatch = useDispatch();
   useEffect(() => {
     //
-    getHomies(user.latitude, user.longitude);
+
+    if (user.zone != "Unverified") {
+      getHomies(user.latitude, user.longitude);
+    }
+    else {
+    }
   }, []);
 
 
@@ -72,9 +84,10 @@ export default function ExploreTab() {
       console.log(userLocation);
 
       // save state and update UI
-      setLocation(userLocation);
-      setLocationStatus("Location Received")
-      dispatch(saveLocation(userLocation));
+      setLocationStatus("Location Received");
+      updateFireLocation(userLocation);
+      dispatch(updateLocation(userLocation));
+      getHomies(userLocation.coords.latitude, userLocation.coords.longitude);
 
 
 
@@ -90,93 +103,125 @@ export default function ExploreTab() {
   }
   return (
     <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        provider={PROVIDER_GOOGLE}
-        customMapStyle={mapStyling}
-        initialRegion={{
-          latitude: user.latitude - 0.03,
-          longitude: user.longitude,
-          longitudeDelta: 0.1,
-          latitudeDelta: 0.1,
-        }}
-      >
 
-        <Circle center={{
-          latitude: 34.02884586515826,
-          longitude: -118.41578010808219,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-          radius={1610}
-          strokeWidth={0}
-          fillColor='rgba(99,102,241, 0.6)'
-        />
-      </MapView>
-
-      {(!user.latitude) &&
-        <Button
-          mx='4'
-          position='absolute'
-          w='95%'
-          h='7%'
-          top='10'
-          colorScheme="indigo"
-          _text={{ color: "white" }}
-          shadow="7"
-          onPress={getLocation}
+      {(user.zone !== 'Unverified') &&
+        <MapView
+          style={styles.map}
+          provider={PROVIDER_GOOGLE}
+          customMapStyle={mapStyling}
+          initialRegion={{
+            latitude: user.latitude - 0.03,
+            longitude: user.longitude,
+            longitudeDelta: 0.1,
+            latitudeDelta: 0.1,
+          }}
         >
-          Join The Watch
-        </Button>
+
+          <Circle center={{
+            latitude: user.latitude,
+            longitude: user.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+            radius={1610}
+            strokeWidth={0}
+            fillColor='rgba(99,102,241, 0.6)'
+          />
+        </MapView>
+
+      }
+      {(user.zone === 'Unverified') &&
+        <MapView
+          style={styles.map}
+          provider={PROVIDER_GOOGLE}
+          customMapStyle={mapStyling}
+          initialRegion={{
+            latitude: 39.8283,
+            longitude: -98.5795,
+            longitudeDelta: 50.0,
+            latitudeDelta: 50.0,
+          }}
+        />
+
       }
 
+      {(user.zone === 'Unverified') &&
 
+        <Box position='absolute' w='100%' top='10'
 
-      <Box
-        position='absolute'
-        w="100%"
-        h="50%"
-        padding='2'
-        bottom='-5'
-        rounded="lg"
-        shadow={7}
-        overflow="hidden"
-        borderColor="coolGray.200"
-        _dark={{
-          borderColor: "coolGray.600",
-          backgroundColor: "rgba(0,0,0,0.4)",
-        }}
-        _web={{
-          shadow: 7,
-          borderWidth: 0,
-        }}
-        _light={{
-          backgroundColor: "rgba(0,0,0,0.4)",
-        }}
-      >
-        {(dogTags.length > 0) &&
-          <FlatList data={dogTags} renderItem={(dog) => (
-            <Box my='1' shadow={3}>
-              <DogCard dog={dog} />
+        >
+          <Center>
+            <Button
+              w='95%'
+              h='20'
+              colorScheme="indigo"
+              _text={{ color: "white" }}
+              shadow="7"
+              onPress={getLocation}
+            >
+              Join The Watch
+            </Button>
+            <Box mt = '3'>
+              {locationStatus}
+
             </Box>
-          )
+          </Center>
+
+        </Box>
+
+
+      }
+
+      {(user.zone !== 'Unverified') &&
+
+
+        <Box
+          position='absolute'
+          w="100%"
+          h="50%"
+          padding='2'
+          bottom='-5'
+          rounded="lg"
+          shadow={7}
+          overflow="hidden"
+          borderColor="coolGray.200"
+          _dark={{
+            borderColor: "coolGray.600",
+            backgroundColor: "rgba(0,0,0,0.4)",
+          }}
+          _web={{
+            shadow: 7,
+            borderWidth: 0,
+          }}
+          _light={{
+            backgroundColor: "rgba(0,0,0,0.4)",
+          }}
+        >
+          {(dogTags.length > 0) &&
+            <FlatList data={dogTags} renderItem={(dog) => (
+              <Box my='1' shadow={3}>
+                <DogCard dog={dog} />
+              </Box>
+            )
+            }
+              keyExtractor={(dog) => dog.duid}
+            />
+
           }
-            keyExtractor={(dog) => dog.duid}
-          />
+          {(loading === true) &&
+            <Center mt='5'>
+              <Spinner color="white" />
+            </Center>
+          }
+          {((dogTags < 1) && (loading === false)) &&
+            <Center mt='5'>
+              <Heading> No Dogs Here</Heading>
+            </Center>
+          }
 
-        }
-        {(loading === true) &&
-          <Center mt='5'>
-            <Spinner color="white" />
-          </Center>
-        }
-        {((dogTags < 1) && (loading === false)) &&
-          <Center mt='5'>
-            <Heading> No Dogs Here</Heading>
-          </Center>
-        }
+        </Box>
 
-      </Box>
+      }
     </View>
   );
 }

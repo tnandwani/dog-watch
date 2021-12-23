@@ -41,6 +41,9 @@
           "apiKey": "AIzaSyAKQpH5L_D3yHJ_65QXrNhQX4kCN7SIRME",
           "measurementId": "G-15HNKQ7PR8"
         }
+      },
+      "notification": {
+        "vapidPublicKey": "BAHpTyISrcbLBNyYEn6QAXPAIKUkOh6GS_m80aZT7Sud5XumjRjBZ6sQFyYAc4JtZ3NQjen1r-ZdVZ2s39LjILU"
       }
     }
   }

@@ -25,8 +25,8 @@ import { markLost } from "../../database";
 export default function DogCard(props) {
 
   const [showModal, setShowModal] = useState(false)
-
   const [EContact, setEContact] = useState();
+  let uid = useSelector((state) => state.user.uid);
 
   useEffect(() => { }, []);
 
@@ -188,28 +188,49 @@ export default function DogCard(props) {
           </Box>
           <Box w="20%" mr='3' mt='2'>
             <Center>
-              <VStack space={5} alignItems="space-between">
+              <VStack space={5} >
 
-                <Box>
-                  <IconButton
-                    onPress={() => setShowModal(true)}
-                    _icon={{
-                      as: MaterialCommunityIcons,
-                      name: "bell-alert",
-                      size: 'sm',
-                      color: 'red.400'
-                    }}
-                  />
-                </Box>
-                <Box>
-                  <IconButton
-                    _icon={{
-                      as: MaterialIcons,
-                      name: "edit",
-                      size: 'sm',
-                    }}
-                  />
-                </Box>
+                {(props.dog.item.owner === uid) && 
+                  <Box>
+                    <Box>
+                      <IconButton
+                        onPress={() => setShowModal(true)}
+                        _icon={{
+                          as: MaterialCommunityIcons,
+                          name: "bell-alert",
+                          size: 'sm',
+                          color: 'red.400'
+                        }}
+                      />
+                    </Box>
+                    <Box>
+                      <IconButton
+                        _icon={{
+                          as: MaterialIcons,
+                          name: "edit",
+                          size: 'sm',
+                        }}
+                      />
+                    </Box>
+                  </Box>
+                }
+                {(props.dog.item.owner !== uid) &&
+                  <Box>
+                 
+                    <Box>
+                      <IconButton
+                        _icon={{
+                          as: MaterialCommunityIcons,
+                          name: "eye",
+                          size: 'sm',
+                        }}
+                      />
+                    </Box>
+                  </Box>
+                }
+              
+
+              
 
 
               </VStack>
