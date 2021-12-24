@@ -23,6 +23,7 @@
     "expo-image-picker": "~11.0.3",
     "expo-location": "~13.0.4",
     "expo-notifications": "~0.13.3",
+    "expo-server-sdk": "^3.6.0",
     "expo-status-bar": "~1.1.0",
     "firebase": "^9.6.1",
     "native-base": "^3.2.1",

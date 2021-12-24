@@ -56,6 +56,8 @@ import {
     query,
     where,
     updateDoc,
+    arrayUnion,
+    arrayRemove,
     doc
 } from 'firebase/firestore';
 const db = getFirestore();
@@ -70,6 +72,7 @@ import {
 import {
     saveDogPic
 } from './redux/slices/rawDogSlice';
+import { sendNotificationtoZone } from './notifcations/server';
 const storage = getStorage();
 
 // // analytics
@@ -411,10 +414,10 @@ export async function startPublish(imageURI, navigation) {
 }
 
 
-export function markLost(duid, EContact, index) {
+export function markLost(dog, EContact, index) {
 
     // mark in DOGS
-    const dogRef = doc(db, "dogs", duid);
+    const dogRef = doc(db, "dogs", dog.duid);
     updateDoc(dogRef, {
         lost: true,
         contact: EContact
@@ -444,24 +447,73 @@ export function markLost(duid, EContact, index) {
         console.log("marked personal dog as lost");
     });
 
+    const zone = store.getState().user.zone
 
-    // send out push notifications 
+
+    // get push Tokens
+    const zoneRef = doc(db, "zones", zone);
+    getDoc(zoneRef).then((docSnap) => {
+            if (docSnap.exists()) {
+                let members = docSnap.data().members
+                console.log("members:", members);
+                // send out push notifications 
+                // sendNotificationtoZone(dog, "please call" + EContact , members)
+            } else {
+                // doc.data() will be undefined in this case
+
+            }
+
+        })
+        .catch((error) => {
+            console.log("Error getting document:", error);
+
+        })
 
 
 }
 
 
-export function updateFireLocation(location) {
-    // post new dog list + update coords
+export async function updateFireLocation(location) {
+
+    // get user details
     const uid = store.getState().user.uid
+    const pushToken = store.getState().explore.pushToken
+    console.log("pushToken", pushToken)
 
     const userRef = doc(db, "users", uid);
     updateDoc(userRef, {
         zone: location.zone,
         longitude: location.coords.longitude,
         latitude: location.coords.latitude,
+        pushToken: pushToken
     }).then(() => {
         console.log("finished creating dog")
 
     })
+
+    // add to zones
+
+    const ref = doc(db, "zones", location.zone);
+    const zoneRef = await getDoc(ref);
+
+    if (zoneRef.exists()) {
+        updateDoc(zoneRef, {
+            members: arrayUnion(pushToken)
+
+        }).then((resp) => {
+            console.log(resp)
+
+        }).catch((err) => {
+            console.log(err)
+
+        })
+    } else {
+        // doc.data() will be undefined in this case
+        console.log("FIRST TIME ZONER");
+        setDoc(doc(db, "zones", location.zone), {
+            members: [pushToken]
+        });
+    }
+
+
 }

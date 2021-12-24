@@ -33,7 +33,7 @@ export default function DogCard(props) {
   const confirm = () => {
 
     // update db 
-    markLost(props.dog.item.duid, EContact, props.dog.index);
+    markLost(props.dog.item , EContact, props.dog.index);
 
     // close modal
     setShowModal(false)

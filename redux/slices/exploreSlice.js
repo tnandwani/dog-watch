@@ -21,10 +21,8 @@ export const exploreSlice = createSlice({
       state.myZone = action.payload
     },
     addTag: (state, action) => {
-      console.log("adding Tag", action.payload)
       if (action.payload.duid) {
         state.dogTags.push(action.payload)
-
       }
     },
     updateLoading: (state, action) => {
