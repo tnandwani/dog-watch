@@ -301,7 +301,7 @@ export default function DogCreator({ navigation }) {
                         </Select>
                     </FormControl>
                 </Flex>
-                <FormControl>
+                {/* <FormControl>
                     <FormControl.Label
                         _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
                         Emergency Contact
@@ -310,7 +310,7 @@ export default function DogCreator({ navigation }) {
                     <FormControl.HelperText>
                         only shown if dog is marked lost
                     </FormControl.HelperText>
-                </FormControl>
+                </FormControl> */}
 
                 <FormControl>
                     <Button mt="4" colorScheme="indigo" _text={{ color: 'white' }} shadow="7" onPress={getLocation}  > Mark Home </Button>

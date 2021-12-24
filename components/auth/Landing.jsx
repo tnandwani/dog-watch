@@ -38,7 +38,7 @@ export default function Landing({ navigation }) {
                 <Button
                     colorScheme="teal"
                     leftIcon={<Icon as={MaterialIcons} name="compass" size="md" />}
-                    onPress={() => navigation.navigate("Register")}
+                    onPress={() => navigation.navigate("Explore")}
                 >
                     Explore
                 </Button>
