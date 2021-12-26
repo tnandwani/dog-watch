@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 // maps
-import MapView, { PROVIDER_GOOGLE, Circle } from "react-native-maps";
-import { Marker } from "react-native-maps";
+import MapView, { PROVIDER_GOOGLE, Circle, Marker } from "react-native-maps";
+
 // expo location
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';

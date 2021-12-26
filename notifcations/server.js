@@ -1,12 +1,10 @@
-// import {
-//     Expo
-// } from 'expo-server-sdk';
+import {
+    Expo
+} from 'expo-server-sdk';
 
-// // Create a new Expo SDK client
-// // optionally providing an access token if you have enabled push security
-// let expo = new Expo({
-//     accessToken: process.env.EXPO_ACCESS_TOKEN
-// });
+// Create a new Expo SDK client
+// optionally providing an access token if you have enabled push security
+let expo = new Expo();
 
 export function sendNotificationtoZone(dog, message, zoneTokens) {
 
@@ -30,7 +28,7 @@ export function sendNotificationtoZone(dog, message, zoneTokens) {
         messages.push({
             to: pushToken,
             sound: 'default',
-            body: dog.dognName + ' is lost!',
+            body: dog.dogName + ' is lost!',
             data: {
                 withSome: message
             },

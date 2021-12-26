@@ -457,7 +457,7 @@ export function markLost(dog, EContact, index) {
                 let members = docSnap.data().members
                 console.log("members:", members);
                 // send out push notifications 
-                // sendNotificationtoZone(dog, "please call" + EContact , members)
+                sendNotificationtoZone(dog, "please call" + EContact , members)
             } else {
                 // doc.data() will be undefined in this case
 

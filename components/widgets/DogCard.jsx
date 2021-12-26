@@ -28,7 +28,9 @@ export default function DogCard(props) {
   const [EContact, setEContact] = useState();
   let uid = useSelector((state) => state.user.uid);
 
-  useEffect(() => { }, []);
+  useEffect(() => { 
+    console.log("is loading this card");
+  }, []);
 
   const confirm = () => {
 
@@ -49,7 +51,7 @@ export default function DogCard(props) {
         <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
           <Modal.Content maxWidth="400px">
             <Modal.CloseButton />
-            <Modal.Header colorScheme='red.500'>Mark Dog as Lost</Modal.Header>
+            <Modal.Header colorScheme='red.500'>Mark Dog as Lost???</Modal.Header>
             <Modal.Body>
               <FormControl isRequired>
                 <FormControl.Label>Emergency Contact</FormControl.Label>
@@ -63,21 +65,20 @@ export default function DogCard(props) {
             <Modal.Footer>
               <Button.Group space={2}>
                 <Button
-                  variant="outline"
-                  colorScheme="indigo"
+
                   onPress={() => {
                     setShowModal(false)
                   }}
                 >
-                  Cancel
+                  Close
                 </Button>
                 <Button
-                  colorScheme="red"
+
                   onPress={() => {
                     confirm();
                   }}
                 >
-                  Confirm
+                  Finish
                 </Button>
               </Button.Group>
             </Modal.Footer>
@@ -216,7 +217,6 @@ export default function DogCard(props) {
                 }
                 {(props.dog.item.owner !== uid) &&
                   <Box>
-                 
                     <Box>
                       <IconButton
                         _icon={{
@@ -229,9 +229,6 @@ export default function DogCard(props) {
                   </Box>
                 }
               
-
-              
-
 
               </VStack>
             </Center>

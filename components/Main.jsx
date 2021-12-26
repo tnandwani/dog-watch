@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import {Platform } from "react-native";
+
 import { useSelector, useDispatch } from "react-redux";
 
 //ICONS
@@ -74,20 +76,26 @@ export default function Main() {
 
 
     useEffect(() => {
-        registerForPushNotificationsAsync().then(token => dispatch(updatePushToken(token)));
 
-        notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-            setNotification(notification);
-        });
+        // If not mobile get address
+        if (Platform.OS !== 'web') {
+            registerForPushNotificationsAsync().then(token => dispatch(updatePushToken(token)));
 
-        responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-            console.log(response);
-        });
+            notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+                setNotification(notification);
+            });
 
-        return () => {
-            Notifications.removeNotificationSubscription(notificationListener.current);
-            Notifications.removeNotificationSubscription(responseListener.current);
-        };
+            responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+                console.log(response);
+            });
+
+            return () => {
+                Notifications.removeNotificationSubscription(notificationListener.current);
+                Notifications.removeNotificationSubscription(responseListener.current);
+            };
+
+        }
+        
     }, []);
 
     return (
