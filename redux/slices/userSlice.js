@@ -50,8 +50,9 @@ export const userSlice = createSlice({
       console.log("users dog list is: ", state.dogs)
     },
     markLostDog: (state, action) => {
-      state.dogs[action.payload.index].lost = true
+      state.dogs[action.payload.index].lost = action.payload.lost
       state.dogs[action.payload.index].contact = action.payload.EContact
+      console.log("redux dog list is: ",  state.dogs)
     },
     updateLocation: (state, action) => {
       console.log("attempt to locate:", action.payload)

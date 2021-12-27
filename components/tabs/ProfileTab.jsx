@@ -41,7 +41,6 @@ export default function ProfileTab({ navigation }) {
 
             <Button colorScheme="orange" mt='4' _text={{ color: 'white' }} onPress={() => signOutUser()} > Sign Out</Button>
 
-            {pushToken}
       
 
         </Box>

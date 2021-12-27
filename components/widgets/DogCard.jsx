@@ -16,115 +16,128 @@ import {
   Modal,
   FormControl,
   Input,
+  TextArea,
 } from "native-base";
 
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { markLost } from "../../database";
+import { markLost, markFound } from "../../database";
 
 
 export default function DogCard(props) {
 
-  const [showModal, setShowModal] = useState(false)
+  const [showAlertModal, setShowAlertModal] = useState(false)
+  const [showCancelModal, setShowCancelModal] = useState(false)
+
   const [EContact, setEContact] = useState();
+  const [message, setMessage] = useState();
+
   let uid = useSelector((state) => state.user.uid);
 
-  useEffect(() => { 
-    console.log("is loading this card");
+  useEffect(() => {
+    // dog card loaded
+
   }, []);
 
   const confirm = () => {
-
     // update db 
-    markLost(props.dog.item , EContact, props.dog.index);
-
+    markLost(props.dog.item, EContact, props.dog.index, message);
     // close modal
-    setShowModal(false)
+    setShowAlertModal(false)
+  }
 
-
+  const cancelAlert = () => {
+    // update db 
+    markFound(props.dog.item, props.dog.index);
+    // close modal
+    setShowCancelModal(false)
   }
   return (
     <Center w="100%">
 
-      {/* emergency ON */}
+      {/* TURN ALERT ON */}
+      <Modal isOpen={showAlertModal} onClose={() => setShowAlertModal(false)}>
+        <Modal.Content maxWidth="400px">
+          <Modal.CloseButton />
+          <Modal.Header colorScheme='red.500'>Mark Dog as Lost?</Modal.Header>
+          <Modal.Body>
 
-      {(!props.dog.item.lost) && 
-        <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-          <Modal.Content maxWidth="400px">
-            <Modal.CloseButton />
-            <Modal.Header colorScheme='red.500'>Mark Dog as Lost???</Modal.Header>
-            <Modal.Body>
-              <FormControl isRequired>
-                <FormControl.Label>Emergency Contact</FormControl.Label>
-                <Input onChangeText={(value) => setEContact(value)} />
-                <FormControl.HelperText>
-                  Are you sure you want to mark your dog as lost?
-                </FormControl.HelperText>
-              </FormControl>
+            <FormControl isRequired >
+              <FormControl.Label>Add Alert Details</FormControl.Label>
+              <TextArea onChangeText={(value) => setMessage(value)} />
 
-            </Modal.Body>
-            <Modal.Footer>
-              <Button.Group space={2}>
-                <Button
+            </FormControl>
+            <FormControl isRequired mt='2'>
+              <FormControl.Label>Emergency Contact</FormControl.Label>
+              <Input onChangeText={(value) => setEContact(value)} />
+              <FormControl.HelperText>
+                Are you sure you want to mark your dog as lost?
+              </FormControl.HelperText>
+            </FormControl>
 
-                  onPress={() => {
-                    setShowModal(false)
-                  }}
-                >
-                  Close
-                </Button>
-                <Button
+          </Modal.Body>
+          <Modal.Footer>
+            <Button.Group space={2}>
+              <Button
+                variant="outline"
+                colorScheme="indigo"
+                onPress={() => {
+                  setShowAlertModal(false)
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                colorScheme="error"
+                onPress={() => {
+                  confirm();
+                }}
+              >
+                Confirm
+              </Button>
+            </Button.Group>
+          </Modal.Footer>
+        </Modal.Content>
+      </Modal>
 
-                  onPress={() => {
-                    confirm();
-                  }}
-                >
-                  Finish
-                </Button>
-              </Button.Group>
-            </Modal.Footer>
-          </Modal.Content>
-        </Modal>
-      }
-      {(props.dog.item.lost) &&
-        <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-          <Modal.Content maxWidth="400px">
-            <Modal.CloseButton />
-            <Modal.Header colorScheme='emerald.500'>Mark Dog as Found</Modal.Header>
-            <Modal.Body>
-              <FormControl isRequired>
-                <FormControl.Label>Emergency Contact</FormControl.Label>
-                <Input onChangeText={(value) => setEContact(value)} />
-                <FormControl.HelperText>
-                  Are you sure you want to mark your dog as found?
-                </FormControl.HelperText>
-              </FormControl>
+      {/* TURN ALERT OFF */}
+      <Modal isOpen={showCancelModal} onClose={() => setShowCancelModal(false)}>
+        <Modal.Content maxWidth="400px">
+          <Modal.CloseButton />
+          <Modal.Header colorScheme='emerald.500'>Mark Dog as Found?</Modal.Header>
+          <Modal.Body>
+            <FormControl>
+              <FormControl.HelperText>
+                Are you sure you want to mark your dog as found?
+              </FormControl.HelperText>
+            </FormControl>
 
-            </Modal.Body>
-            <Modal.Footer>
-              <Button.Group space={2}>
-                <Button
-                  variant="outline"
-                  colorScheme="indigo"
-                  onPress={() => {
-                    setShowModal(false)
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  colorScheme="emerald"
-                  onPress={() => {
-                    confirm();
-                  }}
-                >
-                  Confirm
-                </Button>
-              </Button.Group>
-            </Modal.Footer>
-          </Modal.Content>
-        </Modal>
-      }
-   
+          </Modal.Body>
+          <Modal.Footer>
+            <Button.Group space={2}>
+              <Button
+                variant="outline"
+                colorScheme="indigo"
+                onPress={() => {
+                  setShowCancelModal(false)
+                }}
+              >
+                Close
+              </Button>
+              <Button
+                colorScheme="emerald"
+                onPress={() => {
+                  cancelAlert();
+                }}
+              >
+                Cancel Alert
+              </Button>
+            </Button.Group>
+          </Modal.Footer>
+        </Modal.Content>
+      </Modal>
+
+
+
       <Box
         w="100%"
         rounded="lg"
@@ -191,19 +204,38 @@ export default function DogCard(props) {
             <Center>
               <VStack space={5} >
 
-                {(props.dog.item.owner === uid) && 
+                {(props.dog.item.owner === uid) &&
                   <Box>
-                    <Box>
-                      <IconButton
-                        onPress={() => setShowModal(true)}
-                        _icon={{
-                          as: MaterialCommunityIcons,
-                          name: "bell-alert",
-                          size: 'sm',
-                          color: 'red.400'
-                        }}
-                      />
-                    </Box>
+                    {/* IF DOG NOT LOST */}
+                    {(!props.dog.item.lost) &&
+                      <Box>
+                        <IconButton
+                          onPress={() => setShowAlertModal(true)}
+                          _icon={{
+                            as: MaterialCommunityIcons,
+                            name: "bell-alert",
+                            size: 'sm',
+                            color: 'red.400'
+                          }}
+                        />
+                      </Box>
+                    }
+                    {/* IF LOST DOG */}
+                    {(props.dog.item.lost) &&
+                      <Box>
+                        <IconButton
+                          onPress={() => setShowCancelModal(true)}
+                          _icon={{
+                            as: MaterialCommunityIcons,
+                            name: "bell-cancel",
+                            size: 'sm',
+                            color: 'emerald.400'
+                          }}
+                        />
+                      </Box>
+                    }
+
+
                     <Box>
                       <IconButton
                         _icon={{
@@ -228,7 +260,7 @@ export default function DogCard(props) {
                     </Box>
                   </Box>
                 }
-              
+
 
               </VStack>
             </Center>

@@ -3705,8 +3705,6 @@ expo-server-sdk@^3.6.0:
   dependencies:
     node-fetch "^2.6.0"
     promise-limit "^2.7.0"
-    zlib "~1.0.5"
-
 
 expo-status-bar@~1.1.0:
   version "1.1.0"
@@ -3762,6 +3760,10 @@ extglob@^2.0.4:
     regex-not "^1.0.0"
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
+
+fast-base64-decode@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/fast-base64-decode/-/fast-base64-decode-1.0.0.tgz#b434a0dd7d92b12b43f26819300d2dafb83ee418"
 
 fast-glob@^3.2.5:
   version "3.2.7"
@@ -5832,6 +5834,12 @@ react-native-gesture-handler@~1.10.2:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
+react-native-get-random-values@~1.7.0:
+  version "1.7.2"
+  resolved "https://registry.yarnpkg.com/react-native-get-random-values/-/react-native-get-random-values-1.7.2.tgz#60a9b6497d22e713779b71139f016a5fcec7ac04"
+  dependencies:
+    fast-base64-decode "^1.0.0"
+
 react-native-maps@0.28.1:
   version "0.28.1"
   resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.28.1.tgz#f3d9a919f403f1103a70e94f651462e65c7ca6db"
@@ -7047,3 +7055,7 @@ yargs@^16.1.1:
 yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
+
+zlib@~1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/zlib/-/zlib-1.0.5.tgz#6e7c972fc371c645a6afb03ab14769def114fcc0"

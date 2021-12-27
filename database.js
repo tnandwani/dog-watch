@@ -3,6 +3,7 @@ import {
     firebaseConfig
 } from './constants';
 
+import 'react-native-get-random-values';
 import {
     v4 as uuidv4
 } from 'uuid';
@@ -72,7 +73,9 @@ import {
 import {
     saveDogPic
 } from './redux/slices/rawDogSlice';
-import { sendNotificationtoZone } from './notifcations/server';
+import {
+    sendNotificationtoZone
+} from './notifcations/server';
 const storage = getStorage();
 
 // // analytics
@@ -414,7 +417,9 @@ export async function startPublish(imageURI, navigation) {
 }
 
 
-export function markLost(dog, EContact, index) {
+export function markLost(dog, EContact, index, message) {
+
+    let lost = true
 
     // mark in DOGS
     const dogRef = doc(db, "dogs", dog.duid);
@@ -429,8 +434,9 @@ export function markLost(dog, EContact, index) {
     // send changes to redux 
     store.dispatch(markLostDog({
         index,
-        EContact
-    }))
+        EContact,
+        lost
+    }));
 
     // const newList = get old list of user.dogs
     const newDogList = store.getState().user.dogs
@@ -457,7 +463,7 @@ export function markLost(dog, EContact, index) {
                 let members = docSnap.data().members
                 console.log("members:", members);
                 // send out push notifications 
-                sendNotificationtoZone(dog, "please call" + EContact , members)
+                sendNotificationtoZone(dog, message, members)
             } else {
                 // doc.data() will be undefined in this case
 
@@ -468,6 +474,43 @@ export function markLost(dog, EContact, index) {
             console.log("Error getting document:", error);
 
         })
+
+
+}
+
+export async function markFound(dog, index) {
+     let lost = false;
+     let EContact = dog.contact
+     // mark in DOGS
+     const dogRef = doc(db, "dogs", dog.duid);
+     updateDoc(dogRef, {
+         lost: lost
+     }).then(() => {
+         console.log("marked public dog as found");
+     });
+
+
+     // send changes to redux 
+     store.dispatch(markLostDog({
+         index,
+         EContact,
+         lost
+     }));
+
+     // const newList = get old list of user.dogs
+     const newDogList = store.getState().user.dogs
+     const uid = store.getState().user.uid
+
+     console.log("new list is: ", newDogList)
+
+     // post newList
+     // mark in DOGS
+     const usersRef = doc(db, "users", uid);
+     updateDoc(usersRef, {
+         dogs: newDogList,
+     }).then(() => {
+         console.log("marked personal dog as found");
+     });
 
 
 }
@@ -512,6 +555,26 @@ export async function updateFireLocation(location) {
         console.log("FIRST TIME ZONER");
         setDoc(doc(db, "zones", location.zone), {
             members: [pushToken]
+        });
+    }
+
+
+}
+
+
+export function updateDogList(newList, uid) {
+
+    console.log("about to add: ", newList);
+
+    const usersRef = doc(db, "users", uid);
+
+    if (newList === undefined) {
+        console.log("waiting for proxy")
+    } else {
+        updateDoc(usersRef, {
+            dogs: newList
+        }).then(() => {
+            console.log("marked personal dog as lost");
         });
     }
 

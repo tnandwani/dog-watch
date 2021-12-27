@@ -28,7 +28,7 @@ export function sendNotificationtoZone(dog, message, zoneTokens) {
         messages.push({
             to: pushToken,
             sound: 'default',
-            body: dog.dogName + ' is lost!',
+            body: message,
             data: {
                 withSome: message
             },
