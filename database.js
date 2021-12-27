@@ -143,7 +143,10 @@ export function createUserAccount(email, password) {
         .catch((error) => {
             // analytics.logEvent("error: creating user");
             // analytics.logEvent(error.message);
-            Analytics.logEvent('firebase_error', error)
+            console.log(error.message);
+            Analytics.logEvent('fire_error', {
+                message: error.message
+            })
 
 
             // ..
@@ -174,7 +177,9 @@ export async function createUserDoc(email, uid) {
 
     } catch (e) {
         console.error("Error adding document: ", e);
-        Analytics.logEvent('firebase_error', e)
+        Analytics.logEvent('fire_error', {
+            message: e.message
+        })
 
     }
 
@@ -190,10 +195,11 @@ export function signInUser(email, password) {
             getUserDetails(user.uid);
         })
         .catch((error) => {
-            var errorCode = error.code;
-            var errorMessage = error.message;
+
             console.log(errorMessage);
-            Analytics.logEvent('firebase_error', error)
+            Analytics.logEvent('fire_error', {
+                message: error.message
+            })
 
         });
 }
@@ -254,7 +260,9 @@ export async function unwrapDogs(dogs) {
                     })
                     .catch((error) => {
                         console.log("Error getting document:", error);
-                        Analytics.logEvent('firebase_error', error)
+                        Analytics.logEvent('fire_error', {
+                            message: error.message
+                        })
 
                     })
 
@@ -283,6 +291,7 @@ export async function compareTask(lat, long) {
     // create bubble zone query
     const latQ = query(dogsRef, where("latitude", ">=", lat - 0.15), where("latitude", "<=", lat + 0.15));
     const longQ = query(dogsRef, where("longitude", ">=", long - 0.15), where("longitude", "<=", long + 0.15));
+    Analytics.logEvent('got_homies_locations')
 
     const latSnapshot = await getDocs(latQ);
     const longSnapshot = await getDocs(longQ);
@@ -299,6 +308,7 @@ export async function compareTask(lat, long) {
         // doc.data() is never undefined for query doc snapshots
         longArray.push(doc.data())
     });
+    Analytics.logEvent('got_homies_data')
 
 
     const bubbleArray = latArray.filter(a => longArray.some(b => a.duid === b.duid));
@@ -312,7 +322,7 @@ export async function compareTask(lat, long) {
 export async function getHomies(lat, long) {
 
     console.log("getting homies in", );
-    // analytics.logEvent('getting tags');
+    Analytics.logEvent('getting_homies_start')
 
 
     var bubbleTask = compareTask(lat, long);
@@ -335,6 +345,8 @@ export async function getHomies(lat, long) {
         // }
 
     })
+    Analytics.logEvent('got_homies_finish')
+
 
 }
 
@@ -410,14 +422,18 @@ export async function startPublish(imageURI, navigation) {
                     })
                 })
                 .catch((error) => {
-                    Analytics.logEvent('firebase_error', error)
+                    Analytics.logEvent('fire_error', {
+                        message: error.message
+                    })
 
                 })
 
         });
     }).catch((error) => {
         console.log(error)
-        Analytics.logEvent('firebase_error', error)
+        Analytics.logEvent('fire_error', {
+            message: error.message
+        })
 
     })
 
@@ -487,7 +503,9 @@ export function markLost(dog, EContact, index, message) {
         })
         .catch((error) => {
             console.log("Error getting document:", error);
-            Analytics.logEvent('firebase_error', error)
+            Analytics.logEvent('fire_error', {
+                message: error.message
+            })
 
 
         })
@@ -561,11 +579,15 @@ export async function updateFireLocation(location) {
             members: arrayUnion(pushToken)
 
         }).then((resp) => {
-            console.log(resp)
+            console.log(resp);
+            Analytics.logEvent('joined_nieghborhood')
+
 
         }).catch((err) => {
             console.log(err)
-            Analytics.logEvent('firebase_error', err)
+            Analytics.logEvent('fire_error', {
+                message: err.message
+            })
 
 
         })

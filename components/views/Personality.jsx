@@ -231,9 +231,9 @@ export default function Personality({ navigation }) {
 
             </VStack>
 
-            <Divider thickness="4" my='4' />
+            {/* <Divider thickness="4" my='4' /> */}
 
-            <RawDogCard image={profileImage} />
+            {/* <RawDogCard image={profileImage} /> */}
 
             <Center flex={1} >
 

@@ -47,7 +47,7 @@ export default function DogCreator({ navigation }) {
         Analytics.logEvent('create_dog_opened')
 
     }, []);
-    
+
     // dog details 
     const [dogName, setDogName] = useState();
     const [breed, setBreed] = useState();
@@ -257,21 +257,21 @@ export default function DogCreator({ navigation }) {
                     </FormControl>
                 </Flex>
 
+
                 <Flex
                     direction="row"
-                    mb="2.5"
+                    mt="1.5"
                     _text={{
                         color: "coolGray.800",
                     }}
                 >
-                    <FormControl w='49%'>
+                    <FormControl w='49%' >
                         <FormControl.Label
                             _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
                             Age
                         </FormControl.Label>
                         <Select
                             selectedValue={age}
-                            minWidth="200"
                             accessibilityLabel="Choose Age"
                             placeholder="Choose Age"
                             _selectedItem={{
@@ -284,8 +284,6 @@ export default function DogCreator({ navigation }) {
                             <Select.Item label="2" value="2" />
                             <Select.Item label="3" value="3" />
                             <Select.Item label="4" value="4" />
-
-
                         </Select>
                     </FormControl>
                     <Spacer />
@@ -296,8 +294,7 @@ export default function DogCreator({ navigation }) {
                         </FormControl.Label>
                         <Select
                             selectedValue={visibility}
-                            minWidth="200"
-                            accessibilityLabel="Choose Dog Visibility"
+                            accessibilityLabel="Choose Visibility"
                             placeholder="Choose Visibility"
                             _selectedItem={{
                                 bg: "teal.600",
@@ -305,13 +302,13 @@ export default function DogCreator({ navigation }) {
                             }}
                             onValueChange={(value) => updateVisibility(value)}
                         >
-
                             <Select.Item label="Neighborhood" value="n" />
                             <Select.Item label="Private" value="p" />
 
                         </Select>
                     </FormControl>
                 </Flex>
+
 
                 <FormControl>
                     <Button mt="4" colorScheme="indigo" _text={{ color: 'white' }} shadow="7" onPress={getLocation}  > Mark Home </Button>
