@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import * as Analytics from 'expo-firebase-analytics';
 
 import RawDogCard from '../widgets/RawDogCard'
 import { startPublish } from '../../database';
@@ -28,6 +29,11 @@ import { savePersonality } from '../../redux/slices/rawDogSlice';
 
 
 export default function Personality({ navigation }) {
+
+
+    useEffect(() => {
+        Analytics.logEvent('create_dog_personality_opened')
+    }, []);
 
     const dispatch = useDispatch()
 

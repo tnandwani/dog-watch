@@ -94,7 +94,7 @@ onAuthStateChanged(auth, user => {
             uid
         }))
         getUserDetails(uid);
-        Analytics.logEvent('Logged in by Expo Analytics')
+        Analytics.logEvent('Logged_in')
 
     } else {
         store.dispatch(changeStatus('new'))
@@ -135,6 +135,7 @@ export function createUserAccount(email, password) {
             // Signed in 
             // Get UID 
             const uid = userCredential.user.uid
+            Analytics.logEvent('Create_user_start')
 
             // Sign In
             createUserDoc(email, uid)
@@ -142,6 +143,7 @@ export function createUserAccount(email, password) {
         .catch((error) => {
             // analytics.logEvent("error: creating user");
             // analytics.logEvent(error.message);
+            Analytics.logEvent('firebase_error', error)
 
 
             // ..
@@ -167,9 +169,13 @@ export async function createUserDoc(email, uid) {
         }));
 
         store.dispatch(changeStatus('returning'))
+        Analytics.logEvent('Create_user_finish')
+
 
     } catch (e) {
         console.error("Error adding document: ", e);
+        Analytics.logEvent('firebase_error', e)
+
     }
 
 }
@@ -187,7 +193,7 @@ export function signInUser(email, password) {
             var errorCode = error.code;
             var errorMessage = error.message;
             console.log(errorMessage);
-            // analytics.logEvent("error: signing in");
+            Analytics.logEvent('firebase_error', error)
 
         });
 }
@@ -220,9 +226,8 @@ export async function getUserDetails(uid) {
 
 export function setScreenAnalytics(screenName) {
     console.log('state changed', screenName);
-    // setCurrentScreen(analytics, screenName,{
-    //     firebaseScreen: screenName
-    // } )
+    Analytics.logEvent('Opened_' + screenName)
+
 }
 
 
@@ -249,6 +254,7 @@ export async function unwrapDogs(dogs) {
                     })
                     .catch((error) => {
                         console.log("Error getting document:", error);
+                        Analytics.logEvent('firebase_error', error)
 
                     })
 
@@ -336,6 +342,8 @@ export async function getHomies(lat, long) {
 
 export async function startPublish(imageURI, navigation) {
 
+    Analytics.logEvent('Create_dog_start')
+
     // get owner
     const uid = store.getState().user.uid
     store.dispatch(saveOwner(uid))
@@ -364,10 +372,12 @@ export async function startPublish(imageURI, navigation) {
     const storageRef = ref(storage, 'profileImages/' + duid + '.jpg');
     uploadBytes(storageRef, blob).then((snapshot) => {
         console.log('Uploaded a blob or file!');
+        Analytics.logEvent('Created_dog_photo')
 
         // get download URL
         getDownloadURL(snapshot.ref).then((PURI) => {
             console.log('File available at', PURI);
+            Analytics.logEvent('Created_dog_photoURL')
 
             // add url to redux
             store.dispatch(saveDogPic(PURI))
@@ -377,7 +387,7 @@ export async function startPublish(imageURI, navigation) {
 
             setDoc(doc(db, "dogs", duid), readyDog)
                 .then((resp) => {
-
+                    Analytics.logEvent('Created_dog_doc')
                     // add readyDog to user.dogs redux 
                     store.dispatch(addDogtoUser(readyDog))
 
@@ -393,17 +403,22 @@ export async function startPublish(imageURI, navigation) {
                         latitude: readyDog.latitude,
                     }).then((resp) => {
                         console.log("finished creating dog")
+                        Analytics.logEvent('Created_dog_finish')
+
                         navigation.navigate('Profile')
 
                     })
                 })
-                .catch((err) => {
+                .catch((error) => {
+                    Analytics.logEvent('firebase_error', error)
 
                 })
 
         });
     }).catch((error) => {
         console.log(error)
+        Analytics.logEvent('firebase_error', error)
+
     })
 
 }
@@ -464,6 +479,8 @@ export function markLost(dog, EContact, index, message) {
         })
         .catch((error) => {
             console.log("Error getting document:", error);
+            Analytics.logEvent('firebase_error', error)
+
 
         })
 
@@ -471,38 +488,38 @@ export function markLost(dog, EContact, index, message) {
 }
 
 export async function markFound(dog, index) {
-     let lost = false;
-     let EContact = dog.contact
-     // mark in DOGS
-     const dogRef = doc(db, "dogs", dog.duid);
-     updateDoc(dogRef, {
-         lost: lost
-     }).then(() => {
-         console.log("marked public dog as found");
-     });
+    let lost = false;
+    let EContact = dog.contact
+    // mark in DOGS
+    const dogRef = doc(db, "dogs", dog.duid);
+    updateDoc(dogRef, {
+        lost: lost
+    }).then(() => {
+        console.log("marked public dog as found");
+    });
 
 
-     // send changes to redux 
-     store.dispatch(markLostDog({
-         index,
-         EContact,
-         lost
-     }));
+    // send changes to redux 
+    store.dispatch(markLostDog({
+        index,
+        EContact,
+        lost
+    }));
 
-     // const newList = get old list of user.dogs
-     const newDogList = store.getState().user.dogs
-     const uid = store.getState().user.uid
+    // const newList = get old list of user.dogs
+    const newDogList = store.getState().user.dogs
+    const uid = store.getState().user.uid
 
-     console.log("new list is: ", newDogList)
+    console.log("new list is: ", newDogList)
 
-     // post newList
-     // mark in DOGS
-     const usersRef = doc(db, "users", uid);
-     updateDoc(usersRef, {
-         dogs: newDogList,
-     }).then(() => {
-         console.log("marked personal dog as found");
-     });
+    // post newList
+    // mark in DOGS
+    const usersRef = doc(db, "users", uid);
+    updateDoc(usersRef, {
+        dogs: newDogList,
+    }).then(() => {
+        console.log("marked personal dog as found");
+    });
 
 
 }
@@ -540,6 +557,8 @@ export async function updateFireLocation(location) {
 
         }).catch((err) => {
             console.log(err)
+            Analytics.logEvent('firebase_error', err)
+
 
         })
     } else {

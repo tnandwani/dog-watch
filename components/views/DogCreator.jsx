@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import * as ImagePicker from 'expo-image-picker';
 
+import * as Analytics from 'expo-firebase-analytics';
+
 // Location
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
@@ -40,6 +42,12 @@ import { saveDogPic } from '../../redux/slices/rawDogSlice';
 
 export default function DogCreator({ navigation }) {
 
+    useEffect(() => {
+
+        Analytics.logEvent('create_dog_opened')
+
+    }, []);
+    
     // dog details 
     const [dogName, setDogName] = useState();
     const [breed, setBreed] = useState();
@@ -85,7 +93,14 @@ export default function DogCreator({ navigation }) {
         dispatch(saveVisibility(g));
     }
 
-    useEffect(() => {
+  
+
+    const cancelCreate = () => {
+        Analytics.logEvent('create_dog_canceled')
+        navigation.goBack()
+    }
+
+    const pickImage = async () => {
         (async () => {
             if (Platform.OS !== 'web') {
                 const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -94,10 +109,6 @@ export default function DogCreator({ navigation }) {
                 }
             }
         })();
-    }, []);
-
-
-    const pickImage = async () => {
 
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -301,16 +312,6 @@ export default function DogCreator({ navigation }) {
                         </Select>
                     </FormControl>
                 </Flex>
-                {/* <FormControl>
-                    <FormControl.Label
-                        _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
-                        Emergency Contact
-                    </FormControl.Label>
-                    <Input type='number ' placeholder='(000) 000 - 0000' onChangeText={(value) => updateContact(value)} />
-                    <FormControl.HelperText>
-                        only shown if dog is marked lost
-                    </FormControl.HelperText>
-                </FormControl> */}
 
                 <FormControl>
                     <Button mt="4" colorScheme="indigo" _text={{ color: 'white' }} shadow="7" onPress={getLocation}  > Mark Home </Button>
@@ -335,7 +336,7 @@ export default function DogCreator({ navigation }) {
 
 
                 <HStack space={2} mt='3'>
-                    <Button variant="outline" colorScheme="indigo" onPress={() => navigation.goBack()}>
+                    <Button variant="outline" colorScheme="indigo" onPress={() => cancelCreate()}>
                         Cancel
                     </Button>
                     <Button colorScheme="indigo" onPress={() => navigation.navigate("Personality")
