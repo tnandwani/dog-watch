@@ -78,15 +78,7 @@ import {
 } from './notifcations/server';
 const storage = getStorage();
 
-// // analytics
-// import { 
-//     getAnalytics, 
-//     logEvent,
-//     setCurrentScreen    
-// } from "firebase/analytics";
-
-// const analytics = getAnalytics();
-
+import * as Analytics from 'expo-firebase-analytics';
 
 ////////// APP START
 
@@ -102,7 +94,7 @@ onAuthStateChanged(auth, user => {
             uid
         }))
         getUserDetails(uid);
-        // logEvent(analytics, 'EXPO SIGNED IN ;)');        // ...
+        Analytics.logEvent('Logged in by Expo Analytics')
 
     } else {
         store.dispatch(changeStatus('new'))

@@ -12,7 +12,6 @@ export const userSlice = createSlice({
     zone: "Unverified",
     username: null,
     dogs: [],
-    dogCards: [],
     status: 'loading'
   },
   reducers: {
