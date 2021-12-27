@@ -34,7 +34,9 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.tushar.dog_watch",
+      "googleServicesFile": "./assets/configs/google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png",

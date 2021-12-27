@@ -426,6 +426,8 @@ export async function startPublish(imageURI, navigation) {
 
 export function markLost(dog, EContact, index, message) {
 
+    Analytics.logEvent('dog_marked_lost_start')
+
     let lost = true
 
     // mark in DOGS
@@ -435,6 +437,8 @@ export function markLost(dog, EContact, index, message) {
         contact: EContact
     }).then(() => {
         console.log("marked public dog as lost");
+        Analytics.logEvent('dog_marked_lost_publicly')
+
     });
 
 
@@ -458,6 +462,8 @@ export function markLost(dog, EContact, index, message) {
         dogs: newDogList,
     }).then(() => {
         console.log("marked personal dog as lost");
+        Analytics.logEvent('dog_marked_lost_privately')
+
     });
 
     const zone = store.getState().user.zone
@@ -471,6 +477,8 @@ export function markLost(dog, EContact, index, message) {
                 console.log("members:", members);
                 // send out push notifications 
                 sendNotificationtoZone(dog, message, members)
+                Analytics.logEvent('dog_lost_notification_sent')
+
             } else {
                 // doc.data() will be undefined in this case
 
