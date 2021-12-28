@@ -40,14 +40,19 @@
     },
     "web": {
       "favicon": "./assets/favicon.png",
+      "notification": {
+        "vapidPublicKey": "BAHpTyISrcbLBNyYEn6QAXPAIKUkOh6GS_m80aZT7Sud5XumjRjBZ6sQFyYAc4JtZ3NQjen1r-ZdVZ2s39LjILU"
+      },
       "config": {
         "firebase": {
           "apiKey": "AIzaSyAKQpH5L_D3yHJ_65QXrNhQX4kCN7SIRME",
+          "authDomain": "dog-watch-13a9e.firebaseapp.com",
+          "projectId": "dog-watch-13a9e",
+          "storageBucket": "dog-watch-13a9e.appspot.com",
+          "messagingSenderId": "967841760251",
+          "appId": "1:967841760251:web:c0049d560200896706415e",
           "measurementId": "G-15HNKQ7PR8"
         }
-      },
-      "notification": {
-        "vapidPublicKey": "BAHpTyISrcbLBNyYEn6QAXPAIKUkOh6GS_m80aZT7Sud5XumjRjBZ6sQFyYAc4JtZ3NQjen1r-ZdVZ2s39LjILU"
       }
       
     }

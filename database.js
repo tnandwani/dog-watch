@@ -33,6 +33,7 @@ import {
 import {
     initializeApp,
 } from 'firebase/app';
+
 initializeApp(firebaseConfig)
 
 // auth 
@@ -78,7 +79,8 @@ import {
 } from './notifcations/server';
 const storage = getStorage();
 
-import * as Analytics from 'expo-firebase-analytics';
+import * as Analytics from 'expo-firebase-analytics'; 
+
 
 ////////// APP START
 
