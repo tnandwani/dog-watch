@@ -62,7 +62,7 @@ export default function DogCreator({ navigation }) {
     // location
     const [visibility, setVisibility] = useState();
     const [location, setLocation] = useState();
-    const [locationStatus, setLocationStatus] = useState("No Location Found");
+    const [locationStatus, setLocationStatus] = useState("Location will not be public");
 
 
     const dispatch = useDispatch()
