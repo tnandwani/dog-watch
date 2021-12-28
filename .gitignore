@@ -10,8 +10,9 @@ npm-debug.*
 web-build/
 
 constants.js
-app.json
 assets/configs
+app.json
+
 
 # macOS
 .DS_Store
