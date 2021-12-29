@@ -16,8 +16,7 @@ import { getUserDetails, signOutUser } from '../../database';
 
 export default function ProfileTab({ navigation }) {
 
-    const dogCards = useSelector((state) => state.user.dogs)
-    const uid = useSelector((state) => state.user.uid)
+    const user = useSelector((state) => state.user)
     const pushToken = useSelector((state) => state.explore.pushToken)
 
 
@@ -25,8 +24,8 @@ export default function ProfileTab({ navigation }) {
         <Box m='3'>
             {/* add dog card for each  */}
 
-            {( dogCards.length > 0) && 
-                <FlatList data={dogCards} renderItem={(dog) => (
+            {(user.dogs.length > 0) &&
+                <FlatList data={user.dogs} renderItem={(dog) => (
                     <Box my='1'>
                         <DogCard dog={dog} />
 
@@ -36,12 +35,11 @@ export default function ProfileTab({ navigation }) {
                     keyExtractor={(dog) => dog.profileImage}
                 />
             }
-        
+
+
             <Button mt="5" colorScheme="indigo" variant="outline" onPress={() => navigation.navigate("DogCreator")}> + Add Dog </Button>
 
             <Button colorScheme="orange" mt='4' _text={{ color: 'white' }} onPress={() => signOutUser()} > Sign Out</Button>
-
-      
 
         </Box>
     )

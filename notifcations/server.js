@@ -6,16 +6,16 @@ import {
 // optionally providing an access token if you have enabled push security
 let expo = new Expo();
 
-export function sendNotificationtoZone(dog, message, zoneTokens) {
+export function sendNotificationtoZone(dog, message, listTokens, senderToken, EContact) {
 
-    console.log("members:", zoneTokens)
-    console.log("dog:", dog)
-    console.log("message:", message)
-
-
+    let createdDate = new Date().toLocaleDateString('en-us', {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+    })
     // Create the messages that you want to send to clients
     let messages = [];
-    for (let pushToken of zoneTokens) {
+    for (let pushToken of listTokens) {
         // Each push token looks like ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx]
 
         // Check that all your push tokens appear to be valid Expo push tokens
@@ -30,7 +30,11 @@ export function sendNotificationtoZone(dog, message, zoneTokens) {
             sound: 'default',
             body: message,
             data: {
-                withSome: message
+                dog: dog,
+                message: message,
+                date: createdDate,
+                senderToken: senderToken,
+                EContact: EContact
             },
         })
     }

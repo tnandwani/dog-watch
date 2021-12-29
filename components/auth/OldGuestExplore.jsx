@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 // maps
-import IMap from '../views/imap'
+import MapView, { PROVIDER_GOOGLE, Circle, Marker } from "react-native-maps";
+
 // expo location
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
@@ -10,6 +11,7 @@ import * as Location from 'expo-location';
 
 import { StyleSheet, View, Dimensions, Platform } from "react-native";
 import { getHomies, updateFireLocation } from "../../database";
+import { mapStyling } from "../../constants";
 import DogCard from '../widgets/DogCard'
 
 import { Box, Button, Center, FlatList, Heading, Spinner } from "native-base";
@@ -100,19 +102,54 @@ export default function GuestExplore() {
     );
   }
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
 
       {(user.zone !== 'Unverified') &&
+        <MapView
+          style={styles.map}
+          provider={PROVIDER_GOOGLE}
+          customMapStyle={mapStyling}
+          initialRegion={{
+            latitude: user.latitude - 0.03,
+            longitude: user.longitude,
+            longitudeDelta: 0.1,
+            latitudeDelta: 0.1,
+          }}
+        >
 
-        <IMap minLong={user.longitude - 0.03} minLat={user.latitude - 0.08} maxLong={user.longitude + 0.03} maxLat={user.latitude } />
+          <Circle center={{
+            latitude: user.latitude,
+            longitude: user.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+            radius={1610}
+            strokeWidth={0}
+            fillColor='rgba(99,102,241, 0.6)'
+          />
+        </MapView>
 
       }
       {(user.zone === 'Unverified') &&
-        <IMap minLong={-115.28719067573549} minLat={0.12038549863730057} maxLong={-82.32820630073549} maxLat={55.2976194318208}/>
+        <MapView
+          style={styles.map}
+          provider={PROVIDER_GOOGLE}
+          customMapStyle={mapStyling}
+          initialRegion={{
+            latitude: 39.8283,
+            longitude: -98.5795,
+            longitudeDelta: 50.0,
+            latitudeDelta: 50.0,
+          }}
+        />
+
       }
+
       {(user.zone === 'Unverified') &&
 
-        <Box position='absolute' w='100%' top='10'>
+        <Box position='absolute' w='100%' top='10'
+
+        >
           <Center>
             <Button
               w='95%'
@@ -126,6 +163,7 @@ export default function GuestExplore() {
             </Button>
             <Box mt='3'>
               {locationStatus}
+
             </Box>
           </Center>
 
@@ -187,3 +225,16 @@ export default function GuestExplore() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  map: {
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
+  },
+});

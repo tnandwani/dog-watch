@@ -79,7 +79,7 @@ import {
 } from './notifcations/server';
 const storage = getStorage();
 
-import * as Analytics from 'expo-firebase-analytics'; 
+import * as Analytics from 'expo-firebase-analytics';
 
 
 ////////// APP START
@@ -485,16 +485,15 @@ export function markLost(dog, EContact, index, message) {
     });
 
     const zone = store.getState().user.zone
-
+    const senderToken = store.getState().user.pushToken
 
     // get push Tokens
     const zoneRef = doc(db, "zones", zone);
     getDoc(zoneRef).then((docSnap) => {
             if (docSnap.exists()) {
                 let members = docSnap.data().members
-                console.log("members:", members);
                 // send out push notifications 
-                sendNotificationtoZone(dog, message, members)
+                sendNotificationtoZone(dog, message, members, senderToken, EContact)
                 Analytics.logEvent('dog_lost_notification_sent')
 
             } else {

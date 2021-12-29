@@ -1,6 +1,10 @@
 import React from "react";
+import { useSelector, useDispatch } from 'react-redux'
 
+
+import NotificationCard from '../widgets/NotificationCard';
 import EventCard from "../widgets/EventCard";
+
 // UI
 import {
   Box,
@@ -18,22 +22,14 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 export default function HomeTab() {
+
+  const user = useSelector((state) => state.user)
+
   return (
     <Box m="4">
-      <HStack justifyContent="space-between">
-        <Heading>Nearby Events</Heading>
-        <Button variant="outline" colorScheme="indigo" size="sm">
-          Host Event
-        </Button>
-      </HStack>
-      <VStack w="100%" mt="3">
-        <EventCard id="Joshua Tree" />
-        <EventCard id="Venice Beach Hangout" />
-        <EventCard id="Billy Birthday bash" />
-      </VStack>
-      <Divider thickness="3" my="2" />
-      <Heading>Resources</Heading>
-      <VStack w="100%" mt="3">
+
+      <Heading mb='2'>Resources</Heading>
+      <VStack w="100%">
         <Flex
           direction="row"
           mb="2.5"
@@ -95,6 +91,41 @@ export default function HomeTab() {
           </Center>
         </Flex>
       </VStack>
+      <Divider thickness="3" my="4" />
+
+      <HStack justifyContent="space-between">
+        <Heading>Lost Dogs Nearby</Heading>
+        <Button variant="outline" colorScheme="indigo" size="sm">
+          Found Dog
+        </Button>
+      </HStack>
+      <VStack w="100%" mt="3">
+        {(user.notifications.length > 0) &&
+          <FlatList data={user.notifications} renderItem={(noti) => (
+            <Box>
+              <NotificationCard data={noti.item} />
+
+            </Box>
+          )
+          }
+            keyExtractor={(noti) => noti.identifier}
+          />
+        }
+      </VStack>
+      {/*  EVENTS
+      <Divider thickness="3" my="2" />
+
+      <HStack justifyContent="space-between">
+        <Heading>Nearby Events</Heading>
+        <Button variant="outline" colorScheme="indigo" size="sm">
+          Host Event
+        </Button>
+      </HStack>
+      <VStack w="100%" mt="3">
+        <EventCard id="Joshua Tree" />
+        <EventCard id="Venice Beach Hangout" />
+        <EventCard id="Billy Birthday bash" />
+      </VStack> */}
     </Box>
   );
 }

@@ -12,7 +12,8 @@ export const userSlice = createSlice({
     zone: "Unverified",
     username: null,
     dogs: [],
-    status: 'loading'
+    status: 'loading',
+    notifications: []
   },
   reducers: {
     saveUserAccount: (state, action) => {
@@ -46,18 +47,21 @@ export const userSlice = createSlice({
       if (!state.dogs.includes(action.payload)) {
         state.dogs.push(action.payload)
       }
-      console.log("users dog list is: ", state.dogs)
     },
     markLostDog: (state, action) => {
       state.dogs[action.payload.index].lost = action.payload.lost
       state.dogs[action.payload.index].contact = action.payload.EContact
-      console.log("redux dog list is: ",  state.dogs)
     },
     updateLocation: (state, action) => {
       console.log("attempt to locate:", action.payload)
       state.zone = action.payload.zone
       state.latitude = action.payload.coords.latitude
       state.longitude = action.payload.coords.longitude
+
+    },
+    addNotification: (state, action) => {
+      console.log("notification: ", action.payload)
+      state.notifications.push(action.payload)
 
     },
 
@@ -73,7 +77,8 @@ export const {
   changeStatus,
   addDogtoUser,
   markLostDog,
-  updateLocation
+  updateLocation,
+  addNotification
 
 } = userSlice.actions
 

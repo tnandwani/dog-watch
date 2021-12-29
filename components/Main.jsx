@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {Platform } from "react-native";
+import { Platform } from "react-native";
 
 import { useSelector, useDispatch } from "react-redux";
 
@@ -20,6 +20,7 @@ import { setScreenAnalytics } from '../database';
 import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import { updatePushToken } from '../redux/slices/exploreSlice';
+import { addNotification } from '../redux/slices/userSlice';
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -83,6 +84,8 @@ export default function Main() {
 
             notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
                 setNotification(notification);
+                console.log("got a noty")
+                dispatch(addNotification(notification))
             });
 
             responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
@@ -95,39 +98,40 @@ export default function Main() {
             };
 
         }
-        
+
     }, []);
 
     return (
-        <Tab.Navigator  screenListeners={{
+        <Tab.Navigator screenListeners={{
             state: (e) => {
                 // Do something with the state
                 let screen = e.data.state
-                let currentScreen =  screen.routes[screen.index].name
+                let currentScreen = screen.routes[screen.index].name
                 setScreenAnalytics(currentScreen);
-                
-              }
+
+            }
         }}>
-            <Tab.Screen name="Profile" component={ProfileTab} options={{
-                headerShown: true,
-                tabBarIcon: ({ color, size }) => (
-                    <MaterialIcons name="dog-side" color={color} size={size} />
-                )
-            }} />
-            {/* <Tab.Screen name="Home" component={HomeTab} options={{
+
+            <Tab.Screen name="Home" component={HomeTab} options={{
                 headerShown: true,
                 tabBarIcon: ({ color, size }) => (
                     <MaterialIcons name="home" color={color} size={size} />
                 )
-            }} /> */}
+            }} />
             <Tab.Screen name="Explore" component={ExploreTab} options={{
                 headerShown: true,
                 tabBarIcon: ({ color, size }) => (
                     <MaterialIcons name="compass" color={color} size={size} />
                 )
             }} />
-             
-    
+            <Tab.Screen name="Profile" component={ProfileTab} options={{
+                headerShown: true,
+                tabBarIcon: ({ color, size }) => (
+                    <MaterialIcons name="dog-side" color={color} size={size} />
+                )
+            }} />
+
+
         </Tab.Navigator>
     )
 }
