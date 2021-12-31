@@ -37,7 +37,6 @@ export default function App() {
 export function AppContent() {
   var status = useSelector((state) => state.user.status);
 
-
   return (
     <NativeBaseProvider>
       {status == "loading" && (
@@ -105,6 +104,7 @@ export function AppContent() {
                 headerShown: false,
               }}
             />
+
           </Stack.Navigator>
         </NavigationContainer>
       )}

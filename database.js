@@ -26,6 +26,7 @@ import {
 import {
     addTag,
     emptyTag,
+    saveZoneData,
     updateLoading,
 } from "./redux/slices/exploreSlice";
 
@@ -158,7 +159,12 @@ export function createUserAccount(email, password) {
 
 export async function createUserDoc(email, uid) {
 
-    // creatubg user doc
+    // add user to redux
+    store.dispatch(saveUserAccount({
+        email,
+        uid
+    }));
+    // create user doc
 
     try {
         const docRef = await setDoc(doc(db, "users", uid), {
@@ -167,11 +173,6 @@ export async function createUserDoc(email, uid) {
             zone: "Unverified",
             dogs: []
         });
-        console.log("Created User with ID: ", docRef.id);
-        store.dispatch(saveUserAccount({
-            email,
-            uid
-        }));
 
         store.dispatch(changeStatus('returning'))
         Analytics.logEvent('Create_user_finish')
@@ -442,13 +443,20 @@ export async function startPublish(imageURI, navigation) {
 }
 
 
-export function markLost(dog, EContact, index, message) {
+export async function markLost(dog, EContact, index, message) {
 
     Analytics.logEvent('dog_marked_lost_start')
 
     let lost = true
 
-    // mark in DOGS
+    // send changes to redux 
+    store.dispatch(markLostDog({
+        index,
+        EContact,
+        lost
+    }));
+
+    // mark LOST in DOGS/duid
     const dogRef = doc(db, "dogs", dog.duid);
     updateDoc(dogRef, {
         lost: true,
@@ -460,12 +468,6 @@ export function markLost(dog, EContact, index, message) {
     });
 
 
-    // send changes to redux 
-    store.dispatch(markLostDog({
-        index,
-        EContact,
-        lost
-    }));
 
     // const newList = get old list of user.dogs
     const newDogList = store.getState().user.dogs
@@ -474,7 +476,7 @@ export function markLost(dog, EContact, index, message) {
     console.log("new list is: ", newDogList)
 
     // post newList
-    // mark in DOGS
+    // mark LOST in USERS/uid/dogs
     const usersRef = doc(db, "users", uid);
     updateDoc(usersRef, {
         dogs: newDogList,
@@ -487,8 +489,11 @@ export function markLost(dog, EContact, index, message) {
     const zone = store.getState().user.zone
     const senderToken = store.getState().user.pushToken
 
-    // get push Tokens
+
+    // mark LOST in ZONES/zone/lost
     const zoneRef = doc(db, "zones", zone);
+
+    // get push Tokens
     getDoc(zoneRef).then((docSnap) => {
             if (docSnap.exists()) {
                 let members = docSnap.data().members
@@ -496,8 +501,37 @@ export function markLost(dog, EContact, index, message) {
                 sendNotificationtoZone(dog, message, members, senderToken, EContact, 'LOST DOG')
                 Analytics.logEvent('dog_lost_notification_sent')
 
+                // set dog as lost in zone 
+                updateDoc(zoneRef, {
+                    lost: arrayUnion({
+                        date: new Date().toLocaleDateString('en-us', {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric"
+                        }),
+                        message: message,
+                        dog: dog,
+                        contact: EContact
+                    }),
+                }).then(() => {
+                    console.log("marked personal dog as lost");
+                    Analytics.logEvent('dog_marked_lost_privately')
+
+                });
+
             } else {
                 // doc.data() will be undefined in this case
+
+                // create zone doc
+                // add user ppush token token
+                // add dog as lost  
+
+                setDoc(doc(db, "zones", zone), {
+                    members: [pushToken],
+                    lost: [dog]
+                });
+
+
 
             }
 
@@ -627,14 +661,38 @@ export function foundOtherDog() {
 
 
     // SHOW FOUND MODAL
-        // picture
-        // location found???
-        // Breed if known
-        // contact me #
+    // picture
+    // location found???
+    // Breed if known
+    // contact me #
     // found date
 
     // add dog to zones/lost/
-    
-    
 
+
+}
+
+
+export function getZoneData() {
+
+    const zone = store.getState().user.zone
+
+    const docRef = doc(db, "zones", zone);
+    getDoc(docRef).then((docSnap) => {
+            if (docSnap.exists()) {
+                let zoneData = docSnap.data()
+                store.dispatch(saveZoneData(zoneData));
+            } else {
+                // doc.data() will be undefined in this case
+                console.log("No such document!");
+            }
+
+        })
+        .catch((error) => {
+            console.log("Error getting document:", error);
+            Analytics.logEvent('fire_error', {
+                message: error.message
+            })
+
+        })
 }

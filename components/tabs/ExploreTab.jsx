@@ -17,7 +17,7 @@ import DogCard from '../widgets/DogCard'
 import { Box, Button, Center, FlatList, Heading, Spinner } from "native-base";
 import { updateLocation } from "../../redux/slices/userSlice";
 
-export default function ExploreTab() {
+export default function ExploreTab({navigation}) {
 
   let user = useSelector((state) => state.user);
   let dogTags = useSelector((state) => state.explore.dogTags);
@@ -200,7 +200,7 @@ export default function ExploreTab() {
           {(dogTags.length > 0) &&
             <FlatList data={dogTags} renderItem={(dog) => (
               <Box my='1' shadow={3}>
-                <DogCard dog={dog} />
+                <DogCard dog={dog} navigation ={navigation} />
               </Box>
             )
             }

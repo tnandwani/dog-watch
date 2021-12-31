@@ -19,7 +19,8 @@ import { markFound } from "../../database";
 
 export default function NotificationCard(props) {
 
-  let notiData = props.data.request.content.data;
+  console.log("props are" ,props)
+
 
   useEffect(() => { }, []);
 
@@ -71,14 +72,14 @@ export default function NotificationCard(props) {
           <Center w='35%'>
             <AspectRatio w="115%" ratio={9 / 9}>
               <Image
-                source={{ uri: notiData.dog.profileImage }}
+                source={{ uri: props.data.dog.profileImage }}
               />
             </AspectRatio>
           </Center>
           <Box w='65%'>
             <Stack p="4" space={1} ml='3'>
               <Heading size="md" ml="-1">
-                {notiData.dog.dogName}
+                {props.data.dog.dogName}
               </Heading>
               <Text
                 color="coolGray.600"
@@ -87,7 +88,7 @@ export default function NotificationCard(props) {
                 }}
                 fontWeight="300"
               >
-                {notiData.message}
+                {props.data.message}
               </Text>
               <Text
                 fontSize="xs"
@@ -101,12 +102,12 @@ export default function NotificationCard(props) {
                 ml="-0.5"
                 mt="1"
               >
-                {notiData.date}
+                {"Lost on: " + props.data.date}
               </Text>
         
               <HStack space={2} mt='3' alignContent='flex-end'>
                 <Button colorScheme="indigo" size='sm' px='5'> View</Button>
-                <Button colorScheme="indigo" size='sm' px='5' onPress={() => callNumber(notiData.EContact)}> Contact</Button>
+                <Button colorScheme="indigo" size='sm' px='5' onPress={() => callNumber(props.data.contact)}> Contact</Button>
               </HStack>
             </Stack>
           </Box>

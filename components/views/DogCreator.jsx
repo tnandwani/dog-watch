@@ -34,11 +34,18 @@ import {
     CheckIcon,
     Box,
     Divider,
+    FlatList,
     Flex,
     Spacer,
     Spinner
 } from 'native-base';
 import { saveDogPic } from '../../redux/slices/rawDogSlice';
+import { breedList } from '../../constants';
+
+
+const breedSelects = breedList.map((breed) =>
+    <Select.Item label={breed.name} value={breed.name} />
+);
 
 export default function DogCreator({ navigation }) {
 
@@ -227,11 +234,8 @@ export default function DogCreator({ navigation }) {
                             }}
                             onValueChange={(value) => updateBreed(value)}
                         >
-                            <Select.Item label="Poodle" value="Poodle" />
-                            <Select.Item label="Pitbull" value="Pitbull" />
-                            <Select.Item label="Unknown" value="Unknown" />
-                            <Select.Item label="Mixed" value="Mixed" />
-                            <Select.Item label="German Shepherd" value="German Shepherd" />
+                           {breedSelects}
+                            
                         </Select>
                     </FormControl>
                     <Spacer />

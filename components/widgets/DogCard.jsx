@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Image } from "react-native";
 
 import {
@@ -21,23 +21,36 @@ import {
 
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { markLost, markFound } from "../../database";
-
+import { updateDogView } from "../../redux/slices/exploreSlice";
+import DogViewer from "../views/DogViewer";
 
 export default function DogCard(props) {
 
+  const dispatch = useDispatch()
+
   const [showAlertModal, setShowAlertModal] = useState(false)
   const [showCancelModal, setShowCancelModal] = useState(false)
+  const [showDogModal, setShowDogModal] = useState(false)
 
   const [EContact, setEContact] = useState();
   const [message, setMessage] = useState();
 
   let uid = useSelector((state) => state.user.uid);
+  let dogView = useSelector((state) => state.explore.dogView);
 
   useEffect(() => {
     // dog card loaded
 
   }, []);
 
+  const viewDog = (dog) => {
+    //send dog to redux
+    dispatch(updateDogView(dog))
+    // show modal
+    setShowDogModal(true);
+
+
+  }
   const confirm = () => {
     // update db 
     markLost(props.dog.item, EContact, props.dog.index, message);
@@ -136,6 +149,35 @@ export default function DogCard(props) {
         </Modal.Content>
       </Modal>
 
+      {/* SHOW DOG DETAILS MODAL */}
+      <Modal isOpen={showDogModal} onClose={() => setShowDogModal(false)}>
+        {dogView && 
+          <Modal.Content maxWidth="500px">
+            <Modal.CloseButton />
+            <Modal.Header colorScheme='emerald.500'>{dogView.dogName}</Modal.Header>
+            <Modal.Body>
+              <DogViewer dog={dogView} />
+
+            </Modal.Body>
+            <Modal.Footer>
+              <Button.Group space={2}>
+                <Button
+                  variant="outline"
+                  colorScheme="indigo"
+                  onPress={() => {
+                    setShowDogModal(false)
+                  }}
+                >
+                  Close
+                </Button>
+              </Button.Group>
+            </Modal.Footer>
+          </Modal.Content>
+        }
+      
+      </Modal>
+
+
 
 
       <Box
@@ -224,7 +266,7 @@ export default function DogCard(props) {
                     {(props.dog.item.lost) &&
                       <Box>
                         <IconButton
-                          onPress={() => setShowCancelModal(true)}
+                          onPress={() => cancelAlert()}
                           _icon={{
                             as: MaterialCommunityIcons,
                             name: "bell-cancel",
@@ -251,6 +293,7 @@ export default function DogCard(props) {
                   <Box>
                     <Box>
                       <IconButton
+                        onPress={() => viewDog(props.dog.item)}
                         _icon={{
                           as: MaterialCommunityIcons,
                           name: "eye",
