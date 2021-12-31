@@ -6,7 +6,7 @@ import {
 // optionally providing an access token if you have enabled push security
 let expo = new Expo();
 
-export function sendNotificationtoZone(dog, message, listTokens, senderToken, EContact) {
+export function sendNotificationtoZone(dog, message, listTokens, senderToken, EContact, notiType) {
 
     let createdDate = new Date().toLocaleDateString('en-us', {
         year: "numeric",
@@ -28,7 +28,7 @@ export function sendNotificationtoZone(dog, message, listTokens, senderToken, EC
         messages.push({
             to: pushToken,
             sound: 'default',
-            body: message,
+            body: notiType,
             data: {
                 dog: dog,
                 message: message,
@@ -44,6 +44,7 @@ export function sendNotificationtoZone(dog, message, listTokens, senderToken, EC
     // recommend you batch your notifications to reduce the number of requests
     // and to compress them (notifications with similar content will get
     // compressed).
+    
     let chunks = expo.chunkPushNotifications(messages);
     let tickets = [];
     (async () => {

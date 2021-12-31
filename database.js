@@ -493,7 +493,7 @@ export function markLost(dog, EContact, index, message) {
             if (docSnap.exists()) {
                 let members = docSnap.data().members
                 // send out push notifications 
-                sendNotificationtoZone(dog, message, members, senderToken, EContact)
+                sendNotificationtoZone(dog, message, members, senderToken, EContact, 'LOST DOG')
                 Analytics.logEvent('dog_lost_notification_sent')
 
             } else {
@@ -620,5 +620,21 @@ export function updateDogList(newList, uid) {
         });
     }
 
+
+}
+
+export function foundOtherDog() {
+
+
+    // SHOW FOUND MODAL
+        // picture
+        // location found???
+        // Breed if known
+        // contact me #
+    // found date
+
+    // add dog to zones/lost/
+    
+    
 
 }

@@ -24,14 +24,17 @@ export default function NotificationCard(props) {
   useEffect(() => { }, []);
 
   const callNumber = phone => {
+  
     console.log('callNumber ----> ', phone);
     let phoneNumber = phone;
+
     if (Platform.OS !== 'android') {
       phoneNumber = `telprompt:${phone}`;
     }
     else {
       phoneNumber = `tel:${phone}`;
     }
+    
     Linking.canOpenURL(phoneNumber)
       .then(supported => {
         if (!supported) {
