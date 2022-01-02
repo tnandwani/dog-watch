@@ -47,6 +47,11 @@ const breedSelects = breedList.map((breed) =>
     <Select.Item label={breed.name} value={breed.name} />
 );
 
+const ageList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
+const ageSelects = ageList.map((age) =>
+    <Select.Item label={age} value={age} />
+);
+
 export default function DogCreator({ navigation }) {
 
     useEffect(() => {
@@ -100,7 +105,7 @@ export default function DogCreator({ navigation }) {
         dispatch(saveVisibility(g));
     }
 
-  
+
 
     const cancelCreate = () => {
         Analytics.logEvent('create_dog_canceled')
@@ -234,8 +239,8 @@ export default function DogCreator({ navigation }) {
                             }}
                             onValueChange={(value) => updateBreed(value)}
                         >
-                           {breedSelects}
-                            
+                            {breedSelects}
+
                         </Select>
                     </FormControl>
                     <Spacer />
@@ -284,10 +289,7 @@ export default function DogCreator({ navigation }) {
                             }}
                             onValueChange={(value) => updateAge(value)}
                         >
-                            <Select.Item label="1" value="1" />
-                            <Select.Item label="2" value="2" />
-                            <Select.Item label="3" value="3" />
-                            <Select.Item label="4" value="4" />
+                            {ageSelects}
                         </Select>
                     </FormControl>
                     <Spacer />
