@@ -20,9 +20,8 @@ import {
 } from "native-base";
 
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { markLost, markFound } from "../../database";
-import { updateDogView } from "../../redux/slices/exploreSlice";
-import DogViewer from "../views/DogViewer";
+import { markLost, markFound, viewDog } from "../../database";
+import { updateDogView, updateShowDogModal } from "../../redux/slices/exploreSlice";
 
 export default function DogCard(props) {
 
@@ -43,14 +42,7 @@ export default function DogCard(props) {
 
   }, []);
 
-  const viewDog = (dog) => {
-    //send dog to redux
-    dispatch(updateDogView(dog))
-    // show modal
-    setShowDogModal(true);
 
-
-  }
   const confirm = () => {
     // update db 
     markLost(props.dog.item, EContact, props.dog.index, message);
@@ -149,34 +141,7 @@ export default function DogCard(props) {
         </Modal.Content>
       </Modal>
 
-      {/* SHOW DOG DETAILS MODAL */}
-      <Modal isOpen={showDogModal} onClose={() => setShowDogModal(false)}>
-        {dogView && 
-          <Modal.Content maxWidth="500px">
-            <Modal.CloseButton />
-            <Modal.Header colorScheme='emerald.500'>{dogView.dogName}</Modal.Header>
-            <Modal.Body>
-              <DogViewer dog={dogView} />
-
-            </Modal.Body>
-            <Modal.Footer>
-              <Button.Group space={2}>
-                <Button
-                  variant="outline"
-                  colorScheme="indigo"
-                  onPress={() => {
-                    setShowDogModal(false)
-                  }}
-                >
-                  Close
-                </Button>
-              </Button.Group>
-            </Modal.Footer>
-          </Modal.Content>
-        }
-      
-      </Modal>
-
+    
 
 
 

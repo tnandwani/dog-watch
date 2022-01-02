@@ -23,11 +23,11 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { getZoneData } from "../../database";
-
+import DogViewModal from "../modals/DogViewModal";
 
 
 export default function HomeTab() {
-  
+
   useEffect(() => {
 
     // on load Home screen 
@@ -43,6 +43,7 @@ export default function HomeTab() {
   return (
     <Box m="4">
 
+      <DogViewModal />
 
       <Resources />
       <Divider thickness="3" my="4" />

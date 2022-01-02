@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Image } from "react-native";
 import { Linking, Alert, Platform } from 'react-native';
+import { viewDog } from "../../database";
 
 import {
   Box,
@@ -19,10 +20,9 @@ import { markFound } from "../../database";
 
 export default function NotificationCard(props) {
 
-  console.log("props are" ,props)
 
+  const dispatch = useDispatch()
 
-  useEffect(() => { }, []);
 
   const callNumber = phone => {
   
@@ -106,7 +106,7 @@ export default function NotificationCard(props) {
               </Text>
         
               <HStack space={2} mt='3' alignContent='flex-end'>
-                <Button colorScheme="indigo" size='sm' px='5'> View</Button>
+                <Button colorScheme="indigo" size='sm' px='5' onPress={() => viewDog(props.data.dog)}> View</Button>
                 <Button colorScheme="indigo" size='sm' px='5' onPress={() => callNumber(props.data.contact)}> Contact</Button>
               </HStack>
             </Stack>

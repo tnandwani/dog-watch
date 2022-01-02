@@ -27,7 +27,9 @@ import {
     addTag,
     emptyTag,
     saveZoneData,
+    updateDogView,
     updateLoading,
+    updateShowDogModal,
 } from "./redux/slices/exploreSlice";
 
 // FIREBASE
@@ -695,4 +697,16 @@ export function getZoneData() {
             })
 
         })
+}
+
+
+export function viewDog(dog) {
+    //send dog to redux
+
+    store.dispatch(updateDogView(dog))
+    // show modal
+    store.dispatch(updateShowDogModal(true))
+
+
+
 }
