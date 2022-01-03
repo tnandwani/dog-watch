@@ -32,6 +32,9 @@ export default function NotificationCard(props) {
     if (Platform.OS !== 'android') {
       phoneNumber = `telprompt:${phone}`;
     }
+    if (Platform.OS == 'web') {
+      alert("Please Call: " + phone)
+    }
     else {
       phoneNumber = `tel:${phone}`;
     }

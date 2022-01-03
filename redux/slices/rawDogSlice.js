@@ -2,35 +2,36 @@ import {
   createSlice
 } from '@reduxjs/toolkit'
 
+
+const detaultState = {
+  dogName: 'Test',
+  duid: null,
+  breed: null,
+  lost: false,
+  gender: null,
+  age: null,
+  visibility: null,
+  profileImage: "https://freesvg.org/img/Dog-Leash.png",
+  latitude: null,
+  longitude: null,
+  zone: "Unverified",
+  owner: null,
+  email: null,
+  contact: null,
+  personality: {
+    people: null,
+    otherDogs: null,
+    sharing: null,
+    energy: null,
+    sn: null,
+    training: null,
+    bio: null
+  }
+}
+
 export const rawDogSlice = createSlice({
   name: 'rawDog',
-  initialState: {
-    dogName: 'Test',
-    duid: null,
-    breed: null,
-    lost: false,
-    gender: null,
-    age: null,
-    visibility: null,
-    profileImage: "https://freesvg.org/img/Dog-Leash.png",
-    latitude: null,
-    longitude: null,
-    zone: "Unverified",
-    owner: null,
-    email: null,
-    contact: null,
-    personality: {
-      people: null,
-      otherDogs: null,
-      sharing: null,
-      energy: null,
-      sn: null,
-      training: null,
-      bio: null
-    }
-  },
-
-
+  initialState: detaultState,
   reducers: {
     // dog details
     saveDogName: (state, action) => {
@@ -69,6 +70,42 @@ export const rawDogSlice = createSlice({
     createDUID: (state, action) => {
       state.duid = action.payload
     },
+    createDUID: (state, action) => {
+      initialState
+    },
+    importDog: (state, action) => {
+      state.dogName = action.payload.dogName
+      state.duid = action.payload.duid
+      state.breed = action.payload.breed
+      state.gender = action.payload.gender
+      state.age = action.payload.age
+      state.visibility = action.payload.visibility
+      state.profileImage = action.payload.profileImage
+      state.latitude = action.payload.latitude
+      state.longitude = action.payload.longitude
+      state.zone = action.payload.zone
+      state.owner = action.payload.owner
+      state.personality = action.payload.personality
+    },
+    resetRawDog: (state, action) => {
+      state.dogName = detaultState.dogName
+      state.duid = detaultState.duid
+      state.breed = detaultState.breed
+      state.gender = detaultState.gender
+      state.age = detaultState.age
+      state.visibility = detaultState.visibility
+      state.profileImage = detaultState.profileImage
+      state.latitude = detaultState.latitude
+      state.longitude = detaultState.longitude
+      state.zone = detaultState.zone
+      state.owner = detaultState.owner
+      state.personality = detaultState.personality
+      state.email = detaultState.email
+      state.contact = detaultState.contact
+      state.lost = detaultState.lost
+
+    },
+
 
   },
 })
@@ -85,7 +122,9 @@ export const {
   saveLocation,
   saveOwner,
   savePersonality,
-  createDUID
+  createDUID,
+  importDog,
+  resetRawDog
 
 } = rawDogSlice.actions
 

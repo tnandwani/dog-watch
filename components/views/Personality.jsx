@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import * as Analytics from 'expo-firebase-analytics';
 
 import RawDogCard from '../widgets/RawDogCard'
-import { startPublish } from '../../database';
+import { startPublish, editPublish } from '../../database';
 
 import {
     Heading,
@@ -39,6 +39,7 @@ export default function Personality({ navigation }) {
 
     // image as prop
     const profileImage = useSelector((state) => state.rawDog.profileImage)
+    const duid = useSelector((state) => state.rawDog.duid)
 
     // personality local state
     let [people, setPeople] = useState()
@@ -66,9 +67,18 @@ export default function Personality({ navigation }) {
 
         // update personality redux
         dispatch(savePersonality({ people, otherDogs, sharing, energy, sn, training, bio }));
+       
+        startPublish(profileImage, navigation)
 
-        // upload photo
-        let uploadTask = startPublish(profileImage, navigation)
+
+    }
+    const onUpdateDog = () => {
+
+        // update personality redux
+        dispatch(savePersonality({ people, otherDogs, sharing, energy, sn, training, bio }));
+
+        editPublish(profileImage, navigation)
+
 
     }
 
@@ -242,11 +252,20 @@ export default function Personality({ navigation }) {
                     <Button variant="outline" colorScheme="indigo" onPress={() => navigation.goBack()}>
                         Back
                     </Button>
-                    <Button colorScheme="indigo"
-                        isDisabled={isFinished}
-                        onPress={() => onPublish()}>
-                        Finish
-                    </Button>
+                    {!duid &&
+                        <Button colorScheme="indigo"
+                            isDisabled={isFinished}
+                            onPress={() => onPublish()}>
+                            Create Dog
+                        </Button>
+                         }
+                    {duid &&
+                        <Button colorScheme="indigo"
+                            isDisabled={isFinished}
+                            onPress={() => onUpdateDog()}>
+                            Finish Editing
+                        </Button>
+                    }
 
                 </HStack>
             </Center>

@@ -41,6 +41,7 @@ import {
 } from 'native-base';
 import { saveDogPic } from '../../redux/slices/rawDogSlice';
 import { breedList } from '../../constants';
+import { deleteDog } from '../../database';
 
 
 const breedSelects = breedList.map((breed) =>
@@ -65,11 +66,12 @@ export default function DogCreator({ navigation }) {
     const [breed, setBreed] = useState();
     const [age, setAge] = useState();
     const [gender, setGender] = useState();
-    const [profileImage, setProfileImage] = useState("https://freesvg.org/img/Dog-Leash.png");
+    const [profileImage, setProfileImage] = useState(useSelector((state) => state.user.status));
 
     // owner
     const [contact, setContact] = useState();
     const uid = useSelector((state) => state.user.uid)
+    const duid = useSelector((state) => state.rawDog.duid)
 
     // location
     const [visibility, setVisibility] = useState();
@@ -339,9 +341,15 @@ export default function DogCreator({ navigation }) {
 
 
                 <HStack space={2} mt='3'>
-                    <Button variant="outline" colorScheme="indigo" onPress={() => cancelCreate()}>
+                 
+                    <Button variant="outline" colorScheme="indigo" onPress={() => deleteDog(duid, uid)}>
                         Cancel
                     </Button>
+                    {duid &&
+                        <Button variant="outline" colorScheme="red" onPress={() => cancelCreate()}>
+                            Delete Dog
+                        </Button>
+                    }
                     <Button colorScheme="indigo" onPress={() => navigation.navigate("Personality")
                     }>
                         Add Personality

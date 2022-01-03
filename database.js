@@ -17,7 +17,8 @@ import {
     saveUserDetails,
     signInAccount,
     markLostDog,
-    addDogtoUser
+    addDogtoUser,
+    changeDogInUser
 } from "./redux/slices/userSlice";
 import {
     createDUID,
@@ -62,6 +63,7 @@ import {
     where,
     updateDoc,
     arrayUnion,
+    deleteDoc,
     arrayRemove,
     doc
 } from 'firebase/firestore';
@@ -367,7 +369,6 @@ export async function startPublish(imageURI, navigation) {
 
     // create dog duid 
     const duid = uuidv4();
-
     // add duid to redux
     store.dispatch(createDUID(duid));
 
@@ -441,6 +442,135 @@ export async function startPublish(imageURI, navigation) {
         })
 
     })
+
+}
+
+export async function editPublish(imageURI, navigation) {
+
+    Analytics.logEvent('Edit_dog_start')
+
+    // get owner
+    const uid = store.getState().rawDog.owner
+    // create dog duid 
+    const duid = store.getState().rawDog.duid
+
+
+    // check if image uploaded 
+
+    if (imageURI.includes("firebasestorage")) {
+        // no new picture
+
+        console.log("OLD PICTURE")
+
+        const readyDog = store.getState().rawDog
+        // upload readyDog to dogs/
+
+        setDoc(doc(db, "dogs", duid), readyDog)
+            .then((resp) => {
+                Analytics.logEvent('Created_dog_doc')
+                // add readyDog to user.dogs redux 
+                store.dispatch(changeDogInUser(readyDog))
+
+                // get list with new dog
+                const newList = store.getState().user.dogs
+
+                // post new dog list + update coords
+                const userRef = doc(db, "users", uid);
+                updateDoc(userRef, {
+                    dogs: newList,
+                    zone: readyDog.zone,
+                    longitude: readyDog.longitude,
+                    latitude: readyDog.latitude,
+                }).then((resp) => {
+                    console.log("finished creating dog")
+                    Analytics.logEvent('Created_dog_finish')
+
+                    navigation.navigate('Profile')
+
+                })
+            })
+            .catch((error) => {
+                Analytics.logEvent('fire_error', {
+                    message: error.message
+                })
+
+            })
+    } else {
+
+
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                resolve(xhr.response);
+            };
+            xhr.onerror = function (e) {
+                reject(new TypeError("Network request failed"));
+            };
+            xhr.responseType = "blob";
+            xhr.open("GET", imageURI, true);
+            xhr.send(null);
+        });
+
+        // upload dog photo with duid 
+        const storageRef = ref(storage, 'profileImages/' + duid + '.jpg');
+        uploadBytes(storageRef, blob).then((snapshot) => {
+            console.log('Uploaded a blob or file!');
+            Analytics.logEvent('Created_dog_photo')
+
+            // get download URL
+            getDownloadURL(snapshot.ref).then((PURI) => {
+                console.log('File available at', PURI);
+                Analytics.logEvent('Created_dog_photoURL')
+
+                // add url to redux
+                store.dispatch(saveDogPic(PURI))
+
+                const readyDog = store.getState().rawDog
+                // upload readyDog to dogs/
+
+                setDoc(doc(db, "dogs", duid), readyDog)
+                    .then((resp) => {
+                        Analytics.logEvent('Created_dog_doc')
+                        // add readyDog to user.dogs redux 
+                        store.dispatch(changeDogInUser(readyDog))
+
+                        // get list with new dog
+                        const newList = store.getState().user.dogs
+
+                        // post new dog list + update coords
+                        const userRef = doc(db, "users", uid);
+                        updateDoc(userRef, {
+                            dogs: newList,
+                            zone: readyDog.zone,
+                            longitude: readyDog.longitude,
+                            latitude: readyDog.latitude,
+                        }).then((resp) => {
+                            console.log("finished creating dog")
+                            Analytics.logEvent('Created_dog_finish')
+
+                            navigation.navigate('Profile')
+
+                        })
+                    })
+                    .catch((error) => {
+                        Analytics.logEvent('fire_error', {
+                            message: error.message
+                        })
+
+                    })
+
+            });
+        }).catch((error) => {
+            console.log(error)
+            Analytics.logEvent('fire_error', {
+                message: error.message
+            })
+
+        })
+    }
+
+
+
 
 }
 
@@ -707,6 +837,25 @@ export function viewDog(dog) {
     // show modal
     store.dispatch(updateShowDogModal(true))
 
+}
 
+
+export function deleteDog(duid, uid) {
+
+
+    const rawDog = store.getState().rawDog
+
+    // delete dog doc
+    deleteDoc(doc(db, "dogs", duid));
+
+
+    // remove dog from user list
+    const userRef = doc(db, "users", uid);
+    // Atomically remove a region from the "regions" array field.
+    updateDoc(userRef, {
+        dogs: arrayRemove(rawDog)
+    });
+
+    // update redux state
 
 }

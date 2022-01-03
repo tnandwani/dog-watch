@@ -200,7 +200,7 @@ export default function GuestExplore() {
           {(dogTags.length > 0) &&
             <FlatList data={dogTags} renderItem={(dog) => (
               <Box my='1' shadow={3}>
-                <DogCard dog={dog} />
+                <DogCard dog={dog} navigation ={navigation} />
               </Box>
             )
             }

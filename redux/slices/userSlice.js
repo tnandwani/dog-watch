@@ -43,7 +43,6 @@ export const userSlice = createSlice({
       state.status = action.payload
     },
     addDogtoUser: (state, action) => {
-      // check if dog is in array 
       if (!state.dogs.includes(action.payload)) {
         state.dogs.push(action.payload)
       }
@@ -64,6 +63,10 @@ export const userSlice = createSlice({
       state.notifications.push(action.payload)
 
     },
+    changeDogInUser: (state, action) => {
+        const index = state.dogs.findIndex(dog => dog.duid === action.payload.duid);
+        state.dogs[index] = action.payload
+    },
 
   },
 })
@@ -78,7 +81,8 @@ export const {
   addDogtoUser,
   markLostDog,
   updateLocation,
-  addNotification
+  addNotification,
+  changeDogInUser
 
 } = userSlice.actions
 

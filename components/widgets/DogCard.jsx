@@ -22,6 +22,7 @@ import {
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { markLost, markFound, viewDog } from "../../database";
 import { updateDogView, updateShowDogModal } from "../../redux/slices/exploreSlice";
+import { importDog } from "../../redux/slices/rawDogSlice";
 
 export default function DogCard(props) {
 
@@ -42,6 +43,16 @@ export default function DogCard(props) {
 
   }, []);
 
+  const editDog = () => {
+  
+      // pass dog to rawDog
+    dispatch(importDog(props.dog.item))
+    props.navigation.navigate('DogCreator')
+
+     // open Dog Creator 
+  
+  
+  }
 
   const confirm = () => {
     // update db 
@@ -56,6 +67,7 @@ export default function DogCard(props) {
     // close modal
     setShowCancelModal(false)
   }
+
   return (
     <Center w="100%">
 
@@ -140,10 +152,6 @@ export default function DogCard(props) {
           </Modal.Footer>
         </Modal.Content>
       </Modal>
-
-    
-
-
 
       <Box
         w="100%"
@@ -245,6 +253,7 @@ export default function DogCard(props) {
 
                     <Box>
                       <IconButton
+                        onPress={() => editDog()}
                         _icon={{
                           as: MaterialIcons,
                           name: "edit",

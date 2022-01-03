@@ -49,12 +49,8 @@ export default function HomeTab() {
       <Divider thickness="3" my="4" />
 
 
-      <HStack justifyContent="space-between">
-        <Heading>Lost Dogs Nearby</Heading>
-        <Button variant="outline" colorScheme="indigo" size="sm">
-          Found Dog
-        </Button>
-      </HStack>
+      <Heading>Lost Dogs Nearby</Heading>
+
       <VStack w="100%" mt="3">
         {(myZone.lost.length > 0) &&
           <FlatList data={myZone.lost} renderItem={(noti) => (
@@ -68,8 +64,8 @@ export default function HomeTab() {
           />
         }
       </VStack>
-      {/*  EVENTS
-      <Divider thickness="3" my="2" />
+       
+      {/* <Divider thickness="3" my="2" />
 
       <HStack justifyContent="space-between">
         <Heading>Nearby Events</Heading>
