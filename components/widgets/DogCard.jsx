@@ -53,7 +53,6 @@ export default function DogCard(props) {
   
   
   }
-
   const confirm = () => {
     // update db 
     markLost(props.dog.item, EContact, props.dog.index, message);
