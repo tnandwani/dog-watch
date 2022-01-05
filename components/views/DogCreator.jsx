@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+    import { useDispatch, useSelector } from 'react-redux'
 
 import * as ImagePicker from 'expo-image-picker';
 
@@ -342,11 +342,11 @@ export default function DogCreator({ navigation }) {
 
                 <HStack space={2} mt='3'>
                  
-                    <Button variant="outline" colorScheme="indigo" onPress={() => deleteDog(duid, uid)}>
+                    <Button variant="outline" colorScheme="indigo" onPress={() => cancelCreate() }>
                         Cancel
                     </Button>
                     {duid &&
-                        <Button variant="outline" colorScheme="red" onPress={() => cancelCreate()}>
+                        <Button variant="outline" colorScheme="red" onPress={() => deleteDog(duid, uid, navigation)}>
                             Delete Dog
                         </Button>
                     }

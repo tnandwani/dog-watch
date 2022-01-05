@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 import {
     Box,
@@ -21,13 +22,13 @@ export default function Step3({ navigation }) {
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
     const [confirm, setConfirm] = useState();
-    const [alert, setAlert] = useState('Must be atleast 6 characters.');
+    const alert = useSelector((state) => state.interface.alerts.createAccount) 
 
 
     const onSignUp = () => {
 
         signOutUser();
-        createUserAccount(email, password);
+        createUserAccount(email, password, confirm);
 
 
     }

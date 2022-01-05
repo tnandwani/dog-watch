@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+
 import {
     Box,
     Text,
@@ -17,7 +19,8 @@ import { signInUser } from '../../database';
 export default function Login({navigation}) {
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
-    const [alert, setAlert] = useState("'Must be atleast 6 characters.'");
+
+    const loginAlert = useSelector((state) => state.interface.alerts.login)
 
 
     return (
@@ -52,7 +55,7 @@ export default function Login({navigation}) {
                 </FormControl.Label> 
                 <Input type="password" onChangeText={(value) => setPassword(value)}/>
                 <FormControl.HelperText>
-            {alert}
+              {loginAlert}
           </FormControl.HelperText>
                 {/* <Link
                   _text={{ fontSize: 'xs', fontWeight: '500', color: 'indigo.500' }}

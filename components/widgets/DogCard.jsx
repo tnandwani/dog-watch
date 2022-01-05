@@ -53,6 +53,7 @@ export default function DogCard(props) {
   
   
   }
+
   const confirm = () => {
     // update db 
     markLost(props.dog.item, EContact, props.dog.index, message);
@@ -238,7 +239,7 @@ export default function DogCard(props) {
                     {(props.dog.item.lost) &&
                       <Box>
                         <IconButton
-                          onPress={() => cancelAlert()}
+                          onPress={() => setShowCancelModal(true)}
                           _icon={{
                             as: MaterialCommunityIcons,
                             name: "bell-cancel",

@@ -18,19 +18,21 @@ import {
     signInAccount,
     markLostDog,
     addDogtoUser,
-    changeDogInUser
+    changeDogInUser,
+    removeDogfromUser
 } from "./redux/slices/userSlice";
 import {
     createDUID,
     saveOwner
 } from "./redux/slices/rawDogSlice";
 import {
+    addLocalAlert,
     addTag,
     emptyTag,
+    foundZoneDog,
     saveZoneData,
     updateDogView,
     updateLoading,
-    updateShowDogModal,
 } from "./redux/slices/exploreSlice";
 
 // FIREBASE
@@ -79,6 +81,11 @@ import {
 } from './notifcations/server';
 
 import * as Analytics from 'expo-firebase-analytics';
+import {
+    updateCreateAlert,
+    updateLoginAlert,
+    updateShowDogModal
+} from './redux/slices/interfaceSlice';
 
 
 ////////// APP START
@@ -143,31 +150,39 @@ export function signOutUser() {
 }
 
 
-export function createUserAccount(email, password) {
+export function createUserAccount(email, password, confirm) {
 
 
-    // FIREBASE
-    createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            // Signed in 
-            // Get UID 
-            const uid = userCredential.user.uid
-            Analytics.logEvent('Create_user_start')
+    if (password === confirm) {
+        // FIREBASE
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed in 
+                // Get UID 
+                const uid = userCredential.user.uid
+                Analytics.logEvent('Create_user_start')
 
-            // Sign In
-            createUserDoc(email, uid)
-        })
-        .catch((error) => {
-            // analytics.logEvent("error: creating user");
-            // analytics.logEvent(error.message);
-            console.log(error.message);
-            Analytics.logEvent('fire_error', {
-                message: error.message
+                // Sign In
+                createUserDoc(email, uid)
             })
+            .catch((error) => {
+                // analytics.logEvent("error: creating user");
+                // analytics.logEvent(error.message);
+                console.log(error.message);
+                Analytics.logEvent('fire_error', {
+                    message: error.message
+                })
+                store.dispatch(updateCreateAlert(error.message))
 
 
-            // ..
-        });
+                // ..
+            });
+    } else {
+        store.dispatch(updateCreateAlert("Passwords do not match"))
+
+    }
+
+
 
 }
 
@@ -211,10 +226,12 @@ export function signInUser(email, password) {
         })
         .catch((error) => {
 
-            console.log(errorMessage);
+            console.log(error.message);
             Analytics.logEvent('fire_error', {
                 message: error.message
             })
+            store.dispatch(updateLoginAlert(error.message))
+
         });
 }
 
@@ -320,20 +337,20 @@ export async function getHomies(lat, long) {
     Analytics.logEvent('getting_homies_start')
 
 
+    // LAT & LONG METHOD 
     var bubbleTask = compareTask(lat, long);
-
     bubbleTask.then((response) => {
 
         console.log("response from compare: ")
         console.log(response);
-
         response.forEach((dog) => {
             store.dispatch(addTag(dog))
         })
-
-       
-
     })
+
+    // GET DOGS WITH ZIPCODE
+
+
     Analytics.logEvent('got_homies_finish')
 
 
@@ -684,18 +701,21 @@ export async function markLost(dog, EContact, index, message) {
                 sendNotificationtoZone(dog, message, members, senderToken, EContact, 'LOST DOG')
                 Analytics.logEvent('dog_lost_notification_sent')
 
+                const alert = {
+                    duid: dog.duid,
+                    date: new Date().toLocaleDateString('en-us', {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric"
+                    }),
+                    message: message,
+                    dog: dog,
+                    contact: EContact
+                }
+                store.dispatch(addLocalAlert(alert))
                 // set dog as lost in zone 
                 updateDoc(zoneRef, {
-                    lost: arrayUnion({
-                        date: new Date().toLocaleDateString('en-us', {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric"
-                        }),
-                        message: message,
-                        dog: dog,
-                        contact: EContact
-                    }),
+                    lost: arrayUnion(alert),
                 }).then(() => {
                     console.log("marked personal dog as lost");
                     Analytics.logEvent('dog_marked_lost_privately')
@@ -756,6 +776,24 @@ export async function markFound(dog, index) {
     });
 
 
+
+    // mark dog as lost in redux
+    store.dispatch(foundZoneDog(dog.duid))
+
+    // get new list of lost dogs
+    const newLostZone = store.getState().explore.myZone.lost
+
+    // update dog alert list ZONES/zone/lost
+    const zone = store.getState().user.zone
+    const zoneRef = doc(db, "zones", zone);
+    updateDoc(zoneRef, {
+        lost: newLostZone,
+    }).then(() => {
+        console.log("marked personal dog as found");
+    });
+
+
+
 }
 
 export function updateDogList(newList, uid) {
@@ -792,22 +830,38 @@ export function foundOtherDog() {
 
 }
 
-export function deleteDog(duid, uid) {
+export function deleteDog(duid, uid, navigation) {
 
+    console.log("starting delete")
 
     const rawDog = store.getState().rawDog
 
     // delete dog doc
-    deleteDoc(doc(db, "dogs", duid));
-
-
-    // remove dog from user list
-    const userRef = doc(db, "users", uid);
-    // Atomically remove a region from the "regions" array field.
-    updateDoc(userRef, {
-        dogs: arrayRemove(rawDog)
+    deleteDoc(doc(db, "dogs", duid)).then((resp) => {
+        // remove dog from user list
+        const userRef = doc(db, "users", uid);
+        // Atomically remove a region from the "regions" array field.
+        updateDoc(userRef, {
+            dogs: arrayRemove(rawDog)
+        }).then((resp) => {
+            // update redux state
+            store.dispatch(removeDogfromUser(duid))
+            navigation.navigate('Profile')
+        }).catch((error) => {
+            console.log("error", error)
+            Analytics.logEvent('fire_error', {
+                message: error.message
+            })
+        });
+    }).catch((error) => {
+        console.log("error", error)
+        Analytics.logEvent('fire_error', {
+            message: error.message
+        })
     });
 
-    // update redux state
+
+
+
 
 }

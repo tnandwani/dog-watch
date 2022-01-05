@@ -64,8 +64,13 @@ export const userSlice = createSlice({
 
     },
     changeDogInUser: (state, action) => {
-        const index = state.dogs.findIndex(dog => dog.duid === action.payload.duid);
-        state.dogs[index] = action.payload
+      const index = state.dogs.findIndex(dog => dog.duid === action.payload.duid);
+      state.dogs[index] = action.payload
+    },
+    removeDogfromUser: (state, action) => {
+      const index = state.dogs.findIndex(dog => dog.duid === action.payload.duid);
+      state.dogs.splice(index, 1)
+      
     },
 
   },
@@ -82,7 +87,8 @@ export const {
   markLostDog,
   updateLocation,
   addNotification,
-  changeDogInUser
+  changeDogInUser,
+  removeDogfromUser
 
 } = userSlice.actions
 

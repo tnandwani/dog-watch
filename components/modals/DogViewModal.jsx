@@ -18,7 +18,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { savePersonality } from '../../redux/slices/rawDogSlice';
 
-import { updateDogView, updateShowDogModal } from "../../redux/slices/exploreSlice";
+import { updateDogView } from "../../redux/slices/exploreSlice";
+import { updateShowDogModal } from "../../redux/slices/interfaceSlice";
 
 export default function DogViewModal(props) {
 
@@ -26,7 +27,7 @@ export default function DogViewModal(props) {
 
 
   let dogView = useSelector((state) => state.explore.dogView);
-  let showDogModal = useSelector((state) => state.explore.modals.showDogModal);
+  let showDogModal = useSelector((state) => state.interface.modals.showDogModal);
 
   return (
     <Modal isOpen={showDogModal} onClose={() => dispatch(updateShowDogModal(false))}>
