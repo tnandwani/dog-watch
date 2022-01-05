@@ -5,6 +5,7 @@ import {
 
 const detaultState = {
   dogName: 'Test',
+  editing: false,
   duid: null,
   breed: null,
   lost: false,
@@ -70,8 +71,8 @@ export const rawDogSlice = createSlice({
     createDUID: (state, action) => {
       state.duid = action.payload
     },
-    createDUID: (state, action) => {
-      initialState
+    setEditing: (state, action) => {
+      state.editing = action.payload
     },
     importDog: (state, action) => {
       state.dogName = action.payload.dogName
@@ -86,6 +87,7 @@ export const rawDogSlice = createSlice({
       state.zone = action.payload.zone
       state.owner = action.payload.owner
       state.personality = action.payload.personality
+      state.editing = true
     },
     resetRawDog: (state, action) => {
       state.dogName = detaultState.dogName
@@ -103,6 +105,7 @@ export const rawDogSlice = createSlice({
       state.email = detaultState.email
       state.contact = detaultState.contact
       state.lost = detaultState.lost
+      state.editing = false
 
     },
 
@@ -124,7 +127,8 @@ export const {
   savePersonality,
   createDUID,
   importDog,
-  resetRawDog
+  resetRawDog,
+  setEditing
 
 } = rawDogSlice.actions
 

@@ -12,6 +12,7 @@ import {
     HStack,
     FormControl,
     Button,
+    Progress,
     Slider,
     Box,
     Divider,
@@ -37,9 +38,12 @@ export default function Personality({ navigation }) {
 
     const dispatch = useDispatch()
 
+    // progress bar  
+    const progress = useSelector((state) => state.interface.progress.dog)
+
     // image as prop
     const profileImage = useSelector((state) => state.rawDog.profileImage)
-    const duid = useSelector((state) => state.rawDog.duid)
+    const editing = useSelector((state) => state.rawDog.editing)
 
     // personality local state
     let [people, setPeople] = useState()
@@ -252,14 +256,14 @@ export default function Personality({ navigation }) {
                     <Button variant="outline" colorScheme="indigo" onPress={() => navigation.goBack()}>
                         Back
                     </Button>
-                    {!duid &&
+                    {!editing &&
                         <Button colorScheme="indigo"
                             isDisabled={isFinished}
                             onPress={() => onPublish()}>
                             Create Dog
                         </Button>
                          }
-                    {duid &&
+                    {editing &&
                         <Button colorScheme="indigo"
                             isDisabled={isFinished}
                             onPress={() => onUpdateDog()}>
@@ -268,7 +272,14 @@ export default function Personality({ navigation }) {
                     }
 
                 </HStack>
+
+                <Box w="90%" mt='3'>
+
+                    <Progress colorScheme="indigo" value={progress} mx="4" />
+                </Box>
             </Center>
+
+
 
         </Box>
     )

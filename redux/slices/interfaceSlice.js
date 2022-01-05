@@ -12,6 +12,9 @@ export const interfaceSlice = createSlice({
     alerts : {
       createAccount: 'Must be atleast 6 characters.',
       login: 'Must be atleast 6 characters.'
+    },
+    progress: {
+      dog: 0,
     }
   },
   reducers: {
@@ -25,6 +28,9 @@ export const interfaceSlice = createSlice({
     updateCreateAlert: (state, action) => {
       state.alerts.createAccount = action.payload
     },
+     updateDogProgress: (state, action) => {
+       state.progress.dog = action.payload
+     },
   },
 })
 
@@ -32,7 +38,8 @@ export const interfaceSlice = createSlice({
 export const {
   updateShowDogModal,
   updateLoginAlert,
-  updateCreateAlert
+  updateCreateAlert,
+  updateDogProgress
 
 } = interfaceSlice.actions
 

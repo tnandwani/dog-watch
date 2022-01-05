@@ -34,13 +34,14 @@ import {
     CheckIcon,
     Box,
     Divider,
+    Progress,
     FlatList,
     Flex,
     Spacer,
     Spinner
 } from 'native-base';
 import { saveDogPic } from '../../redux/slices/rawDogSlice';
-import { breedList } from '../../constants';
+import { breedList, mapQuestKey } from '../../constants';
 import { deleteDog } from '../../database';
 
 
@@ -69,7 +70,7 @@ export default function DogCreator({ navigation }) {
     const [profileImage, setProfileImage] = useState(useSelector((state) => state.user.status));
 
     // owner
-    const [contact, setContact] = useState();
+    // const [contact, setContact] = useState();
     const uid = useSelector((state) => state.user.uid)
     const duid = useSelector((state) => state.rawDog.duid)
 
@@ -121,11 +122,11 @@ export default function DogCreator({ navigation }) {
                 alert('Sorry, we need camera roll permissions to make this work!');
             }
         }
-        
+
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
-            aspect: [4, 3],
+            aspect: [6, 6],
             quality: 1,
         });
 
@@ -162,39 +163,71 @@ export default function DogCreator({ navigation }) {
 
             // get coords
             let currentPin = await Location.getCurrentPositionAsync({});
-            let userZone = "Unverified"
 
-            // If not mobile get address
-            if (Platform.OS !== 'web') {
-                // get address
-                let reveresResult = await Location.reverseGeocodeAsync(currentPin.coords, false)
-                userZone = reveresResult[0].postalCode;
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    location: {
+                        latLng: {
+                            lat: currentPin.coords.latitude,
+                            lng: currentPin.coords.longitude
+                        }
+                    },
+                    options: {
+                        thumbMaps: false
+                    },
+                    includeNearestIntersection: true,
+                    includeRoadMetadata: true
+                })
 
-            }
-            else {
-                console.log("Web Mode")
-            }
+            };
+            fetch('http://www.mapquestapi.com/geocoding/v1/reverse?key=' + mapQuestKey, requestOptions)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    const addy = data.results[0].locations[0].postalCode
+                    const zip = addy.substr(0, addy.indexOf('-')); 
+                    console.log("zone" , zip);
+
+                    // create new location object 
+                    let userLocation = {
+                        latitude: currentPin.coords.latitude,
+                        longitude: currentPin.coords.longitude,
+                        zone: zip,
+
+                    }
+                    console.log(userLocation);
+
+                    // save state and update UI
+                    setLocation(userLocation);
+                    setLocationStatus("Location Received")
+                    dispatch(saveLocation(userLocation));
+
+                }).catch((err) => {
+                    console.log(err)
+                });
 
 
-            // create new location object 
-            let userLocation = {
-                latitude: currentPin.coords.latitude,
-                longitude: currentPin.coords.longitude,
-                zone: userZone,
 
-            }
-            console.log(userLocation);
-
-            // save state and update UI
-            setLocation(userLocation);
-            setLocationStatus("Location Received")
-            dispatch(saveLocation(userLocation));
 
 
 
         })();
     }
 
+
+    let [isFinished, setIsFinished] = useState(true)
+
+    let verify = () => {
+        console.log("isFinished", dogName, breed, age, gender, visibility, location)
+
+        if (dogName && breed && age && gender && visibility && location && isFinished) {
+            setIsFinished(false)
+        }
+
+    }
+    verify();
 
 
     return (
@@ -348,12 +381,14 @@ export default function DogCreator({ navigation }) {
                             Delete Dog
                         </Button>
                     }
-                    <Button colorScheme="indigo" onPress={() => navigation.navigate("Personality")
+                    <Button isDisabled={isFinished} colorScheme="indigo" onPress={() => navigation.navigate("Personality")
                     }>
                         Add Personality
                     </Button>
 
                 </HStack>
+
+
             </Center>
 
 

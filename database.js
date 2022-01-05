@@ -83,6 +83,7 @@ import {
 import * as Analytics from 'expo-firebase-analytics';
 import {
     updateCreateAlert,
+    updateDogProgress,
     updateLoginAlert,
     updateShowDogModal
 } from './redux/slices/interfaceSlice';
@@ -149,7 +150,6 @@ export function signOutUser() {
 
 }
 
-
 export function createUserAccount(email, password, confirm) {
 
 
@@ -215,7 +215,6 @@ export async function createUserDoc(email, uid) {
     }
 }
 
-
 export function signInUser(email, password) {
 
     signInWithEmailAndPassword(auth, email, password)
@@ -235,7 +234,6 @@ export function signInUser(email, password) {
         });
 }
 
-
 export async function getUserDetails(uid) {
 
     const docRef = doc(db, "users", uid);
@@ -252,7 +250,6 @@ export async function getUserDetails(uid) {
 
 
 }
-
 
 //////////////////// ZONE FUNCTIONS 
 
@@ -462,16 +459,22 @@ export async function startPublish(imageURI, navigation) {
         xhr.send(null);
     });
 
+    store.dispatch(updateDogProgress(10))
     // upload dog photo with duid 
     const storageRef = ref(storage, 'profileImages/' + duid + '.jpg');
     uploadBytes(storageRef, blob).then((snapshot) => {
+
         console.log('Uploaded a blob or file!');
         Analytics.logEvent('Created_dog_photo')
+        store.dispatch(updateDogProgress(25))
+
 
         // get download URL
         getDownloadURL(snapshot.ref).then((PURI) => {
             console.log('File available at', PURI);
             Analytics.logEvent('Created_dog_photoURL')
+            store.dispatch(updateDogProgress(50))
+
 
             // add url to redux
             store.dispatch(saveDogPic(PURI))
@@ -482,6 +485,8 @@ export async function startPublish(imageURI, navigation) {
             setDoc(doc(db, "dogs", duid), readyDog)
                 .then((resp) => {
                     Analytics.logEvent('Created_dog_doc')
+                    store.dispatch(updateDogProgress(75))
+
                     // add readyDog to user.dogs redux 
                     store.dispatch(addDogtoUser(readyDog))
 
@@ -498,8 +503,12 @@ export async function startPublish(imageURI, navigation) {
                     }).then((resp) => {
                         console.log("finished creating dog")
                         Analytics.logEvent('Created_dog_finish')
+                        store.dispatch(updateDogProgress(100))
+
 
                         navigation.navigate('Profile')
+                        store.dispatch(updateDogProgress(0))
+
 
                     })
                 })
@@ -840,12 +849,18 @@ export function deleteDog(duid, uid, navigation) {
     deleteDoc(doc(db, "dogs", duid)).then((resp) => {
         // remove dog from user list
         const userRef = doc(db, "users", uid);
-        // Atomically remove a region from the "regions" array field.
+
+        // remove dog from user redux list
+        store.dispatch(removeDogfromUser(duid))
+
+        // update doc with new user list
+
+        const newDogList = store.getState().user.dogs
+
         updateDoc(userRef, {
-            dogs: arrayRemove(rawDog)
+            dogs: newDogList
         }).then((resp) => {
             // update redux state
-            store.dispatch(removeDogfromUser(duid))
             navigation.navigate('Profile')
         }).catch((error) => {
             console.log("error", error)
