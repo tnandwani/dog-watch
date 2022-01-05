@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-    import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import * as ImagePicker from 'expo-image-picker';
 
@@ -115,15 +115,13 @@ export default function DogCreator({ navigation }) {
     }
 
     const pickImage = async () => {
-        (async () => {
-            if (Platform.OS !== 'web') {
-                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-                if (status !== 'granted') {
-                    alert('Sorry, we need camera roll permissions to make this work!');
-                }
+        if (Platform.OS !== 'web') {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+                alert('Sorry, we need camera roll permissions to make this work!');
             }
-        })();
-
+        }
+        
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
@@ -341,8 +339,8 @@ export default function DogCreator({ navigation }) {
 
 
                 <HStack space={2} mt='3'>
-                 
-                    <Button variant="outline" colorScheme="indigo" onPress={() => cancelCreate() }>
+
+                    <Button variant="outline" colorScheme="indigo" onPress={() => cancelCreate()}>
                         Cancel
                     </Button>
                     {duid &&
