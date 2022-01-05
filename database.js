@@ -335,20 +335,36 @@ export async function getHomies(lat, long) {
 
 
     // LAT & LONG METHOD 
-    var bubbleTask = compareTask(lat, long);
-    bubbleTask.then((response) => {
+    // var bubbleTask = compareTask(lat, long);
+    // bubbleTask.then((response) => {
 
-        console.log("response from compare: ")
-        console.log(response);
-        response.forEach((dog) => {
-            store.dispatch(addTag(dog))
-        })
-    })
+    //     console.log("response from compare: ")
+    //     console.log(response);
+    //     response.forEach((dog) => {
+    //         store.dispatch(addTag(dog))
+    //     })
+    // })
 
     // GET DOGS WITH ZIPCODE
+    const zone = store.getState().user.zone
+    const dogsRef = collection(db, "dogs");
 
+    const zoneQ = query(dogsRef, where("zone", "==", zone));
+    const zoneSnapshot = await getDocs(zoneQ);
+
+    let homiesArray = [];
 
     Analytics.logEvent('got_homies_finish')
+    zoneSnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log("got dog ->", doc.data())
+        homiesArray.push(doc.data())
+    });
+    homiesArray.forEach((dog) => {
+        store.dispatch(addTag(dog))
+    })
+    store.dispatch(updateLoading(false));
+
 
 
 }

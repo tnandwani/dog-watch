@@ -14,7 +14,7 @@ import { getHomies, updateFireLocation } from "../../database";
 import { mapStyling } from "../../constants";
 import DogCard from '../widgets/DogCard'
 
-import { Box, Button, Center, FlatList, Heading, Spinner } from "native-base";
+import { Box, Button, Center, FlatList, Heading, Spinner, Text } from "native-base";
 import { updateLocation } from "../../redux/slices/userSlice";
 
 export default function ExploreTab({navigation}) {
@@ -97,7 +97,53 @@ export default function ExploreTab({navigation}) {
   if (Platform.OS === "web") {
     return (
       <Center flex={1} px="3">
-        Not Available on Web
+        <Text position = 'absolute' top='20'>Map Not Available on Web</Text>
+
+        <Box
+          position='absolute'
+          w="100%"
+          h="50%"
+          padding='2'
+          bottom='-5'
+          rounded="lg"
+          shadow={7}
+          overflow="hidden"
+          borderColor="coolGray.200"
+          _dark={{
+            borderColor: "coolGray.600",
+            backgroundColor: "rgba(0,0,0,0.4)",
+          }}
+          _web={{
+            shadow: 7,
+            borderWidth: 0,
+          }}
+          _light={{
+            backgroundColor: "rgba(0,0,0,0.4)",
+          }}
+        >
+          {(dogTags.length > 0) &&
+            <FlatList data={dogTags} renderItem={(dog) => (
+              <Box my='1' shadow={3}>
+                <DogCard dog={dog} navigation={navigation} />
+              </Box>
+            )
+            }
+              keyExtractor={(dog) => dog.duid}
+            />
+
+          }
+          {(loading === true) &&
+            <Center mt='5'>
+              <Spinner color="white" />
+            </Center>
+          }
+          {((dogTags < 1) && (loading === false)) &&
+            <Center mt='5'>
+              <Heading> No Dogs Here</Heading>
+            </Center>
+          }
+
+        </Box>
       </Center>
     );
   }
