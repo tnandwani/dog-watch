@@ -11,7 +11,7 @@ import * as Location from 'expo-location';
 
 import { StyleSheet, View, Dimensions, Platform } from "react-native";
 import { getHomies, updateFireLocation } from "../../database";
-import { mapStyling } from "../../constants";
+import { mapQuestKey, mapStyling } from "../../constants";
 import DogCard from '../widgets/DogCard'
 
 import { Box, Button, Center, FlatList, Heading, Spinner } from "native-base";
@@ -53,42 +53,51 @@ export default function GuestExplore() {
 
       // get coords
       let currentPin = await Location.getCurrentPositionAsync({});
-      var currentAddress = "Unverified";
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: {
+            latLng: {
+              lat: currentPin.coords.latitude,
+              lng: currentPin.coords.longitude
+            }
+          },
+          options: {
+            thumbMaps: false
+          },
+          includeNearestIntersection: true,
+          includeRoadMetadata: true
+        })
 
-      // If not mobile get address
-      if (Platform.OS !== 'web') {
-        // get address
-        let reveresResult = await Location.reverseGeocodeAsync(currentPin.coords, false)
-        currentAddress = reveresResult[0];
-        // get zipcode
+      };
+      fetch('http://www.mapquestapi.com/geocoding/v1/reverse?key=' + mapQuestKey, requestOptions)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          const addy = data.results[0].locations[0].postalCode
+          const zip = addy.substr(0, addy.indexOf('-'));
+          console.log("zone", zip);
 
-        // pass zipcode instead of full addess
+          // create new location object 
+          let userLocation = {
+            latitude: currentPin.coords.latitude,
+            longitude: currentPin.coords.longitude,
+            zone: zip,
 
+          }
+          console.log(userLocation);
 
-      }
-      else {
-        console.log("Web Mode")
-        // get API key for web created accounts - too expensive for only web
-        // Location.setGoogleApiKey(googleAPI)
-        // let reveresResult = await Location.reverseGeocodeAsync(currentPin.coords, false)
-        // currentAddress = reveresResult[0];
-      }
+          // save state and update UI
+          // save state and update UI
+          setLocationStatus("Location Received");
+          updateFireLocation(userLocation);
+          dispatch(updateLocation(userLocation));
+          getHomies(userLocation.latitude, userLocation.longitude);
 
-
-      // create new location object 
-      let userLocation = {
-        coords: currentPin.coords,
-        zone: currentAddress.postalCode,
-
-      }
-      console.log(userLocation);
-
-      // save state and update UI
-      setLocationStatus("Location Received");
-      updateFireLocation(userLocation);
-      dispatch(updateLocation(userLocation));
-      getHomies(userLocation.coords.latitude, userLocation.coords.longitude);
-
+        }).catch((err) => {
+          console.log(err)
+        });
 
 
     })();

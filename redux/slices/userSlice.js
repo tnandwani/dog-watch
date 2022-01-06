@@ -54,8 +54,8 @@ export const userSlice = createSlice({
     updateLocation: (state, action) => {
       console.log("attempt to locate:", action.payload)
       state.zone = action.payload.zone
-      state.latitude = action.payload.coords.latitude
-      state.longitude = action.payload.coords.longitude
+      state.latitude = action.payload.latitude
+      state.longitude = action.payload.longitude
 
     },
     addNotification: (state, action) => {

@@ -330,7 +330,6 @@ export async function compareTask(lat, long) {
 
 export async function getHomies(lat, long) {
 
-    console.log("getting homies in", );
     Analytics.logEvent('getting_homies_start')
 
 
@@ -363,6 +362,7 @@ export async function getHomies(lat, long) {
     homiesArray.forEach((dog) => {
         store.dispatch(addTag(dog))
     })
+    console.log("getting homies end", );
     store.dispatch(updateLoading(false));
 
 
@@ -403,8 +403,8 @@ export async function updateFireLocation(location) {
     const userRef = doc(db, "users", uid);
     updateDoc(userRef, {
         zone: location.zone,
-        longitude: location.coords.longitude,
-        latitude: location.coords.latitude,
+        longitude: location.longitude,
+        latitude: location.latitude,
         pushToken: pushToken
     }).then(() => {
         console.log("finished creating dog")

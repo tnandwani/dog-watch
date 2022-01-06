@@ -11,13 +11,15 @@ import * as Location from 'expo-location';
 
 import { StyleSheet, View, Dimensions, Platform } from "react-native";
 import { getHomies, updateFireLocation } from "../../database";
-import { mapStyling } from "../../constants";
+import { mapQuestKey, mapStyling } from "../../constants";
 import DogCard from '../widgets/DogCard'
 
 import { Box, Button, Center, FlatList, Heading, Spinner, Text } from "native-base";
 import { updateLocation } from "../../redux/slices/userSlice";
+import { saveLocation } from "../../redux/slices/rawDogSlice";
+import { updateLoading } from "../../redux/slices/exploreSlice";
 
-export default function ExploreTab({navigation}) {
+export default function ExploreTab({ navigation }) {
 
   let user = useSelector((state) => state.user);
   let dogTags = useSelector((state) => state.explore.dogTags);
@@ -32,6 +34,7 @@ export default function ExploreTab({navigation}) {
       getHomies(user.latitude, user.longitude);
     }
     else {
+      dispatch(updateLoading(false));
     }
   }, []);
 
@@ -40,6 +43,10 @@ export default function ExploreTab({navigation}) {
     console.log("getting location");
 
     (async () => {
+
+      // get API key for web created accounts - too expensive for only web
+      // Location.setGoogleApiKey(googleAPI)
+
       setLocationStatus(<Spinner color="indigo.500" />);
       if (Platform.OS === 'android' && !Constants.isDevice) {
         setErrorMessage('Oops, this will not work on Snack in an Android emulator. Try it on your device!');
@@ -53,41 +60,55 @@ export default function ExploreTab({navigation}) {
 
       // get coords
       let currentPin = await Location.getCurrentPositionAsync({});
-      var currentAddress = "Unverified";
 
-      // If not mobile get address
-      if (Platform.OS !== 'web') {
-        // get address
-        let reveresResult = await Location.reverseGeocodeAsync(currentPin.coords, false)
-        currentAddress = reveresResult[0];
-        // get zipcode
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: {
+            latLng: {
+              lat: currentPin.coords.latitude,
+              lng: currentPin.coords.longitude
+            }
+          },
+          options: {
+            thumbMaps: false
+          },
+          includeNearestIntersection: true,
+          includeRoadMetadata: true
+        })
 
-        // pass zipcode instead of full addess
+      };
+      fetch('http://www.mapquestapi.com/geocoding/v1/reverse?key=' + mapQuestKey, requestOptions)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          const addy = data.results[0].locations[0].postalCode
+          const zip = addy.substr(0, addy.indexOf('-'));
+          console.log("zone", zip);
+
+          // create new location object 
+          let userLocation = {
+            latitude: currentPin.coords.latitude,
+            longitude: currentPin.coords.longitude,
+            zone: zip,
+
+          }
+          console.log(userLocation);
+
+          // save state and update UI
+          // save state and update UI
+          setLocationStatus("Location Received");
+          updateFireLocation(userLocation);
+          dispatch(updateLocation(userLocation));
+          getHomies(userLocation.latitude, userLocation.longitude);
+
+        }).catch((err) => {
+          console.log(err)
+        });
 
 
-      }
-      else {
-        console.log("Web Mode")
-        // get API key for web created accounts - too expensive for only web
-        // Location.setGoogleApiKey(googleAPI)
-        // let reveresResult = await Location.reverseGeocodeAsync(currentPin.coords, false)
-        // currentAddress = reveresResult[0];
-      }
 
-
-      // create new location object 
-      let userLocation = {
-        coords: currentPin.coords,
-        zone: currentAddress.postalCode,
-
-      }
-      console.log(userLocation);
-
-      // save state and update UI
-      setLocationStatus("Location Received");
-      updateFireLocation(userLocation);
-      dispatch(updateLocation(userLocation));
-      getHomies(userLocation.coords.latitude, userLocation.coords.longitude);
 
 
 
@@ -96,9 +117,31 @@ export default function ExploreTab({navigation}) {
 
   if (Platform.OS === "web") {
     return (
-      <Center flex={1} px="3">
-        <Text position = 'absolute' top='20'>Map Not Available on Web</Text>
+      <Center flex={1}>
+       
+        <Box position='absolute' top='20' >
+          <Text >Map Not Available on Web</Text>
+          {(user.zone === 'Unverified') &&
+          <Box>
+              <Button
+                w='95%'
+                mt='2'
+                colorScheme="indigo"
+                _text={{ color: "white" }}
+                shadow="7"
+                onPress={getLocation}
+              >
+                Join The Watch
+              </Button>
+              <Box mt='3'>
+                {locationStatus}
 
+              </Box>
+          </Box>
+           
+          }
+
+        </Box>
         <Box
           position='absolute'
           w="100%"
@@ -207,7 +250,7 @@ export default function ExploreTab({navigation}) {
             >
               Join The Watch
             </Button>
-            <Box mt = '3'>
+            <Box mt='3'>
               {locationStatus}
 
             </Box>
@@ -246,7 +289,7 @@ export default function ExploreTab({navigation}) {
           {(dogTags.length > 0) &&
             <FlatList data={dogTags} renderItem={(dog) => (
               <Box my='1' shadow={3}>
-                <DogCard dog={dog} navigation ={navigation} />
+                <DogCard dog={dog} navigation={navigation} />
               </Box>
             )
             }
