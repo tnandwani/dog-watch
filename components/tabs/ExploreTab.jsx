@@ -118,11 +118,11 @@ export default function ExploreTab({ navigation }) {
   if (Platform.OS === "web") {
     return (
       <Center flex={1}>
-       
+
         <Box position='absolute' top='20' >
           <Text >Map Not Available on Web</Text>
           {(user.zone === 'Unverified') &&
-          <Box>
+            <Box>
               <Button
                 w='95%'
                 mt='2'
@@ -137,8 +137,8 @@ export default function ExploreTab({ navigation }) {
                 {locationStatus}
 
               </Box>
-          </Box>
-           
+            </Box>
+
           }
 
         </Box>
@@ -148,7 +148,7 @@ export default function ExploreTab({ navigation }) {
           h="50%"
           padding='2'
           bottom='-5'
-          rounded="lg"
+          rounded="xl"
           shadow={7}
           overflow="hidden"
           borderColor="coolGray.200"
@@ -197,16 +197,26 @@ export default function ExploreTab({ navigation }) {
         <MapView
           style={styles.map}
           provider={PROVIDER_GOOGLE}
+          maxZoomLevel={11}
           customMapStyle={mapStyling}
           initialRegion={{
-            latitude: user.latitude - 0.03,
+            latitude: user.latitude - 0.10,
             longitude: user.longitude,
-            longitudeDelta: 0.1,
-            latitudeDelta: 0.1,
+            longitudeDelta: 0.2,
+            latitudeDelta: 0.2,
           }}
         >
 
-          <Circle center={{
+          {dogTags.map((dog, index) => (
+            <Marker
+              key={index}
+              coordinate={{latitude: dog.latitude, longitude: dog.longitude }}
+              title={dog.dogName}
+              description={dog.breed}
+            />
+          ))}
+
+          {/* <Circle center={{
             latitude: user.latitude,
             longitude: user.longitude,
             latitudeDelta: 0.0922,
@@ -215,7 +225,7 @@ export default function ExploreTab({ navigation }) {
             radius={1610}
             strokeWidth={0}
             fillColor='rgba(99,102,241, 0.6)'
-          />
+          /> */}
         </MapView>
 
       }
@@ -223,6 +233,7 @@ export default function ExploreTab({ navigation }) {
         <MapView
           style={styles.map}
           provider={PROVIDER_GOOGLE}
+        maxZoomLevel={12}
           customMapStyle={mapStyling}
           initialRegion={{
             latitude: 39.8283,
@@ -270,7 +281,7 @@ export default function ExploreTab({ navigation }) {
           h="50%"
           padding='2'
           bottom='-5'
-          rounded="lg"
+          rounded="xl"
           shadow={7}
           overflow="hidden"
           borderColor="coolGray.200"

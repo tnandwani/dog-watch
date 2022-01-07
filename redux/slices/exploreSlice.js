@@ -11,7 +11,7 @@ export const exploreSlice = createSlice({
     myCoords: null,
     myZone: null,
     vapidToken: null,
-    pushToken: '',
+    pushToken: null,
     myZone: {
       members: [],
       lost: [],

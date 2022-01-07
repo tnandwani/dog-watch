@@ -437,7 +437,9 @@ export async function updateFireLocation(location) {
         // doc.data() will be undefined in this case
         console.log("FIRST TIME ZONER");
         setDoc(doc(db, "zones", location.zone), {
-            members: [pushToken]
+            members: [pushToken],
+            lost: [],
+            found: []
         });
     }
 
