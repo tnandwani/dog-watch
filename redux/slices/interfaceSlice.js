@@ -6,6 +6,7 @@ import {
 export const interfaceSlice = createSlice({
   name: 'interface',
   initialState: {
+    screen: null,
     modals: {
       showDogModal: false,
     },
@@ -31,6 +32,10 @@ export const interfaceSlice = createSlice({
      updateDogProgress: (state, action) => {
        state.progress.dog = action.payload
      },
+     setTabScreen: (state, action) => {
+       state.screen = action.payload
+     },
+     
   },
 })
 
@@ -39,7 +44,8 @@ export const {
   updateShowDogModal,
   updateLoginAlert,
   updateCreateAlert,
-  updateDogProgress
+  updateDogProgress,
+  setTabScreen
 
 } = interfaceSlice.actions
 

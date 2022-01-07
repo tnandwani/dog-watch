@@ -9,7 +9,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import {
     Box,
     Button,
-    FlatList
+    FlatList,
+    Heading
 } from "native-base"
 import { getUserDetails, signOutUser } from '../../database';
 import { resetRawDog } from '../../redux/slices/rawDogSlice';
@@ -30,9 +31,10 @@ export default function ProfileTab({ navigation }) {
     }
 
     return (
-        <Box m='3'>
+        <Box m='3' mt='5'>
             {/* add dog card for each  */}
-
+            
+            <Heading size="3xl" mt='5' mb='2'>My Dogs</Heading>
             {(user.dogs.length > 0) &&
                 <FlatList data={user.dogs} renderItem={(dog) => (
                     <Box my='1'>

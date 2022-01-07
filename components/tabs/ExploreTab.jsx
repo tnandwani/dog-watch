@@ -14,17 +14,22 @@ import { getHomies, updateFireLocation } from "../../database";
 import { mapQuestKey, mapStyling } from "../../constants";
 import DogCard from '../widgets/DogCard'
 
-import { Box, Button, Center, FlatList, Heading, Spinner, Text } from "native-base";
+import { Box, Button, Center, FlatList, Heading, Spinner, Text, Fab, Icon } from "native-base";
 import { updateLocation } from "../../redux/slices/userSlice";
 import { saveLocation } from "../../redux/slices/rawDogSlice";
-import { updateLoading } from "../../redux/slices/exploreSlice";
+import { updateDogView, updateLoading } from "../../redux/slices/exploreSlice";
+import { MaterialIcons } from '@expo/vector-icons';
+
 
 export default function ExploreTab({ navigation }) {
 
+  let screen = useSelector((state) => state.interface.screen);
   let user = useSelector((state) => state.user);
   let dogTags = useSelector((state) => state.explore.dogTags);
   let loading = useSelector((state) => state.explore.loading);
   const [locationStatus, setLocationStatus] = useState('');
+
+  let dogView = useSelector((state) => state.explore.dogView);
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -118,7 +123,24 @@ export default function ExploreTab({ navigation }) {
   if (Platform.OS === "web") {
     return (
       <Center flex={1}>
+        {(screen === 'Explore') && 
+          <Fab
+            borderRadius="full"
+            colorScheme="indigo"
+            mt='20'
+            placement="top-left"
+            icon={
+              <Icon
+                color="white"
+                as={<MaterialIcons name="lightbulb" />}
+                size="4"
+              />
+            }
+            label="Quick Start"
+          />
 
+        }
+  
         <Box position='absolute' top='20' >
           <Text >Map Not Available on Web</Text>
           {(user.zone === 'Unverified') &&
@@ -145,35 +167,23 @@ export default function ExploreTab({ navigation }) {
         <Box
           position='absolute'
           w="100%"
-          h="50%"
           padding='2'
-          bottom='-5'
+          bottom='0'
           rounded="xl"
           shadow={7}
           overflow="hidden"
-          borderColor="coolGray.200"
-          _dark={{
-            borderColor: "coolGray.600",
-            backgroundColor: "rgba(0,0,0,0.4)",
-          }}
-          _web={{
-            shadow: 7,
-            borderWidth: 0,
-          }}
-          _light={{
-            backgroundColor: "rgba(0,0,0,0.4)",
-          }}
+        
         >
-          {(dogTags.length > 0) &&
-            <FlatList data={dogTags} renderItem={(dog) => (
-              <Box my='1' shadow={3}>
+      
+          {dogView &&
+            <FlatList data={[dogView]} renderItem={(dog) => (
+              <Box my='1'>
                 <DogCard dog={dog} navigation={navigation} />
               </Box>
             )
             }
               keyExtractor={(dog) => dog.duid}
             />
-
           }
           {(loading === true) &&
             <Center mt='5'>
@@ -192,7 +202,23 @@ export default function ExploreTab({ navigation }) {
   }
   return (
     <View style={styles.container}>
+      {(screen=== 'Explore') &&
+        <Fab
+          borderRadius="full"
+          colorScheme="indigo"
+          mt='20'
+          placement="top-left"
+          icon={
+            <Icon
+              color="white"
+              as={<MaterialIcons name="lightbulb" />}
+              size="4"
+            />
+          }
+          label="Quick Start"
+        />
 
+      }
       {(user.zone !== 'Unverified') &&
         <MapView
           style={styles.map}
@@ -210,9 +236,11 @@ export default function ExploreTab({ navigation }) {
           {dogTags.map((dog, index) => (
             <Marker
               key={index}
-              coordinate={{latitude: dog.latitude, longitude: dog.longitude }}
+              coordinate={{ latitude: dog.latitude, longitude: dog.longitude }}
               title={dog.dogName}
-              description={dog.breed}
+              key = {dog.duid}
+              description={dog.breed + '  (' + dog.age + ')'} 
+              onPress={() => dispatch(updateDogView(dog))}
             />
           ))}
 
@@ -233,7 +261,7 @@ export default function ExploreTab({ navigation }) {
         <MapView
           style={styles.map}
           provider={PROVIDER_GOOGLE}
-        maxZoomLevel={12}
+          maxZoomLevel={12}
           customMapStyle={mapStyling}
           initialRegion={{
             latitude: 39.8283,
@@ -278,35 +306,23 @@ export default function ExploreTab({ navigation }) {
         <Box
           position='absolute'
           w="100%"
-          h="50%"
           padding='2'
-          bottom='-5'
+          bottom='10'
           rounded="xl"
           shadow={7}
           overflow="hidden"
-          borderColor="coolGray.200"
-          _dark={{
-            borderColor: "coolGray.600",
-            backgroundColor: "rgba(0,0,0,0.4)",
-          }}
-          _web={{
-            shadow: 7,
-            borderWidth: 0,
-          }}
-          _light={{
-            backgroundColor: "rgba(0,0,0,0.4)",
-          }}
+
         >
-          {(dogTags.length > 0) &&
-            <FlatList data={dogTags} renderItem={(dog) => (
-              <Box my='1' shadow={3}>
+
+          {dogView &&
+            <FlatList data={[dogView]} renderItem={(dog) => (
+              <Box my='1'>
                 <DogCard dog={dog} navigation={navigation} />
               </Box>
             )
             }
               keyExtractor={(dog) => dog.duid}
             />
-
           }
           {(loading === true) &&
             <Center mt='5'>
@@ -329,7 +345,7 @@ export default function ExploreTab({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#F3F3F4",
     alignItems: "center",
     justifyContent: "center",
   },

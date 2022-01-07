@@ -21,6 +21,7 @@ import Constants from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import { updatePushToken } from '../redux/slices/exploreSlice';
 import { addNotification } from '../redux/slices/userSlice';
+import { setTabScreen } from '../redux/slices/interfaceSlice';
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -108,6 +109,7 @@ export default function Main() {
                 let screen = e.data.state
                 let currentScreen = screen.routes[screen.index].name
                 setScreenAnalytics(currentScreen);
+                dispatch(setTabScreen(currentScreen))
 
             }
         }}>

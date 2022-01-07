@@ -4,63 +4,80 @@ import { Image } from "react-native";
 
 import {
   Box,
-  Heading,
-  AspectRatio,
-  Text,
-  Button,
   Center,
-  Stack,
   HStack,
-  Avatar,
-  Pressable
+  AspectRatio,
+  Stack,
+  Heading,
+  Text
+
 } from "native-base";
 
 export default function DogView() {
   useEffect(() => { }, []);
   let dog = useSelector((state) => state.explore.dogView);
 
+  if (dog) {
+    return (
+      <Box flex={1} w='100%' m='3'>
 
-  return (
-    <Center w="100%" mb="2">
-      <HStack w="100%">
-        <Box w="70%">
-          <Stack p="4" ml="3" space={3}>
-            <Heading size="md" ml="-1">
-              {props.id}
-            </Heading>
-            <Text
-              fontSize="xs"
-              _light={{
-                color: "violet.500",
-              }}
-              _dark={{
-                color: "violet.400",
-              }}
-              fontWeight="500"
-              ml="-0.5"
-              mt="-1"
-              mb='2'
-            >
-              July 4th - 6pm
-            </Text>
+        <HStack w="100%" space={3}>
+          <Center w="25%">
+            <AspectRatio w="115%" ratio={9 / 9}>
+              <Image
+                source={{
+                  uri: dog.profileImage,
+                }}
+                alt="image"
+              />
+            </AspectRatio>
+          </Center>
+          <Box w='70%'>
+            <Stack p="4" space={2}>
+              <Heading size="md" ml="-1">
 
+                {dog.dogName}
+              </Heading>
+              <Text
+                fontSize="xs"
+                _light={{
+                  color: "violet.500",
+                }}
+                _dark={{
+                  color: "violet.400",
+                }}
+                fontWeight="500"
+                ml="-0.5"
+                mt="-1"
+              >
 
-          </Stack>
-        </Box>
-        <Box w="30%">
+                {dog.breed}
+              </Text>
 
-      
+              <Text
+                color="coolGray.600"
+                _dark={{
+                  color: "warmGray.200",
+                }}
+                fontWeight="300"
+              >
 
-          <HStack space={2} position='absolute' my='1' bottom='1'>
-            <Button colorScheme="indigo" size='sm' px='2'> View</Button>
-            <Button colorScheme="indigo" size='sm' > Join</Button>
-
-
-          </HStack>
-
-
-        </Box>
-      </HStack>
-    </Center>
-  );
+                {dog.age + " Years Old"}
+              </Text>
+            </Stack>
+          </Box>
+        </HStack>
+        <Center>
+          Ratings
+        </Center>
+      </Box>
+    );
+  }
+  else {
+    return (
+      <Center>
+        Please Choose a dog to View
+      </Center>
+    )
+  }
 }

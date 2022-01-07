@@ -24,7 +24,6 @@ import {
 
 
 // ICONS
-import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { savePersonality } from '../../redux/slices/rawDogSlice';
 
