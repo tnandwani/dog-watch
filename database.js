@@ -128,6 +128,7 @@ export function viewDog(dog) {
     store.dispatch(updateDogView(dog))
     // show modal
     store.dispatch(updateShowDogModal(true))
+    console.log("VIEW ENABLED")
 
 }
 

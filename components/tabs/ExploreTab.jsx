@@ -123,7 +123,7 @@ export default function ExploreTab({ navigation }) {
   if (Platform.OS === "web") {
     return (
       <Center flex={1}>
-        {(screen === 'Explore') && 
+        {(screen === 'Explore') && (user.zone !== 'Unverified') && 
           <Fab
             borderRadius="full"
             colorScheme="indigo"
@@ -136,7 +136,7 @@ export default function ExploreTab({ navigation }) {
                 size="4"
               />
             }
-            label="Quick Start"
+            label="View Lost Dogs"
           />
 
         }
@@ -202,7 +202,7 @@ export default function ExploreTab({ navigation }) {
   }
   return (
     <View style={styles.container}>
-      {(screen=== 'Explore') &&
+      {(screen === 'Explore') && (user.zone !== 'Unverified') && 
         <Fab
           borderRadius="full"
           colorScheme="indigo"
@@ -215,7 +215,7 @@ export default function ExploreTab({ navigation }) {
               size="4"
             />
           }
-          label="Quick Start"
+          label="View Lost Dogs"
         />
 
       }
@@ -226,7 +226,7 @@ export default function ExploreTab({ navigation }) {
           maxZoomLevel={11}
           customMapStyle={mapStyling}
           initialRegion={{
-            latitude: user.latitude - 0.10,
+            latitude: user.latitude,
             longitude: user.longitude,
             longitudeDelta: 0.2,
             latitudeDelta: 0.2,
@@ -275,7 +275,7 @@ export default function ExploreTab({ navigation }) {
 
       {(user.zone === 'Unverified') &&
 
-        <Box position='absolute' w='100%' top='10'
+        <Box position='absolute' w='100%' top='20'
 
         >
           <Center>

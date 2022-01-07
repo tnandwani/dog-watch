@@ -43,7 +43,6 @@ export default function HomeTab() {
   return (
     <Box m="4">
 
-      <DogViewModal />
 
       <Resources />
       <Divider thickness="3" my="4" />

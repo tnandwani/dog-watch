@@ -171,19 +171,7 @@ export default function DogViewModal(props) {
             </Box>
 
           </Modal.Body>
-          <Modal.Footer>
-            <Button.Group space={2}>
-              <Button
-                variant="outline"
-                colorScheme="indigo"
-                onPress={() => {
-                  dispatch(updateShowDogModal(false))
-                }}
-              >
-                Close
-              </Button>
-            </Button.Group>
-          </Modal.Footer>
+
         </Modal.Content>
       }
 

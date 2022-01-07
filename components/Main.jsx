@@ -114,12 +114,12 @@ export default function Main() {
             }
         }}>
 
-            <Tab.Screen name="Home" component={HomeTab} options={{
+            {/* <Tab.Screen name="Home" component={HomeTab} options={{
                 headerShown: false,
                 tabBarIcon: ({ color, size }) => (
                     <MaterialIcons name="home" color={color} size={size} />
                 )
-            }} />
+            }} /> */}
             <Tab.Screen name="Explore" component={ExploreTab} options={{
                 headerShown: false,
                 tabBarIcon: ({ color, size }) => (
