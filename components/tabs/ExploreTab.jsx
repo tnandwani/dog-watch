@@ -10,7 +10,7 @@ import * as Location from 'expo-location';
 
 
 import { StyleSheet, View, Dimensions, Platform } from "react-native";
-import { getHomies, updateFireLocation } from "../../database";
+import { getHomies, getZoneData, updateFireLocation } from "../../database";
 import { mapQuestKey, mapStyling } from "../../constants";
 import DogCard from '../widgets/DogCard'
 
@@ -19,6 +19,9 @@ import { updateLocation } from "../../redux/slices/userSlice";
 import { saveLocation } from "../../redux/slices/rawDogSlice";
 import { updateDogView, updateLoading } from "../../redux/slices/exploreSlice";
 import { MaterialIcons } from '@expo/vector-icons';
+import { updateShowLostModal } from "../../redux/slices/interfaceSlice";
+import LostModal from '../modals/LostModal';
+import DogViewModal from '../modals/DogViewModal';
 
 
 export default function ExploreTab({ navigation }) {
@@ -35,6 +38,7 @@ export default function ExploreTab({ navigation }) {
   useEffect(() => {
     //
 
+    getZoneData();
     if (user.zone != "Unverified") {
       getHomies(user.latitude, user.longitude);
     }
@@ -123,9 +127,14 @@ export default function ExploreTab({ navigation }) {
   if (Platform.OS === "web") {
     return (
       <Center flex={1}>
-        {(screen === 'Explore') && (user.zone !== 'Unverified') && 
+        <LostModal />
+
+        <DogViewModal />
+
+        {(screen === 'Explore') && (user.zone !== 'Unverified') &&
           <Fab
             borderRadius="full"
+            onPress={() => dispatch(updateShowLostModal(true))}
             colorScheme="indigo"
             mt='20'
             placement="top-left"
@@ -140,8 +149,8 @@ export default function ExploreTab({ navigation }) {
           />
 
         }
-  
-        <Box position='absolute' top='20' >
+
+        <Box position='absolute' top='10' >
           <Text >Map Not Available on Web</Text>
           {(user.zone === 'Unverified') &&
             <Box>
@@ -172,9 +181,9 @@ export default function ExploreTab({ navigation }) {
           rounded="xl"
           shadow={7}
           overflow="hidden"
-        
+
         >
-      
+
           {dogView &&
             <FlatList data={[dogView]} renderItem={(dog) => (
               <Box my='1'>
@@ -202,9 +211,14 @@ export default function ExploreTab({ navigation }) {
   }
   return (
     <View style={styles.container}>
-      {(screen === 'Explore') && (user.zone !== 'Unverified') && 
+      <LostModal />
+
+      <DogViewModal />
+
+      {(screen === 'Explore') && (user.zone !== 'Unverified') &&
         <Fab
           borderRadius="full"
+          onPress={() => dispatch(updateShowLostModal(true))}
           colorScheme="indigo"
           mt='20'
           placement="top-left"
@@ -238,8 +252,8 @@ export default function ExploreTab({ navigation }) {
               key={index}
               coordinate={{ latitude: dog.latitude, longitude: dog.longitude }}
               title={dog.dogName}
-              key = {dog.duid}
-              description={dog.breed + '  (' + dog.age + ')'} 
+              key={dog.duid}
+              description={dog.breed + '  (' + dog.age + ')'}
               onPress={() => dispatch(updateDogView(dog))}
             />
           ))}

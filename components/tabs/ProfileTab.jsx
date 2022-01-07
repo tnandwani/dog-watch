@@ -14,7 +14,6 @@ import {
 } from "native-base"
 import { getUserDetails, signOutUser } from '../../database';
 import { resetRawDog } from '../../redux/slices/rawDogSlice';
-import DogViewModal from '../modals/DogViewModal';
 
 export default function ProfileTab({ navigation }) {
 
@@ -33,8 +32,7 @@ export default function ProfileTab({ navigation }) {
     return (
         <Box safeArea flex={1} p="1" py="8" w="90%" mx="auto">
             {/* add dog card for each  */}
-            <DogViewModal />
-
+        
             <Heading size="2xl" mt='5' mb='2'>My Dogs</Heading>
             {(user.dogs.length > 0) &&
                 <FlatList data={user.dogs} renderItem={(dog) => (

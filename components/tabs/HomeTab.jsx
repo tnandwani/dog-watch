@@ -62,6 +62,10 @@ export default function HomeTab() {
             keyExtractor={(noti) => noti.dog.duid}
           />
         }
+        {(myZone.lost.length < 1) &&
+          <Text>No Lost Dogs!</Text>
+        }
+å
       </VStack>
        
       {/* <Divider thickness="3" my="2" />
