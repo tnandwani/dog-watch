@@ -49,7 +49,6 @@ async function registerForPushNotificationsAsync() {
             return;
         }
         token = (await Notifications.getExpoPushTokenAsync()).data;
-        console.log(token);
     } else {
         alert('Must use physical device for Push Notifications');
     }
@@ -73,13 +72,15 @@ export default function Main() {
     const [notification, setNotification] = useState(false);
     const notificationListener = useRef();
     const responseListener = useRef();
+    let user  = useSelector((state) => state.user);
 
     const dispatch = useDispatch()
 
 
     useEffect(() => {
 
-        // If not mobile get address
+
+        // If mobile
         if (Platform.OS !== 'web') {
             registerForPushNotificationsAsync().then(token => dispatch(updatePushToken(token)));
 

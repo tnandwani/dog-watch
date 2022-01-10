@@ -98,7 +98,6 @@ const db = getFirestore();
 
 onAuthStateChanged(auth, user => {
     if (user != null) {
-        console.log('We are authenticated now!');
         const uid = user.uid;
         const email = user.email;
         store.dispatch(signInAccount({
@@ -117,7 +116,6 @@ onAuthStateChanged(auth, user => {
 
 //////////////////// UI FUNCTIONS 
 export function setScreenAnalytics(screenName) {
-    console.log('state changed', screenName);
     Analytics.logEvent('Opened_' + screenName)
 
 }
@@ -128,7 +126,6 @@ export function viewDog(dog) {
     store.dispatch(updateDogView(dog))
     // show modal
     store.dispatch(updateShowDogModal(true))
-    console.log("VIEW ENABLED")
 
 }
 
@@ -294,7 +291,7 @@ export async function unwrapDogs(dogs) {
 }
 
 export async function compareTask(lat, long) {
-    console.log("starting compare");
+    console.log("getting lat long comparison");
 
     const dogsRef = collection(db, "dogs");
 
@@ -323,7 +320,6 @@ export async function compareTask(lat, long) {
 
     const bubbleArray = latArray.filter(a => longArray.some(b => a.duid === b.duid));
 
-    console.log("return bubble", bubbleArray);
     store.dispatch(updateLoading(false));
 
     return bubbleArray;
@@ -357,13 +353,11 @@ export async function getHomies(lat, long) {
     Analytics.logEvent('got_homies_finish')
     zoneSnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
-        console.log("got dog ->", doc.data())
         homiesArray.push(doc.data())
     });
     homiesArray.forEach((dog) => {
         store.dispatch(addTag(dog))
     })
-    console.log("getting homies end", );
     store.dispatch(updateLoading(false));
 
 
@@ -399,7 +393,6 @@ export async function updateFireLocation(location) {
     // get user details
     const uid = store.getState().user.uid
     const pushToken = store.getState().explore.pushToken
-    console.log("pushToken", pushToken)
 
     const userRef = doc(db, "users", uid);
     updateDoc(userRef, {
@@ -422,7 +415,6 @@ export async function updateFireLocation(location) {
             members: arrayUnion(pushToken)
 
         }).then((resp) => {
-            console.log(resp);
             Analytics.logEvent('joined_nieghborhood')
 
 
@@ -586,7 +578,6 @@ export async function editPublish(imageURI, navigation) {
                     longitude: readyDog.longitude,
                     latitude: readyDog.latitude,
                 }).then((resp) => {
-                    console.log("finished creating dog")
                     Analytics.logEvent('Created_dog_finish')
 
                     navigation.navigate('Profile')
@@ -623,7 +614,6 @@ export async function editPublish(imageURI, navigation) {
 
             // get download URL
             getDownloadURL(snapshot.ref).then((PURI) => {
-                console.log('File available at', PURI);
                 Analytics.logEvent('Created_dog_photoURL')
 
                 // add url to redux
@@ -649,7 +639,6 @@ export async function editPublish(imageURI, navigation) {
                             longitude: readyDog.longitude,
                             latitude: readyDog.latitude,
                         }).then((resp) => {
-                            console.log("finished creating dog")
                             Analytics.logEvent('Created_dog_finish')
 
                             navigation.navigate('Profile')
@@ -692,7 +681,6 @@ export async function markLost(dog, EContact, index, message) {
         lost: true,
         contact: EContact
     }).then(() => {
-        console.log("marked public dog as lost");
         Analytics.logEvent('dog_marked_lost_publicly')
 
     });
@@ -709,14 +697,36 @@ export async function markLost(dog, EContact, index, message) {
     updateDoc(usersRef, {
         dogs: newDogList,
     }).then(() => {
-        console.log("marked personal dog as lost");
         Analytics.logEvent('dog_marked_lost_privately')
 
     });
 
     const zone = store.getState().user.zone
     const senderToken = store.getState().user.pushToken
+    const members = store.getState().explore.myZone.members
+    sendNotificationtoZone(dog, message, members, senderToken, 'LOST DOG')
+    Analytics.logEvent('dog_lost_notification_sent')
 
+    const alert = {
+        duid: dog.duid,
+        date: new Date().toLocaleDateString('en-us', {
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+        }),
+        message: message,
+        dog: dog,
+        contact: EContact
+    }
+    store.dispatch(addLocalAlert(alert))
+    // set dog as lost in zone 
+    updateDoc(zoneRef, {
+        lost: arrayUnion(alert),
+    }).then(() => {
+        console.log("marked personal dog as lost");
+        Analytics.logEvent('dog_marked_lost_privately')
+
+    });
 
     // mark LOST in ZONES/zone/lost
     const zoneRef = doc(db, "zones", zone);
@@ -726,32 +736,7 @@ export async function markLost(dog, EContact, index, message) {
             if (docSnap.exists()) {
                 let members = docSnap.data().members
                 // send out push notifications 
-                sendNotificationtoZone(dog, message, members, senderToken, EContact, 'LOST DOG')
-                Analytics.logEvent('dog_lost_notification_sent')
-
-                const alert = {
-                    duid: dog.duid,
-                    date: new Date().toLocaleDateString('en-us', {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric"
-                    }),
-                    message: message,
-                    dog: dog,
-                    contact: EContact
-                }
-                store.dispatch(addLocalAlert(alert))
-                // set dog as lost in zone 
-                updateDoc(zoneRef, {
-                    lost: arrayUnion(alert),
-                }).then(() => {
-                    console.log("marked personal dog as lost");
-                    Analytics.logEvent('dog_marked_lost_privately')
-
-                });
-
             } else {
-
                 setDoc(doc(db, "zones", zone), {
                     members: [pushToken],
                     lost: [dog]
@@ -792,8 +777,6 @@ export async function markFound(dog, index) {
     const newDogList = store.getState().user.dogs
     const uid = store.getState().user.uid
 
-    console.log("new list is: ", newDogList)
-
     // post newList
     // mark in DOGS
     const usersRef = doc(db, "users", uid);
@@ -825,8 +808,6 @@ export async function markFound(dog, index) {
 }
 
 export function updateDogList(newList, uid) {
-
-    console.log("about to add: ", newList);
 
     const usersRef = doc(db, "users", uid);
 
