@@ -239,7 +239,7 @@ export default function DogCard(props) {
                     {(props.dog.item.lost) &&
                       <Box>
                         <IconButton
-                          onPress={() => setShowCancelModal()}
+                          onPress={() => setShowCancelModal(true)}
                           _icon={{
                             as: MaterialCommunityIcons,
                             name: "bell-cancel",

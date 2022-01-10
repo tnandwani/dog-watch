@@ -91,7 +91,6 @@ export default function ExploreTab({ navigation }) {
       fetch('http://www.mapquestapi.com/geocoding/v1/reverse?key=' + mapQuestKey, requestOptions)
         .then(response => response.json())
         .then(data => {
-          console.log(data);
           const addy = data.results[0].locations[0].postalCode
           const zip = addy.substr(0, addy.indexOf('-'));
           console.log("zone", zip);
@@ -103,8 +102,6 @@ export default function ExploreTab({ navigation }) {
             zone: zip,
 
           }
-          console.log(userLocation);
-
           // save state and update UI
           // save state and update UI
           setLocationStatus("Location Received");

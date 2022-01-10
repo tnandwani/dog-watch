@@ -13,7 +13,8 @@ export const userSlice = createSlice({
     username: null,
     dogs: [],
     status: 'loading',
-    notifications: []
+    notifications: [],
+    pushToken: null,
   },
   reducers: {
     saveUserAccount: (state, action) => {
@@ -32,7 +33,7 @@ export const userSlice = createSlice({
       state.latitude = action.payload.latitude
       state.longitude = action.payload.longitude
       state.dogs = action.payload.dogs
-
+      state.pushToken = action.payload.pushToken
     },
     saveDogCards: (state, action) => {
       if (!state.dogCards.includes(action.payload)) {
@@ -52,14 +53,12 @@ export const userSlice = createSlice({
       state.dogs[action.payload.index].contact = action.payload.EContact
     },
     updateLocation: (state, action) => {
-      console.log("attempt to locate:", action.payload)
       state.zone = action.payload.zone
       state.latitude = action.payload.latitude
       state.longitude = action.payload.longitude
 
     },
     addNotification: (state, action) => {
-      console.log("notification: ", action.payload)
       state.notifications.push(action.payload)
 
     },
@@ -70,7 +69,7 @@ export const userSlice = createSlice({
     removeDogfromUser: (state, action) => {
       const index = state.dogs.findIndex(dog => dog.duid === action.payload.duid);
       state.dogs.splice(index, 1)
-      
+
     },
 
   },

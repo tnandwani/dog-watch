@@ -130,7 +130,6 @@ export default function DogCreator({ navigation }) {
             quality: 1,
         });
 
-        console.log(result);
 
         if (!result.cancelled) {
             // get URI
@@ -185,7 +184,6 @@ export default function DogCreator({ navigation }) {
             fetch('http://www.mapquestapi.com/geocoding/v1/reverse?key=' + mapQuestKey, requestOptions)
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
                     const addy = data.results[0].locations[0].postalCode
                     const zip = addy.substr(0, addy.indexOf('-')); 
                     console.log("zone" , zip);
@@ -197,7 +195,6 @@ export default function DogCreator({ navigation }) {
                         zone: zip,
 
                     }
-                    console.log(userLocation);
 
                     // save state and update UI
                     setLocation(userLocation);

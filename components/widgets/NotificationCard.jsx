@@ -26,7 +26,6 @@ export default function NotificationCard(props) {
 
   const callNumber = phone => {
   
-    console.log('callNumber ----> ', phone);
     let phoneNumber = phone;
 
     if (Platform.OS !== 'android') {
@@ -72,14 +71,14 @@ export default function NotificationCard(props) {
         }}
       >
         <HStack w='100%'>
-          <Center w='35%'>
+          <Center w='25%'>
             <AspectRatio w="115%" ratio={9 / 9}>
               <Image
                 source={{ uri: props.data.dog.profileImage }}
               />
             </AspectRatio>
           </Center>
-          <Box w='65%'>
+          <Box w='75%'>
             <Stack p="4" space={1} ml='3'>
               <Heading size="md" ml="-1">
                 {props.data.dog.dogName}
@@ -108,10 +107,11 @@ export default function NotificationCard(props) {
                 {"Lost on: " + props.data.date}
               </Text>
         
-              <HStack space={2} mt='3' alignContent='flex-end'>
+              {/* <HStack space={2} mt='3' alignContent='flex-end'>
                 <Button colorScheme="indigo" size='sm' px='5' onPress={() => viewDog(props.data.dog)}> View</Button>
                 <Button colorScheme="indigo" size='sm' px='5' onPress={() => callNumber(props.data.contact)}> Contact</Button>
-              </HStack>
+              </HStack> */}
+
             </Stack>
           </Box>
         
