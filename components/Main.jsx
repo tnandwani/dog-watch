@@ -12,7 +12,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeTab from './tabs/HomeTab'
 import ExploreTab from './tabs/ExploreTab'
 import ProfileTab from './tabs/ProfileTab'
-import { setScreenAnalytics } from '../database';
+import { addMembertoZone, setScreenAnalytics } from '../database';
 
 
 
@@ -72,17 +72,25 @@ export default function Main() {
     const [notification, setNotification] = useState(false);
     const notificationListener = useRef();
     const responseListener = useRef();
-    let user  = useSelector((state) => state.user);
+    let userToken = useSelector((state) => state.user.pushToken);
 
     const dispatch = useDispatch()
 
-
     useEffect(() => {
-
 
         // If mobile
         if (Platform.OS !== 'web') {
-            registerForPushNotificationsAsync().then(token => dispatch(updatePushToken(token)));
+            if (userToken) {
+                dispatch(updatePushToken(userToken))
+            }
+            else {
+                registerForPushNotificationsAsync().then(token => {
+                    addMembertoZone(token)
+                    dispatch(updatePushToken(token))
+                });
+
+
+            }
 
             notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
                 setNotification(notification);

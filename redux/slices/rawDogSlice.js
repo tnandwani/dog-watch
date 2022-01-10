@@ -4,7 +4,7 @@ import {
 
 
 const detaultState = {
-  dogName: 'Test',
+  dogName: 'Dog Name',
   editing: false,
   duid: null,
   breed: null,

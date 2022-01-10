@@ -14,7 +14,7 @@ import { getHomies, getZoneData, updateFireLocation } from "../../database";
 import { mapQuestKey, mapStyling } from "../../constants";
 import DogCard from '../widgets/DogCard'
 
-import { Box, Button, Center, FlatList, Heading, Spinner, Text, Fab, Icon } from "native-base";
+import { Box, Button, Center, FlatList, Heading, Spinner, Text, Fab, Icon, Badge } from "native-base";
 import { updateLocation } from "../../redux/slices/userSlice";
 import { saveLocation } from "../../redux/slices/rawDogSlice";
 import { updateDogView, updateLoading } from "../../redux/slices/exploreSlice";
@@ -129,21 +129,26 @@ export default function ExploreTab({ navigation }) {
         <DogViewModal />
 
         {(screen === 'Explore') && (user.zone !== 'Unverified') &&
-          <Fab
-            borderRadius="full"
-            onPress={() => dispatch(updateShowLostModal(true))}
-            colorScheme="indigo"
-            mt='20'
-            placement="top-left"
-            icon={
-              <Icon
-                color="white"
-                as={<MaterialIcons name="lightbulb" />}
-                size="4"
-              />
-            }
-            label="View Lost Dogs"
-          />
+          <Box>
+            <Fab
+              borderRadius="full"
+              onPress={() => dispatch(updateShowLostModal(true))}
+              colorScheme="indigo"
+              mt='20'
+              placement="top-left"
+              icon={
+                <Icon
+                  color="white"
+                  as={<MaterialIcons name="lightbulb" />}
+                  size="4"
+                />
+              }
+              label="View Lost Dogs"
+            />
+            <Badge>NEW FEATURE</Badge>
+          </Box>
+
+
 
         }
 
@@ -213,21 +218,24 @@ export default function ExploreTab({ navigation }) {
       <DogViewModal />
 
       {(screen === 'Explore') && (user.zone !== 'Unverified') &&
-        <Fab
-          borderRadius="full"
-          onPress={() => dispatch(updateShowLostModal(true))}
-          colorScheme="indigo"
-          mt='20'
-          placement="top-left"
-          icon={
-            <Icon
-              color="white"
-              as={<MaterialIcons name="lightbulb" />}
-              size="4"
-            />
-          }
-          label="View Lost Dogs"
-        />
+        <Box>
+          <Fab
+            borderRadius="full"
+            onPress={() => dispatch(updateShowLostModal(true))}
+            colorScheme="indigo"
+            mt='20'
+            placement="top-left"
+            icon={
+              <Icon
+                color="white"
+                as={<MaterialIcons name="lightbulb" />}
+                size="4"
+              />
+            }
+            label="View Lost Dogs"
+          />
+          <Badge>NEW FEATURE</Badge>
+        </Box>
 
       }
       {(user.zone !== 'Unverified') &&

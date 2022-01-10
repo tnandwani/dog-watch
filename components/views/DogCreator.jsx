@@ -67,7 +67,7 @@ export default function DogCreator({ navigation }) {
     const [breed, setBreed] = useState();
     const [age, setAge] = useState();
     const [gender, setGender] = useState();
-    const [profileImage, setProfileImage] = useState(useSelector((state) => state.user.status));
+    const [profileImage, setProfileImage] = useState(useSelector((state) => state.rawDog.profileImage));
 
     // owner
     // const [contact, setContact] = useState();
@@ -77,7 +77,8 @@ export default function DogCreator({ navigation }) {
     // location
     const [visibility, setVisibility] = useState();
     const [location, setLocation] = useState();
-    const [locationStatus, setLocationStatus] = useState("Location will not be public");
+    const [locationStatus, setLocationStatus] = useState("No Location Recieved");
+    const [locationHelper, setLocationHelper] = useState("Visibility based on privacy");
 
 
     const dispatch = useDispatch()
@@ -99,12 +100,16 @@ export default function DogCreator({ navigation }) {
         setGender(g);
         dispatch(saveDogGender(g));
     }
-    const updateContact = (a) => {
-        setContact(a);
-        dispatch(saveContact(a));
-    }
+
     const updateVisibility = (g) => {
         setVisibility(g);
+        if(g == 'n'){
+            setLocationHelper('Dog location will only be accurate in emegencies')
+        }
+        else{
+            setLocationHelper('Dog location will only be shown in case of emergencies')
+
+        }
         dispatch(saveVisibility(g));
     }
 
@@ -264,7 +269,6 @@ export default function DogCreator({ navigation }) {
                             accessibilityLabel="Choose Breed"
                             placeholder="Choose Breed"
                             _selectedItem={{
-                                bg: "teal.600",
                                 endIcon: <CheckIcon size="5" />,
                             }}
                             onValueChange={(value) => updateBreed(value)}
@@ -284,7 +288,6 @@ export default function DogCreator({ navigation }) {
                             accessibilityLabel="Choose Gender"
                             placeholder="Choose Gender"
                             _selectedItem={{
-                                bg: "teal.600",
                                 endIcon: <CheckIcon size="5" />,
                             }}
                             onValueChange={(value) => updateGender(value)}
@@ -314,7 +317,6 @@ export default function DogCreator({ navigation }) {
                             accessibilityLabel="Choose Age"
                             placeholder="Choose Age"
                             _selectedItem={{
-                                bg: "teal.600",
                                 endIcon: <CheckIcon size="5" />,
                             }}
                             onValueChange={(value) => updateAge(value)}
@@ -326,20 +328,19 @@ export default function DogCreator({ navigation }) {
                     <FormControl w='49%'>
                         <FormControl.Label
                             _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
-                            Dog Visibility
+                            Privacy
                         </FormControl.Label>
                         <Select
                             selectedValue={visibility}
                             accessibilityLabel="Choose Visibility"
                             placeholder="Choose Visibility"
                             _selectedItem={{
-                                bg: "teal.600",
                                 endIcon: <CheckIcon size="5" />,
                             }}
                             onValueChange={(value) => updateVisibility(value)}
                         >
                             <Select.Item label="Neighborhood" value="n" />
-                            <Select.Item label="Private" value="p" />
+                            <Select.Item label="Emergencies" value="e" />
 
                         </Select>
                     </FormControl>
@@ -347,7 +348,10 @@ export default function DogCreator({ navigation }) {
 
 
                 <FormControl>
-                    <Button mt="4" colorScheme="indigo" _text={{ color: 'white' }} shadow="7" onPress={getLocation}  > Mark Home </Button>
+                    <FormControl.HelperText>
+                        {locationHelper}
+                    </FormControl.HelperText>
+                    <Button mt="4" colorScheme="indigo" _text={{ color: 'white' }} shadow="7" onPress={getLocation}  > Set as Home </Button>
 
                     <FormControl.HelperText>
                         {locationStatus}

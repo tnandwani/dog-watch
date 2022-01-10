@@ -19,6 +19,8 @@ export default function RawDogCard(props) {
     let age = useSelector((state) => state.rawDog.age)
     let zone = useSelector((state) => state.rawDog.zone)
 
+    
+
 
     return (
         <Center w='100%'>
@@ -43,13 +45,16 @@ export default function RawDogCard(props) {
                 <HStack w='100%'>
                     <Center w='30%'>
                         <AspectRatio w="100%" ratio={9 / 9}>
-                        <Image
-          source={{ uri: props.image }}
-        />
+                            <Image
+                                source={{
+                                    uri: props.image,
+                                }}
+                                alt="image"
+                            />
                         </AspectRatio>
                     </Center>
                     <Box w='60%'>
-                        <Stack p="4" space={3}>
+                        <Stack p="4" space={2}>
                             <Heading size="md" ml="-1">
                                 {dogName}
                             </Heading>
@@ -68,19 +73,17 @@ export default function RawDogCard(props) {
                                 {breed}
                             </Text>
 
-                            <Text fontWeight="400" my='-1'>
-                                {/* {zone.city} */}
-
-                            </Text>
+                            {age && 
                             <Text
-                                color="coolGray.600"
-                                _dark={{
-                                    color: "warmGray.200",
-                                }}
-                                fontWeight="300"
+                            color="coolGray.600"
+                            _dark={{
+                                color: "warmGray.200",
+                            }}
+                            fontWeight="300"
                             >
-                                {age + ' Years Old'} 
+                                {age + ' Years Old'}
                             </Text>
+                            }
 
                         </Stack>
                     </Box>

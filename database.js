@@ -392,17 +392,14 @@ export async function updateFireLocation(location) {
 
     // get user details
     const uid = store.getState().user.uid
-    const pushToken = store.getState().explore.pushToken
 
     const userRef = doc(db, "users", uid);
     updateDoc(userRef, {
         zone: location.zone,
         longitude: location.longitude,
         latitude: location.latitude,
-        pushToken: pushToken
     }).then(() => {
-        console.log("finished creating dog")
-
+        console.log("udated user doc with loccation and pushToken")
     })
 
     // add to zones
@@ -875,8 +872,23 @@ export function deleteDog(duid, uid, navigation) {
         })
     });
 
+}
+
+export function addMembertoZone(token) {
+    // add member to zone
+    const zone = store.getState().user.zone
+    const zoneRef = doc(db, "zones", zone);
+
+    // Atomically add a new region to the "regions" array field.
+    updateDoc(zoneRef, {
+        members: arrayUnion(token)
+    }).then((result) => {
+        console.log(result)
+    }).catch((err) => {
+        console.log(err)
+
+    });;
 
 
-
-
+    // update redux
 }
