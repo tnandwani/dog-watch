@@ -9,7 +9,6 @@ export const exploreSlice = createSlice({
     loading: true,
     dogTags: [],
     myCoords: null,
-    myZone: null,
     vapidToken: null,
     pushToken: null,
     myZone: {

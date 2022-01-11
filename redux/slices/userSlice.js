@@ -60,7 +60,6 @@ export const userSlice = createSlice({
     },
     addNotification: (state, action) => {
       state.notifications.push(action.payload)
-
     },
     changeDogInUser: (state, action) => {
       const index = state.dogs.findIndex(dog => dog.duid === action.payload.duid);

@@ -716,6 +716,10 @@ export async function markLost(dog, EContact, index, message) {
         contact: EContact
     }
     store.dispatch(addLocalAlert(alert))
+
+    // mark LOST in ZONES/zone/lost
+    const zoneRef = doc(db, "zones", zone);
+
     // set dog as lost in zone 
     updateDoc(zoneRef, {
         lost: arrayUnion(alert),
@@ -725,30 +729,7 @@ export async function markLost(dog, EContact, index, message) {
 
     });
 
-    // mark LOST in ZONES/zone/lost
-    const zoneRef = doc(db, "zones", zone);
-
-    // get push Tokens
-    getDoc(zoneRef).then((docSnap) => {
-            if (docSnap.exists()) {
-                let members = docSnap.data().members
-                // send out push notifications 
-            } else {
-                setDoc(doc(db, "zones", zone), {
-                    members: [pushToken],
-                    lost: [dog]
-                });
-
-            }
-
-        })
-        .catch((error) => {
-            console.log("Error getting document:", error);
-            Analytics.logEvent('fire_error', {
-                message: error.message
-            })
-        })
-
+  
 }
 
 export async function markFound(dog, index) {

@@ -11,6 +11,7 @@ import {
 
 import { updateShowLostModal } from "../../redux/slices/interfaceSlice";
 import NotificationCard from "../widgets/NotificationCard";
+import LostList from "../widgets/LostList";
 
 export default function LostModal(props) {
 
@@ -26,15 +27,14 @@ export default function LostModal(props) {
         <Modal.Header colorScheme='emerald.500'>Lost Dogs</Modal.Header>
         <Modal.Body>
           {(myZone.lost.length > 0) &&
-              <FlatList data={myZone.lost} renderItem={(noti) => (
-                <Box>
-                  <NotificationCard data={noti.item} />
+              // <FlatList data={myZone.lost} renderItem={(noti) => (
+              //     <NotificationCard data={noti.item} />
+              // )
+              // }
+              //   keyExtractor={(noti) => noti.dog.duid}
+              // />
 
-                </Box>
-              )
-              }
-                keyExtractor={(noti) => noti.dog.duid}
-              />
+              <LostList/>
             }
             {(myZone.lost.length < 1) &&
               <Center>No Lost Dogs!</Center>
