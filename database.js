@@ -86,9 +86,8 @@ import {
     updateDogProgress,
     updateLoginAlert,
     updateShowDogModal
-} from './redux/slices/interfaceSlice';
-
-
+}
+from './redux/slices/interfaceSlice';
 ////////// APP START
 
 initializeApp(firebaseConfig)
@@ -706,11 +705,7 @@ export async function markLost(dog, EContact, index, message) {
 
     const alert = {
         duid: dog.duid,
-        date: new Date().toLocaleDateString('en-us', {
-            year: "numeric",
-            month: "short",
-            day: "numeric"
-        }),
+        date: new Date().toLocaleDateString('en-us'),
         message: message,
         dog: dog,
         contact: EContact
@@ -872,4 +867,7 @@ export function addMembertoZone(token) {
 
 
     // update redux
+}
+export function namer() {
+
 }

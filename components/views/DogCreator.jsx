@@ -73,6 +73,7 @@ export default function DogCreator({ navigation }) {
     // const [contact, setContact] = useState();
     const uid = useSelector((state) => state.user.uid)
     const duid = useSelector((state) => state.rawDog.duid)
+    const editing = useSelector((state) => state.rawDog.editing)
 
     // location
     const [visibility, setVisibility] = useState();
@@ -103,10 +104,10 @@ export default function DogCreator({ navigation }) {
 
     const updateVisibility = (g) => {
         setVisibility(g);
-        if(g == 'n'){
+        if (g == 'n') {
             setLocationHelper('Dog location will only be accurate in emegencies')
         }
-        else{
+        else {
             setLocationHelper('Dog location will only be shown in case of emergencies')
 
         }
@@ -190,8 +191,8 @@ export default function DogCreator({ navigation }) {
                 .then(response => response.json())
                 .then(data => {
                     const addy = data.results[0].locations[0].postalCode
-                    const zip = addy.substr(0, addy.indexOf('-')); 
-                    console.log("zone" , zip);
+                    const zip = addy.substr(0, addy.indexOf('-'));
+                    console.log("zone", zip);
 
                     // create new location object 
                     let userLocation = {
@@ -227,6 +228,8 @@ export default function DogCreator({ navigation }) {
         if (dogName && breed && age && gender && visibility && location && isFinished) {
             setIsFinished(false)
         }
+
+
 
     }
     verify();
@@ -377,15 +380,22 @@ export default function DogCreator({ navigation }) {
                     <Button variant="outline" colorScheme="indigo" onPress={() => cancelCreate()}>
                         Cancel
                     </Button>
-                    {duid &&
+                    {editing &&
                         <Button variant="outline" colorScheme="red" onPress={() => deleteDog(duid, uid, navigation)}>
                             Delete Dog
                         </Button>
                     }
-                    <Button isDisabled={isFinished} colorScheme="indigo" onPress={() => navigation.navigate("Personality")
-                    }>
-                        Add Personality
-                    </Button>
+                    {editing &&
+                        <Button colorScheme="indigo" onPress={() => navigation.navigate("Personality")}>
+                            Edit Personality
+                        </Button>
+                    }
+                    {!editing &&
+
+                        <Button isDisabled={isFinished} colorScheme="indigo" onPress={() => navigation.navigate("Personality")}>
+                            Add Personality
+                        </Button>
+                    }
 
                 </HStack>
 

@@ -34,7 +34,7 @@ export default function LostModal(props) {
               //   keyExtractor={(noti) => noti.dog.duid}
               // />
 
-              <LostList/>
+            <LostList />
             }
             {(myZone.lost.length < 1) &&
               <Center>No Lost Dogs!</Center>

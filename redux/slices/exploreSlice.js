@@ -17,7 +17,7 @@ export const exploreSlice = createSlice({
       found: [],
     },
     dogView: null,
-    
+
   },
   reducers: {
     saveCoords: (state, action) => {
