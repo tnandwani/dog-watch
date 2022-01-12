@@ -17,7 +17,7 @@ import {
     Spacer,
 } from 'native-base';
 import { SwipeListView } from 'react-native-swipe-list-view';
-import { MaterialIcons, Ionicons, Entypo } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 
 export default function LostList() {
     const data = [
@@ -98,25 +98,27 @@ export default function LostList() {
     };
 
     const onRowDidOpen = (rowKey) => {
-    console.log('This row opened', rowKey);
+        console.log('This row opened', rowKey);
     };
 
     const renderItem = ({ item, index }) => (
-    <Box>
-            <Pressable onPress={() => console.log('You touched me')} bg="#F9FAFB">
+        <Box>
+            <Pressable onPress={() => alert('You touched me')} bg="#F9FAFB">
                 <Box
-                    pl="4"
-                    pr="5"
-                    py="2"
+                    px={1}
+                    py={3}
                 >
                     <HStack alignItems="center" space={3}>
-                        <Avatar size="100px" source={{ uri: item.dog.profileImage }} />
-                        <VStack>
-                            <Text color="coolGray.800" _dark={{ color: 'warmGray.50' }} bold>
+                        <Avatar size="80px" source={{ uri: item.dog.profileImage }} />
+                        <VStack space={1}>
+                            <Text
+                                fontSize="md"
+                                color="coolGray.800"
+                                _dark={{ color: 'warmGray.50' }} bold>
                                 {item.dog.dogName}
                             </Text>
                             <Text
-                                fontSize="xs"
+                                fontSize="sm"
                                 _light={{
                                     color: "violet.500",
                                 }}
@@ -130,7 +132,16 @@ export default function LostList() {
 
                                 {item.dog.breed}
                             </Text>
-                            <Text color="coolGray.600" _dark={{ color: 'warmGray.200' }}>{item.message}</Text>
+                            <Text
+                                color="coolGray.600"
+                                _dark={{
+                                    color: "warmGray.200",
+                                }}
+                                fontWeight="300"
+                            >
+
+                                {item.dog.age + " Years Old"}
+                            </Text>
                         </VStack>
                         <Spacer />
                         <Text fontSize="xs" color="coolGray.800" _dark={{ color: 'warmGray.50' }} alignSelf="flex-start">
@@ -139,16 +150,15 @@ export default function LostList() {
                     </HStack>
                 </Box>
             </Pressable>
-    </Box>
+        </Box >
     );
 
     const renderHiddenItem = (data, rowMap) => (
-    <HStack flex="1" pl="2">
+        <HStack flex="1" pl="2">
             <Pressable
                 w="70"
                 ml="auto"
-                cursor="pointer"
-                bg="coolGray.200"
+                bg="red.400"
                 justifyContent="center"
                 onPress={() => report(rowMap, data.item.key)}
                 _pressed={{
@@ -156,7 +166,7 @@ export default function LostList() {
                 }}>
                 <VStack alignItems="center" space={2}>
                     <Icon
-                        as={<Entypo name="dots-three-horizontal" />}
+                        as={<MaterialIcons name="report" />}
                         size="xs"
                         color="coolGray.800"
                     />
@@ -167,25 +177,24 @@ export default function LostList() {
             </Pressable>
             <Pressable
                 w="70"
-                cursor="pointer"
-                bg="red.500"
+                bg="success.500"
                 justifyContent="center"
                 onPress={() => callDog(rowMap, data.item.key, data.item.contact)}
                 _pressed={{
                     opacity: 0.5,
                 }}>
                 <VStack alignItems="center" space={2}>
-                    <Icon as={<MaterialIcons name="delete" />} color="white" size="xs" />
+                    <Icon as={<MaterialIcons name="phone" />} color="white" size="xs" />
                     <Text color="white" fontSize="xs" fontWeight="medium">
                         Call
                     </Text>
                 </VStack>
             </Pressable>
-    </HStack>
+        </HStack>
     );
 
     return (
-        <Box safeArea flex="1">
+        <Box flex="1" py='1'>
             <SwipeListView
                 data={listData}
                 renderItem={renderItem}
@@ -196,6 +205,6 @@ export default function LostList() {
                 previewOpenDelay={3000}
                 onRowDidOpen={onRowDidOpen}
             />
-    </Box>
+        </Box>
     );
 }

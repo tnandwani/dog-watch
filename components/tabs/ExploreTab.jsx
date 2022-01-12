@@ -29,6 +29,8 @@ export default function ExploreTab({ navigation }) {
   let screen = useSelector((state) => state.interface.screen);
   let user = useSelector((state) => state.user);
   let dogTags = useSelector((state) => state.explore.dogTags);
+  let lostDogs = useSelector((state) => state.explore.myZone.lost);
+
   let loading = useSelector((state) => state.explore.loading);
   const [locationStatus, setLocationStatus] = useState('');
 
@@ -143,9 +145,8 @@ export default function ExploreTab({ navigation }) {
                   size="4"
                 />
               }
-              label="View Lost Dogs"
+              label={"View Lost Dogs (" + lostDogs.length + ')'}
             />
-            <Badge>NEW FEATURE</Badge>
           </Box>
 
 
@@ -153,7 +154,7 @@ export default function ExploreTab({ navigation }) {
         }
 
         <Box position='absolute' top='10' >
-          <Text >Map Not Available on Web</Text>
+          <Badge colorScheme="danger" variant="subtle" >Map Not Available on Web</Badge>
           {(user.zone === 'Unverified') &&
             <Box>
               <Button
@@ -234,7 +235,6 @@ export default function ExploreTab({ navigation }) {
             }
             label="View Lost Dogs"
           />
-          <Badge>NEW FEATURE</Badge>
         </Box>
 
       }

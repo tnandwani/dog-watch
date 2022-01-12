@@ -708,7 +708,8 @@ export async function markLost(dog, EContact, index, message) {
         date: new Date().toLocaleDateString('en-us'),
         message: message,
         dog: dog,
-        contact: EContact
+        reported: 0,
+            contact: EContact,
     }
     store.dispatch(addLocalAlert(alert))
 
