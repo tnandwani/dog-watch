@@ -344,7 +344,7 @@ export async function getHomies(lat, long) {
     const zone = store.getState().user.zone
     const dogsRef = collection(db, "dogs");
 
-    const zoneQ = query(dogsRef, where("zone", "==", zone));
+    const zoneQ = query(dogsRef, where("zone", "==", zone), where("visibility", "==", 'n'));
     const zoneSnapshot = await getDocs(zoneQ);
 
     let homiesArray = [];

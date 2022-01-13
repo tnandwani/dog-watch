@@ -27,18 +27,11 @@ export default function LostModal(props) {
         <Modal.Header colorScheme='emerald.500'>Lost Dogs</Modal.Header>
         <Modal.Body>
           {(myZone.lost.length > 0) &&
-              // <FlatList data={myZone.lost} renderItem={(noti) => (
-              //     <NotificationCard data={noti.item} />
-              // )
-              // }
-              //   keyExtractor={(noti) => noti.dog.duid}
-              // />
-
             <LostList />
-            }
-            {(myZone.lost.length < 1) &&
-              <Center>No Lost Dogs!</Center>
-            }
+          }
+          {(myZone.lost.length < 1) &&
+            <Center>No Lost Dogs!</Center>
+          }
 
 
         </Modal.Body>

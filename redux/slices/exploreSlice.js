@@ -47,15 +47,12 @@ export const exploreSlice = createSlice({
       state.dogView = action.payload
     },
     foundZoneDog: (state, action) => {
-      const index = state.myZone.lost.findIndex(alert => alert.duid === action.payload.duid);
+      const index = state.myZone.lost.findIndex(alert => alert.duid === action.payload);
       state.myZone.lost.splice(index, 1);
     },
     addLocalAlert: (state, action) => {
       state.myZone.lost.push(action.payload)
-    },
-
-
-
+    }
   },
 })
 

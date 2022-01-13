@@ -242,7 +242,7 @@ export default function ExploreTab({ navigation }) {
         <MapView
           style={styles.map}
           provider={PROVIDER_GOOGLE}
-          maxZoomLevel={11}
+          maxZoomLevel={12}
           customMapStyle={mapStyling}
           initialRegion={{
             latitude: user.latitude,
