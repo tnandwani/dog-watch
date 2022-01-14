@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Image } from "react-native";
+import { Image, Keyboard } from "react-native";
 
 import {
   Box,
@@ -44,14 +44,14 @@ export default function DogCard(props) {
   }, []);
 
   const editDog = () => {
-  
-      // pass dog to rawDog
+
+    // pass dog to rawDog
     dispatch(importDog(props.dog.item))
     props.navigation.navigate('DogCreator')
 
-     // open Dog Creator 
-  
-  
+    // open Dog Creator 
+
+
   }
 
   const confirm = () => {
@@ -80,7 +80,9 @@ export default function DogCard(props) {
 
             <FormControl isRequired >
               <FormControl.Label>Add Alert Details</FormControl.Label>
-              <TextArea onChangeText={(value) => setMessage(value)} />
+              <TextArea
+                onSubmitEditing={() => Keyboard.dismiss()}
+                onChangeText={(value) => setMessage(value)} />
 
             </FormControl>
             <FormControl isRequired mt='2'>
