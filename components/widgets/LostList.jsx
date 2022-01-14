@@ -18,57 +18,32 @@ import {
 } from 'native-base';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { MaterialIcons } from '@expo/vector-icons';
+import { reportUser } from '../../database';
 
 export default function LostList() {
-	const data = [
-		{
-			id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-			fullName: 'Afreen Khan',
-			timeStamp: '12:47 PM',
-			recentText: 'Good Day!',
-			avatarUrl:
-				'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-		},
-		{
-			id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-			fullName: 'Sujita Mathur',
-			timeStamp: '11:11 PM',
-			recentText: 'Cheer up, there!',
-			avatarUrl:
-				'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyEaZqT3fHeNrPGcnjLLX1v_W4mvBlgpwxnA&usqp=CAU',
-		},
-		{
-			id: '58694a0f-3da1-471f-bd96-145571e29d72',
-			fullName: 'Anci Barroco',
-			timeStamp: '6:22 PM',
-			recentText: 'Good Day!',
-			avatarUrl: 'https://miro.medium.com/max/1400/0*0fClPmIScV5pTLoE.jpg',
-		},
-		{
-			id: '68694a0f-3da1-431f-bd56-142371e29d72',
-			fullName: 'Aniket Kumar',
-			timeStamp: '8:56 PM',
-			recentText: 'All the best',
-			avatarUrl:
-				'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr01zI37DYuR8bMV5exWQBSw28C1v_71CAh8d7GP1mplcmTgQA6Q66Oo--QedAN1B4E1k&usqp=CAU',
-		},
-		{
-			id: '28694a0f-3da1-471f-bd96-142456e29d72',
-			fullName: 'Kiara',
-			timeStamp: '12:47 PM',
-			recentText: 'I will call today.',
-			avatarUrl:
-				'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBwgu1A5zgPSvfE83nurkuzNEoXs9DMNr8Ww&usqp=CAU',
-		},
-	];
 
 	let lostData = useSelector((state) => state.explore.myZone.lost);
 
 	const [listData, setListData] = useState(lostData);
 
-	const report = (rowMap, rowKey) => {
-		alert("reported")
+	const closeRow = (rowMap, rowKey) => {
+		if (rowMap[rowKey]) {
+			rowMap[rowKey].closeRow();
+		}
+	};
 
+	const report = (rowMap, rowKey, data) => {
+		const reportedDog = data.item.dog;
+
+		console.log("reported duid", reportedDog)
+		reportUser(reportedDog)
+
+		// remove card 
+		closeRow(rowMap, rowKey);
+		const newData = [...listData];
+		const prevIndex = listData.findIndex((item) => item.key === rowKey);
+		newData.splice(prevIndex, 1);
+		setListData(newData);
 	};
 
 	const callDog = (rowMap, rowKey, phone) => {
@@ -152,13 +127,14 @@ export default function LostList() {
 	);
 
 	const renderHiddenItem = (data, rowMap) => (
+
 		<HStack flex="1" pl="2">
 			<Pressable
 				w="70"
 				ml="auto"
 				bg="red.400"
 				justifyContent="center"
-				onPress={() => report(rowMap, data.item.key)}
+				onPress={() => report(rowMap, data.item.key, data)}
 				_pressed={{
 					opacity: 0.5,
 				}}>

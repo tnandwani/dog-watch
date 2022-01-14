@@ -128,6 +128,8 @@ export default function ExploreTab({ navigation }) {
   if (Platform.OS === "web") {
     return (
       <Center flex={1}>
+        <Badge colorScheme="danger" variant="subtle" >Map Unavailable on Web</Badge>
+
         <LostModal />
 
         <DogViewModal />
@@ -156,7 +158,6 @@ export default function ExploreTab({ navigation }) {
         }
 
         <Box position='absolute' top='10' >
-          <Badge colorScheme="danger" variant="subtle" >Map Not Available on Web</Badge>
           {(user.zone === 'Unverified') &&
             <Box>
               <Button
@@ -355,9 +356,7 @@ export default function ExploreTab({ navigation }) {
               <Heading> No Dogs Here</Heading>
             </Center>
           }
-
         </Box>
-
       }
     </View>
   );

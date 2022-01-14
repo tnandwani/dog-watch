@@ -15,6 +15,7 @@ export const userSlice = createSlice({
     status: 'loading',
     notifications: [],
     pushToken: null,
+    reported: 0
   },
   reducers: {
     signInAccount: (state, action) => {
@@ -28,6 +29,8 @@ export const userSlice = createSlice({
       state.latitude = action.payload.latitude
       state.longitude = action.payload.longitude
       state.pushToken = action.payload.pushToken
+      state.reported = action.payload.reported
+
     },
     saveDogCards: (state, action) => {
       state.dogs.push(action.payload);
@@ -55,7 +58,9 @@ export const userSlice = createSlice({
     removeDogfromUser: (state, action) => {
       const index = state.dogs.findIndex(dog => dog.duid === action.payload.duid);
       state.dogs.splice(index, 1)
-
+    },
+    reportUser: (state, action) => {
+        state.reported++;
     },
 
   },
@@ -71,7 +76,8 @@ export const {
   updateLocation,
   addNotification,
   changeDogInUser,
-  removeDogfromUser
+  removeDogfromUser,
+  reportUser
 
 } = userSlice.actions
 

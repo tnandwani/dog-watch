@@ -12,7 +12,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeTab from './tabs/HomeTab'
 import ExploreTab from './tabs/ExploreTab'
 import ProfileTab from './tabs/ProfileTab'
-import { addMembertoZone, setScreenAnalytics } from '../database';
+import { addUsertoZone, setScreenAnalytics } from '../database';
 
 
 
@@ -85,7 +85,7 @@ export default function Main() {
             }
             else {
                 registerForPushNotificationsAsync().then(token => {
-                    addMembertoZone(token)
+                    addUsertoZone(token)
                     dispatch(updatePushToken(token))
                 });
 

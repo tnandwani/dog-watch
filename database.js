@@ -26,6 +26,7 @@ import {
 import {
     addLocalAlert,
     addTag,
+    removeTag,
     foundZoneDog,
     saveZoneData,
     updateDogView,
@@ -59,6 +60,7 @@ import {
     where,
     updateDoc,
     arrayUnion,
+    increment,
     deleteDoc,
     arrayRemove,
     doc
@@ -195,7 +197,7 @@ export async function createUserDoc(email, uid) {
             email: email,
             zone: "Unverified",
             dogs: [],
-                reported: 0
+            reported: 0
         });
 
         store.dispatch(changeStatus('returning'))
@@ -242,6 +244,24 @@ export async function getUserDetails(uid) {
     } else {
         console.log("No such user!");
     }
+
+
+}
+
+export function reportUser(reportedDog) {
+
+    const userRef = doc(db, "users", reportedDog.owner);
+
+    // report user
+    updateDoc(userRef, {
+        reported: increment(1)
+    }).then((result) => {
+        // remove dog from local explore
+        store.dispatch(removeTag(reportedDog.duid));
+
+    }).catch((err) => {
+
+    });
 
 
 }
@@ -328,24 +348,25 @@ export async function getHomies() {
             store.dispatch(addLocalAlert(dog.alert))
         }
     })
+    store.dispatch(updateLoading(false));
+
 }
-export async function updateFireLocation(location) {
 
-    // get user details
+export async function addUsertoZone(pushToken) {
+
+    // add token to user
     const uid = store.getState().user.uid
-
     const userRef = doc(db, "users", uid);
+
     updateDoc(userRef, {
-        zone: location.zone,
-        longitude: location.longitude,
-        latitude: location.latitude,
-    }).then(() => {
-        console.log("udated user doc with loccation and pushToken")
-    })
+        pushToken: pushToken
+    }).catch((err) => {
+        console.log(err)
+    });
 
     // add to zones
-
-    const ref = doc(db, "zones", location.zone);
+    const zone = store.getState().user.zone
+    const ref = doc(db, "zones", zone);
     const zoneRef = await getDoc(ref);
 
     if (zoneRef.exists()) {
@@ -367,13 +388,33 @@ export async function updateFireLocation(location) {
     } else {
         // doc.data() will be undefined in this case
         console.log("FIRST TIME ZONER");
-        setDoc(doc(db, "zones", location.zone), {
-            members: [pushToken],
-            lost: [],
-            found: []
+        setDoc(doc(db, "zones", zone), {
+            members: [pushToken]
         });
     }
 
+
+}
+
+
+export async function updateFireLocation(location) {
+
+    // get user details
+    const uid = store.getState().user.uid
+    const pushToken = store.getState().user.pushToken
+
+    const userRef = doc(db, "users", uid);
+    updateDoc(userRef, {
+        zone: location.zone,
+        longitude: location.longitude,
+        latitude: location.latitude,
+    }).then(() => {
+        console.log("udated user doc with loccation and pushToken")
+    })
+
+    if (pushToken) {
+        addUsertoZone(pushToken, location);
+    }
 
 }
 
@@ -448,9 +489,11 @@ export async function startPublish(imageURI, navigation) {
                     }).then((resp) => {
                         console.log("finished creating dog")
                         Analytics.logEvent('Created_dog_finish')
+
+                        // add dogcard to explore locally 
+                        store.dispatch(addTag(readyDog));
+
                         store.dispatch(updateDogProgress(100))
-
-
                         navigation.navigate('Profile')
                         store.dispatch(updateDogProgress(0))
 
@@ -622,10 +665,10 @@ export async function markLost(dog, EContact, index, message) {
     const zone = store.getState().user.zone
     const docRef = doc(db, "zones", zone);
     getDoc(docRef).then((docSnap) => {
-                if (docSnap.exists()) {
-                    let members = docSnap.data().members
-                    console.log("got zone info: ", docSnap.data())
-                    store.dispatch(saveZoneData(members));
+            if (docSnap.exists()) {
+                let members = docSnap.data().members
+                console.log("got zone info: ", docSnap.data())
+                store.dispatch(saveZoneData(members));
 
                 const senderToken = store.getState().user.pushToken
                 console.log("MEMEBERS ARE: ", members)
@@ -637,14 +680,14 @@ export async function markLost(dog, EContact, index, message) {
                 console.log("No such document!");
             }
 
+        })
+        .catch((error) => {
+            console.log("Error getting document:", error);
+            Analytics.logEvent('fire_error', {
+                message: error.message
             })
-            .catch((error) => {
-                console.log("Error getting document:", error);
-                Analytics.logEvent('fire_error', {
-                    message: error.message
-                })
 
-            })
+        })
 
 }
 
@@ -671,6 +714,9 @@ export async function markFound(dog, index) {
 export function deleteDog(duid, uid, navigation) {
 
     console.log("starting delete")
+
+    // remove dog locally from explore tags
+    store.dispatch(removeTag(duid));
 
     const rawDog = store.getState().rawDog
 
@@ -701,20 +747,4 @@ export function deleteDog(duid, uid, navigation) {
         })
     });
 
-}
-
-export function addMembertoZone(token) {
-    // add member to zone
-    const zone = store.getState().user.zone
-    const zoneRef = doc(db, "zones", zone);
-
-    // Atomically add a new region to the "regions" array field.
-    updateDoc(zoneRef, {
-        members: arrayUnion(token)
-    }).then((result) => {
-        console.log(result)
-    }).catch((err) => {
-        console.log(err)
-    });;
-    // update redux
 }
