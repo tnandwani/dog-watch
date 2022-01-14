@@ -56,12 +56,12 @@ export default function Personality({ navigation }) {
     let [isFinished, setIsFinished] = useState(true)
 
     let verify = () => {
-        console.log("isFinished", people, otherDogs,sharing, energy, training)
+        console.log("isFinished", people, otherDogs, sharing, energy, training)
 
         if (people && otherDogs && sharing && energy && training && isFinished) {
             setIsFinished(false)
         }
-        
+
     }
 
     verify();
@@ -70,7 +70,7 @@ export default function Personality({ navigation }) {
 
         // update personality redux
         dispatch(savePersonality({ people, otherDogs, sharing, energy, sn, training, bio }));
-       
+
         startPublish(profileImage, navigation)
 
 
@@ -261,7 +261,7 @@ export default function Personality({ navigation }) {
                             onPress={() => onPublish()}>
                             Create Dog
                         </Button>
-                         }
+                    }
                     {editing &&
                         <Button colorScheme="indigo"
                             isDisabled={isFinished}
@@ -274,7 +274,9 @@ export default function Personality({ navigation }) {
 
                 <Box w="90%" mt='3'>
 
-                    <Progress colorScheme="indigo" value={progress} mx="4" />
+                    {(progress != 0) &&
+                        <Progress colorScheme="indigo" value={progress} mx="4" mt='2' />
+                    }
                 </Box>
             </Center>
 

@@ -41,7 +41,7 @@ export const exploreSlice = createSlice({
       state.pushToken = action.payload
     },
     saveZoneData: (state, action) => {
-      state.myZone.members = action.payload.members
+      state.myZone.members = action.payload
     },
     updateDogView: (state, action) => {
       state.dogView = action.payload

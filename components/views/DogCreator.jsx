@@ -34,7 +34,6 @@ import {
     CheckIcon,
     Box,
     Divider,
-    Progress,
     FlatList,
     Flex,
     Spacer,

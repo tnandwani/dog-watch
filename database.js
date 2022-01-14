@@ -328,32 +328,6 @@ export async function getHomies() {
         }
     })
 }
-
-
-export function getZoneMembers() {
-
-    const zone = store.getState().user.zone
-
-    const docRef = doc(db, "zones", zone);
-    getDoc(docRef).then((docSnap) => {
-            if (docSnap.exists()) {
-                let zoneData = docSnap.data()
-                store.dispatch(saveZoneData(zoneData));
-            } else {
-                // doc.data() will be undefined in this case
-                console.log("No such document!");
-            }
-
-        })
-        .catch((error) => {
-            console.log("Error getting document:", error);
-            Analytics.logEvent('fire_error', {
-                message: error.message
-            })
-
-        })
-}
-
 export async function updateFireLocation(location) {
 
     // get user details
@@ -619,7 +593,6 @@ export async function editPublish(imageURI, navigation) {
 }
 
 export async function markLost(dog, EContact, index, message) {
-    getZoneMembers();
     Analytics.logEvent('dog_marked_lost_start')
     let lost = true
     // send changes to redux (local UI changes)
@@ -647,11 +620,32 @@ export async function markLost(dog, EContact, index, message) {
 
     });
     const zone = store.getState().user.zone
-    const senderToken = store.getState().user.pushToken
-    const members = store.getState().explore.myZone.members
-    sendNotificationtoZone(dog, message, members, senderToken, 'LOST DOG')
-    Analytics.logEvent('dog_lost_notification_sent')
-    store.dispatch(addLocalAlert(alert))
+    const docRef = doc(db, "zones", zone);
+    getDoc(docRef).then((docSnap) => {
+                if (docSnap.exists()) {
+                    let members = docSnap.data().members
+                    console.log("got zone info: ", docSnap.data())
+                    store.dispatch(saveZoneData(members));
+
+                const senderToken = store.getState().user.pushToken
+                console.log("MEMEBERS ARE: ", members)
+                sendNotificationtoZone(dog, message, members, senderToken, 'LOST DOG')
+                Analytics.logEvent('dog_lost_notification_sent')
+                store.dispatch(addLocalAlert(alert))
+            } else {
+                // doc.data() will be undefined in this case
+                console.log("No such document!");
+            }
+
+            })
+            .catch((error) => {
+                console.log("Error getting document:", error);
+                Analytics.logEvent('fire_error', {
+                    message: error.message
+                })
+
+            })
+
 }
 
 export async function markFound(dog, index) {
