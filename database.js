@@ -322,8 +322,8 @@ export async function getHomies() {
 }
 
 export async function getLostHomies() {
-        const zone = store.getState().user.zone
-        const dogsRef = collection(db, "dogs");
+    const zone = store.getState().user.zone
+    const dogsRef = collection(db, "dogs");
 
     const lostQ = query(dogsRef, where("zone", "==", zone), where("lost", "==", true));
     const lostSnapshot = await getDocs(lostQ);
@@ -629,10 +629,10 @@ export async function editPublish(imageURI, navigation) {
 }
 
 export async function markLost(dog, EContact, index, message) {
-
+    getZoneMembers();
     Analytics.logEvent('dog_marked_lost_start')
     let lost = true
-// send changes to redux (local UI changes)
+    // send changes to redux (local UI changes)
     store.dispatch(markLostDog({
         index,
         EContact,
@@ -651,7 +651,7 @@ export async function markLost(dog, EContact, index, message) {
     updateDoc(dogRef, {
         lost: true,
         contact: EContact,
-            alert: alert
+        alert: alert
     }).then(() => {
         Analytics.logEvent('dog_marked_lost_publicly')
 
@@ -670,52 +670,20 @@ export async function markFound(dog, index) {
     // mark in DOGS
     const dogRef = doc(db, "dogs", dog.duid);
     updateDoc(dogRef, {
-        lost: lost
+        lost: lost,
+            alert: null,
     }).then(() => {
         console.log("marked public dog as found");
     });
-    // send changes to redux *
+    // mark dog as found in user locally 
     store.dispatch(markLostDog({
         index,
         EContact,
         lost
     }));
-    // mark dog as lost in redux
+    // mark dog as found in zone locally 
     store.dispatch(foundZoneDog(dog.duid))
 }
-
-export function updateDogList(newList, uid) {
-
-    const usersRef = doc(db, "users", uid);
-
-    if (newList === undefined) {
-        console.log("waiting for proxy")
-    } else {
-        updateDoc(usersRef, {
-            dogs: newList
-        }).then(() => {
-            console.log("marked personal dog as lost");
-        });
-    }
-
-
-}
-
-export function foundOtherDog() {
-
-
-    // SHOW FOUND MODAL
-    // picture
-    // location found???
-    // Breed if known
-    // contact me #
-    // found date
-
-    // add dog to zones/lost/
-
-
-}
-
 export function deleteDog(duid, uid, navigation) {
 
     console.log("starting delete")
@@ -731,11 +699,8 @@ export function deleteDog(duid, uid, navigation) {
         store.dispatch(removeDogfromUser(duid))
 
         // update doc with new user list
-
-        const newDogList = store.getState().user.dogs
-
         updateDoc(userRef, {
-            dogs: newDogList
+            dogs: arrayRemove(duid)
         }).then((resp) => {
             // update redux state
             navigation.navigate('Profile')

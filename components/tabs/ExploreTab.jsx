@@ -236,7 +236,7 @@ export default function ExploreTab({ navigation }) {
                 size="4"
               />
             }
-            label="View Lost Dogs"
+            label={"View Lost Dogs (" + lostDogs.length + ')'}
           />
         </Box>
 
