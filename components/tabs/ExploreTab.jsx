@@ -10,7 +10,7 @@ import * as Location from 'expo-location';
 
 
 import { StyleSheet, View, Dimensions, Platform } from "react-native";
-import { getHomies, getLostHomies, updateFireLocation } from "../../database";
+import { getHomies, updateFireLocation } from "../../database";
 import { mapQuestKey, mapStyling } from "../../constants";
 import DogCard from '../widgets/DogCard'
 
@@ -40,7 +40,6 @@ export default function ExploreTab({ navigation }) {
   useEffect(() => {
     //
 
-    getLostHomies();
     //
 
 

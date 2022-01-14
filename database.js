@@ -303,7 +303,7 @@ export async function getHomies() {
 
     const dogsRef = collection(db, "dogs");
 
-    const zoneQ = query(dogsRef, where("zone", "==", zone), where("visibility", "==", 'n'));
+    const zoneQ = query(dogsRef, where("zone", "==", zone));
     const zoneSnapshot = await getDocs(zoneQ);
 
     let homiesArray = [];
@@ -314,32 +314,23 @@ export async function getHomies() {
         homiesArray.push(doc.data())
     });
     homiesArray.forEach((dog) => {
-        store.dispatch(addTag(dog));
+        // for my dogs 
         if (dog.owner == uid) {
             store.dispatch(saveDogCards(dog))
+        }
+        // for explore map
+        if (dog.visibility == 'n') {
+            store.dispatch(addTag(dog));
+        }
+
+        // for lost dogs 
+        if (dog.lost == true) {
+            store.dispatch(addLocalAlert(dog.alert))
         }
     })
 }
 
-export async function getLostHomies() {
-    const zone = store.getState().user.zone
-    const dogsRef = collection(db, "dogs");
 
-    const lostQ = query(dogsRef, where("zone", "==", zone), where("lost", "==", true));
-    const lostSnapshot = await getDocs(lostQ);
-
-    let lostArray = [];
-
-    lostSnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        lostArray.push(doc.data())
-    });
-    lostArray.forEach((dog) => {
-        store.dispatch(addLocalAlert(dog.alert));
-    })
-    store.dispatch(updateLoading(false));
-
-}
 export function getZoneMembers() {
 
     const zone = store.getState().user.zone
@@ -671,7 +662,7 @@ export async function markFound(dog, index) {
     const dogRef = doc(db, "dogs", dog.duid);
     updateDoc(dogRef, {
         lost: lost,
-            alert: null,
+        alert: null,
     }).then(() => {
         console.log("marked public dog as found");
     });
