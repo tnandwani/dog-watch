@@ -322,7 +322,6 @@ export async function getHomies() {
         if (dog.visibility == 'n') {
             store.dispatch(addTag(dog));
         }
-
         // for lost dogs 
         if (dog.lost == true) {
             store.dispatch(addLocalAlert(dog.alert))
