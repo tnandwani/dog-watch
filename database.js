@@ -194,7 +194,8 @@ export async function createUserDoc(email, uid) {
             uid: uid,
             email: email,
             zone: "Unverified",
-            dogs: []
+            dogs: [],
+                reported: 0
         });
 
         store.dispatch(changeStatus('returning'))
@@ -606,7 +607,6 @@ export async function markLost(dog, EContact, index, message) {
         date: new Date().toLocaleDateString('en-us'),
         message: message,
         dog: dog,
-        reported: 0,
         contact: EContact,
     }
     // mark LOST in DOGS/duid
