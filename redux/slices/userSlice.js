@@ -17,14 +17,9 @@ export const userSlice = createSlice({
     pushToken: null,
   },
   reducers: {
-    saveUserAccount: (state, action) => {
-      state.email = action.payload.email
-      state.uid = action.payload.uid
-    },
     signInAccount: (state, action) => {
       state.email = action.payload.email
       state.uid = action.payload.uid
-      state.username = action.payload.name
     },
     saveUserDetails: (state, action) => {
       state.email = action.payload.email
@@ -32,21 +27,13 @@ export const userSlice = createSlice({
       state.zone = action.payload.zone
       state.latitude = action.payload.latitude
       state.longitude = action.payload.longitude
-      state.dogs = action.payload.dogs
       state.pushToken = action.payload.pushToken
     },
     saveDogCards: (state, action) => {
-      if (!state.dogCards.includes(action.payload)) {
-        state.dogCards.push(action.payload)
-      }
+      state.dogs.push(action.payload);
     },
     changeStatus: (state, action) => {
       state.status = action.payload
-    },
-    addDogtoUser: (state, action) => {
-      if (!state.dogs.includes(action.payload)) {
-        state.dogs.push(action.payload)
-      }
     },
     markLostDog: (state, action) => {
       state.dogs[action.payload.index].lost = action.payload.lost
@@ -76,12 +63,10 @@ export const userSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
-  saveUserAccount,
   signInAccount,
   saveUserDetails,
   saveDogCards,
   changeStatus,
-  addDogtoUser,
   markLostDog,
   updateLocation,
   addNotification,

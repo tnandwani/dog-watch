@@ -22,7 +22,6 @@ import {
 
 import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { getZoneData } from "../../database";
 import DogViewModal from "../modals/DogViewModal";
 
 
@@ -32,7 +31,6 @@ export default function HomeTab() {
 
     // on load Home screen 
     // get zone doc
-    getZoneData();
 
   }, []);
 

@@ -13,11 +13,9 @@ import store from "./redux/store";
 import {
     changeStatus,
     saveDogCards,
-    saveUserAccount,
     saveUserDetails,
     signInAccount,
     markLostDog,
-    addDogtoUser,
     changeDogInUser,
     removeDogfromUser
 } from "./redux/slices/userSlice";
@@ -28,7 +26,6 @@ import {
 import {
     addLocalAlert,
     addTag,
-    emptyTag,
     foundZoneDog,
     saveZoneData,
     updateDogView,
@@ -186,7 +183,7 @@ export function createUserAccount(email, password, confirm) {
 export async function createUserDoc(email, uid) {
 
     // add user to redux
-    store.dispatch(saveUserAccount({
+    store.dispatch(signInAccount({
         email,
         uid
     }));
@@ -249,46 +246,6 @@ export async function getUserDetails(uid) {
 }
 
 //////////////////// ZONE FUNCTIONS 
-
-
-export async function unwrapDogs(dogs) {
-
-    const dogCards = store.getState().user.dogCards
-
-    if (dogs) {
-        if (dogCards.length != dogs.length) {
-            dogs.map(dog => {
-                const docRef = doc(db, "dogs", dog);
-                getDoc(docRef).then((docSnap) => {
-                        if (docSnap.exists()) {
-                            let dogData = docSnap.data()
-                            store.dispatch(saveDogCards(dogData));
-                            store.dispatch(changeStatus('returning'))
-                        } else {
-                            console.log("No such document!");
-                        }
-
-                    })
-                    .catch((error) => {
-                        console.log("Error getting document:", error);
-                        Analytics.logEvent('fire_error', {
-                            message: error.message
-                        })
-
-                    })
-
-            })
-        } else {
-            console.log('diff sizes')
-            store.dispatch(changeStatus('returning'))
-
-        }
-    }
-    console.log('empty')
-    store.dispatch(changeStatus('returning'))
-
-}
-
 export async function compareTask(lat, long) {
     console.log("getting lat long comparison");
 
@@ -324,7 +281,7 @@ export async function compareTask(lat, long) {
     return bubbleArray;
 }
 
-export async function getHomies(lat, long) {
+export async function getHomies() {
 
     Analytics.logEvent('getting_homies_start')
 
@@ -342,6 +299,8 @@ export async function getHomies(lat, long) {
 
     // GET DOGS WITH ZIPCODE
     const zone = store.getState().user.zone
+    const uid = store.getState().user.uid
+
     const dogsRef = collection(db, "dogs");
 
     const zoneQ = query(dogsRef, where("zone", "==", zone), where("visibility", "==", 'n'));
@@ -355,15 +314,33 @@ export async function getHomies(lat, long) {
         homiesArray.push(doc.data())
     });
     homiesArray.forEach((dog) => {
-        store.dispatch(addTag(dog))
+        store.dispatch(addTag(dog));
+        if (dog.owner == uid) {
+            store.dispatch(saveDogCards(dog))
+        }
+    })
+}
+
+export async function getLostHomies() {
+        const zone = store.getState().user.zone
+        const dogsRef = collection(db, "dogs");
+
+    const lostQ = query(dogsRef, where("zone", "==", zone), where("lost", "==", true));
+    const lostSnapshot = await getDocs(lostQ);
+
+    let lostArray = [];
+
+    lostSnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        lostArray.push(doc.data())
+    });
+    lostArray.forEach((dog) => {
+        store.dispatch(addLocalAlert(dog.alert));
     })
     store.dispatch(updateLoading(false));
 
-
-
 }
-
-export function getZoneData() {
+export function getZoneMembers() {
 
     const zone = store.getState().user.zone
 
@@ -495,15 +472,11 @@ export async function startPublish(imageURI, navigation) {
                     store.dispatch(updateDogProgress(75))
 
                     // add readyDog to user.dogs redux 
-                    store.dispatch(addDogtoUser(readyDog))
-
-                    // get list with new dog
-                    const newList = store.getState().user.dogs
-
+                    store.dispatch(saveDogCards(readyDog))
                     // post new dog list + update coords
                     const userRef = doc(db, "users", uid);
                     updateDoc(userRef, {
-                        dogs: newList,
+                        dogs: arrayUnion(duid),
                         zone: readyDog.zone,
                         longitude: readyDog.longitude,
                         latitude: readyDog.latitude,
@@ -559,17 +532,12 @@ export async function editPublish(imageURI, navigation) {
 
         setDoc(doc(db, "dogs", duid), readyDog)
             .then((resp) => {
-                Analytics.logEvent('Created_dog_doc')
+                Analytics.logEvent('Updated_dog')
                 // add readyDog to user.dogs redux 
                 store.dispatch(changeDogInUser(readyDog))
-
-                // get list with new dog
-                const newList = store.getState().user.dogs
-
                 // post new dog list + update coords
                 const userRef = doc(db, "users", uid);
                 updateDoc(userRef, {
-                    dogs: newList,
                     zone: readyDog.zone,
                     longitude: readyDog.longitude,
                     latitude: readyDog.latitude,
@@ -664,68 +632,36 @@ export async function markLost(dog, EContact, index, message) {
 
     Analytics.logEvent('dog_marked_lost_start')
     let lost = true
-    // send changes to redux 
+// send changes to redux (local UI changes)
     store.dispatch(markLostDog({
         index,
         EContact,
         lost
     }));
-
-    // mark LOST in DOGS/duid
-    const dogRef = doc(db, "dogs", dog.duid);
-    updateDoc(dogRef, {
-        lost: true,
-        contact: EContact
-    }).then(() => {
-        Analytics.logEvent('dog_marked_lost_publicly')
-
-    });
-
-    // const newList = get old list of user.dogs
-    const newDogList = store.getState().user.dogs
-    const uid = store.getState().user.uid
-
-    console.log("new list is: ", newDogList)
-
-    // post newList
-    // mark LOST in USERS/uid/dogs
-    const usersRef = doc(db, "users", uid);
-    updateDoc(usersRef, {
-        dogs: newDogList,
-    }).then(() => {
-        Analytics.logEvent('dog_marked_lost_privately')
-
-    });
-
-    const zone = store.getState().user.zone
-    const senderToken = store.getState().user.pushToken
-    const members = store.getState().explore.myZone.members
-    sendNotificationtoZone(dog, message, members, senderToken, 'LOST DOG')
-    Analytics.logEvent('dog_lost_notification_sent')
-
     const alert = {
         duid: dog.duid,
         date: new Date().toLocaleDateString('en-us'),
         message: message,
         dog: dog,
         reported: 0,
-            contact: EContact,
+        contact: EContact,
     }
-    store.dispatch(addLocalAlert(alert))
-
-    // mark LOST in ZONES/zone/lost
-    const zoneRef = doc(db, "zones", zone);
-
-    // set dog as lost in zone 
-    updateDoc(zoneRef, {
-        lost: arrayUnion(alert),
+    // mark LOST in DOGS/duid
+    const dogRef = doc(db, "dogs", dog.duid);
+    updateDoc(dogRef, {
+        lost: true,
+        contact: EContact,
+            alert: alert
     }).then(() => {
-        console.log("marked personal dog as lost");
-        Analytics.logEvent('dog_marked_lost_privately')
+        Analytics.logEvent('dog_marked_lost_publicly')
 
     });
-
-  
+    const zone = store.getState().user.zone
+    const senderToken = store.getState().user.pushToken
+    const members = store.getState().explore.myZone.members
+    sendNotificationtoZone(dog, message, members, senderToken, 'LOST DOG')
+    Analytics.logEvent('dog_lost_notification_sent')
+    store.dispatch(addLocalAlert(alert))
 }
 
 export async function markFound(dog, index) {
@@ -738,47 +674,14 @@ export async function markFound(dog, index) {
     }).then(() => {
         console.log("marked public dog as found");
     });
-
-
     // send changes to redux *
     store.dispatch(markLostDog({
         index,
         EContact,
         lost
     }));
-
-    // const newList = get old list of user.dogs
-    const newDogList = store.getState().user.dogs
-    const uid = store.getState().user.uid
-
-    // post newList
-    // mark in DOGS
-    const usersRef = doc(db, "users", uid);
-    updateDoc(usersRef, {
-        dogs: newDogList,
-    }).then(() => {
-        console.log("marked personal dog as found");
-    });
-
-
-
     // mark dog as lost in redux
     store.dispatch(foundZoneDog(dog.duid))
-
-    // get new list of lost dogs
-    const newLostZone = store.getState().explore.myZone.lost
-
-    // update dog alert list ZONES/zone/lost
-    const zone = store.getState().user.zone
-    const zoneRef = doc(db, "zones", zone);
-    updateDoc(zoneRef, {
-        lost: newLostZone,
-    }).then(() => {
-        console.log("marked personal dog as found");
-    });
-
-
-
 }
 
 export function updateDogList(newList, uid) {
@@ -863,12 +766,6 @@ export function addMembertoZone(token) {
         console.log(result)
     }).catch((err) => {
         console.log(err)
-
     });;
-
-
     // update redux
-}
-export function namer() {
-
 }
