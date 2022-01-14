@@ -251,16 +251,28 @@ export async function getUserDetails(uid) {
 export function reportUser(reportedDog) {
 
     const userRef = doc(db, "users", reportedDog.owner);
+    const dogRef = doc(db, "dogs", reportedDog.duid);
 
     // report user
     updateDoc(userRef, {
         reported: increment(1)
     }).then((result) => {
         // remove dog from local explore
-        store.dispatch(removeTag(reportedDog.duid));
+        updateDoc(dogRef, {
+            reported: increment(1)
+        }).then((result) => {
+            store.dispatch(removeTag(reportedDog.duid));
+
+        }).catch((err) => {
+            Analytics.logEvent('fire_error', {
+                message: err.message
+            })
+        });
 
     }).catch((err) => {
-
+        Analytics.logEvent('fire_error', {
+            message: err.message
+        })
     });
 
 
@@ -332,7 +344,9 @@ export async function getHomies() {
     Analytics.logEvent('got_homies_finish')
     zoneSnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
-        homiesArray.push(doc.data())
+        if (doc.data().reported < 1 || doc.data().owner == uid) {
+            homiesArray.push(doc.data())
+        }
     });
     homiesArray.forEach((dog) => {
         // for my dogs 
