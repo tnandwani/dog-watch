@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import { Keyboard} from 'react-native';
+
 import { useDispatch, useSelector } from 'react-redux'
 import * as Analytics from 'expo-firebase-analytics';
 
@@ -56,8 +58,6 @@ export default function Personality({ navigation }) {
     let [isFinished, setIsFinished] = useState(true)
 
     let verify = () => {
-        console.log("isFinished", people, otherDogs, sharing, energy, training)
-
         if (people && otherDogs && sharing && energy && training && isFinished) {
             setIsFinished(false)
         }
@@ -79,12 +79,9 @@ export default function Personality({ navigation }) {
 
         // update personality redux
         dispatch(savePersonality({ people, otherDogs, sharing, energy, sn, training, bio }));
-
         editPublish(profileImage, navigation)
 
-
     }
-
 
     return (
         <Box safeArea flex={1} p="2" w="90%" mx="auto" py="8">
@@ -97,7 +94,19 @@ export default function Personality({ navigation }) {
 
             <VStack space={3} mt="5">
 
+                <FormControl mb='2'>
 
+                    <FormControl.Label
+                        _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
+                        Any specific we should know? Did we miss anything?
+                    </FormControl.Label>
+                    <TextArea
+                        h={20}
+                        placeholder="Tell us more!"
+                        onSubmitEditing={() => Keyboard.dismiss()}
+                        onChangeText={(v) => { setBio(v); }}
+                    />
+                </FormControl>
                 <FormControl>
                     <FormControl.Label
                         _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
@@ -230,17 +239,7 @@ export default function Personality({ navigation }) {
                     </FormControl.Label>
                     <Switch colorScheme="indigo" size="lg" isChecked={sn} onToggle={(v) => { console.log(v); setSn(v) }} />
                 </FormControl>
-                <FormControl>
-                    <FormControl.Label
-                        _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
-                        Any triggers? Did we miss anything?
-                    </FormControl.Label>
-                    <TextArea
-                        h={20}
-                        placeholder="Tell us more!"
-                        onChangeText={(v) => { setBio(v); }}
-                    />
-                </FormControl>
+
 
             </VStack>
 
