@@ -11,7 +11,7 @@ import * as Location from 'expo-location';
 
 
 import { StyleSheet, View, Dimensions, Platform } from "react-native";
-import { getHomies, updateFireLocation } from "../../database";
+import { getHomies, updateFireLocation, inviteFriends } from "../../database";
 import { mapQuestKey, mapStyling } from "../../constants";
 import DogCard from '../widgets/DogCard'
 
@@ -365,6 +365,7 @@ export default function ExploreTab({ navigation }) {
               <Button
                 px='5'
                 py='3'
+                onPress={() => inviteFriends()}
                 variant="subtle"
                 colorScheme="indigo"
                 endIcon={<Icon as={Ionicons} name="paper-plane-sharp" size="sm" />}

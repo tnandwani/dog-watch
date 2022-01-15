@@ -3710,6 +3710,12 @@ expo-server-sdk@^3.6.0:
     node-fetch "^2.6.0"
     promise-limit "^2.7.0"
 
+expo-sms@~10.0.3:
+  version "10.0.3"
+  resolved "https://registry.yarnpkg.com/expo-sms/-/expo-sms-10.0.3.tgz#9faa2b212c7772fa99f2c63d529f82cc025b07fd"
+  dependencies:
+    expo-modules-core "~0.4.4"
+
 expo-status-bar@~1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/expo-status-bar/-/expo-status-bar-1.1.0.tgz#b1015a69c8563b7cadcb5b6c726227397610725d"

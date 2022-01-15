@@ -8,6 +8,9 @@ import {
     v4 as uuidv4
 } from 'uuid';
 
+import * as SMS from 'expo-sms';
+
+
 // REDUX
 import store from "./redux/store";
 import {
@@ -762,4 +765,19 @@ export function deleteDog(duid, uid, navigation) {
         })
     });
 
+}
+
+
+export async function inviteFriends(){
+    const isAvailable = await SMS.isAvailableAsync();
+    if (isAvailable) {
+        // do your SMS stuff here
+        SMS.sendSMSAsync(
+            [],
+            'https://dogwatch.page.link/join'
+        );
+
+    } else {
+        // misfortune... there's no SMS available on this device
+    }
 }
