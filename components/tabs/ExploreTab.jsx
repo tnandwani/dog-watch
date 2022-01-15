@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Ionicons } from "@expo/vector-icons"
 
 // maps
 import MapView, { PROVIDER_GOOGLE, Circle } from "react-native-maps";
@@ -207,7 +208,15 @@ export default function ExploreTab({ navigation }) {
           }
           {((dogTags < 1) && (loading === false)) &&
             <Center mt='5'>
-              <Heading> No Dogs Here</Heading>
+              <Button
+                px='5'
+                py='3'
+                variant="subtle"
+                colorScheme="indigo"
+                endIcon={<Icon as={Ionicons} name="paper-plane-sharp" size="sm" />}
+              >
+                Invite Friends
+              </Button>
             </Center>
           }
 
@@ -353,7 +362,15 @@ export default function ExploreTab({ navigation }) {
           }
           {((dogTags < 1) && (loading === false)) &&
             <Center mt='5'>
-              <Heading> No Dogs Here</Heading>
+              <Button
+                px='5'
+                py='3'
+                variant="subtle"
+                colorScheme="indigo"
+                endIcon={<Icon as={Ionicons} name="paper-plane-sharp" size="sm" />}
+              >
+                Invite Friends
+              </Button>
             </Center>
           }
         </Box>

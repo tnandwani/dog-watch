@@ -383,30 +383,31 @@ export async function addUsertoZone(pushToken) {
     const ref = doc(db, "zones", zone);
     const zoneRef = await getDoc(ref);
 
-    if (zoneRef.exists()) {
-        updateDoc(zoneRef, {
-            members: arrayUnion(pushToken)
+    if (zone != "Unverified") {
+        if (zoneRef.exists()) {
+            updateDoc(zoneRef, {
+                members: arrayUnion(pushToken)
 
-        }).then((resp) => {
-            Analytics.logEvent('joined_nieghborhood')
+            }).then((resp) => {
+                Analytics.logEvent('joined_nieghborhood')
 
 
-        }).catch((err) => {
-            console.log(err)
-            Analytics.logEvent('fire_error', {
-                message: err.message
+            }).catch((err) => {
+                console.log(err)
+                Analytics.logEvent('fire_error', {
+                    message: err.message
+                })
+
+
             })
-
-
-        })
-    } else {
-        // doc.data() will be undefined in this case
-        console.log("FIRST TIME ZONER");
-        setDoc(doc(db, "zones", zone), {
-            members: [pushToken]
-        });
+        } else {
+            // doc.data() will be undefined in this case
+            console.log("FIRST TIME ZONER");
+            setDoc(doc(db, "zones", zone), {
+                members: [pushToken]
+            });
+        }
     }
-
 
 }
 

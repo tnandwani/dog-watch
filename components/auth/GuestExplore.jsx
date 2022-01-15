@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Ionicons } from "@expo/vector-icons"
 
 // maps
 import IMap from '../views/imap'
@@ -177,8 +178,16 @@ export default function GuestExplore() {
           }
           {((dogTags < 1) && (loading === false)) &&
             <Center mt='5'>
-              <Heading> No Dogs Here</Heading>
-            </Center>
+              <Button
+                px='5'
+                py='3'
+                variant="subtle"
+                colorScheme="indigo"
+                endIcon={<Icon as={Ionicons} name="paper-plane-sharp" size="sm" />}
+              >
+                Invite Friends
+              </Button>
+                          </Center>
           }
 
         </Box>

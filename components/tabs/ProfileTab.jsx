@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { MaterialIcons } from '@expo/vector-icons';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+
 import DogCard from '../widgets/DogCard'
 import { useSelector, useDispatch } from 'react-redux'
+import { Ionicons } from "@expo/vector-icons"
 
 
 // UI 
@@ -10,7 +10,8 @@ import {
     Box,
     Button,
     FlatList,
-    Heading
+    Heading,
+    Icon
 } from "native-base"
 import { getUserDetails, signOutUser } from '../../database';
 import { resetRawDog } from '../../redux/slices/rawDogSlice';
@@ -50,7 +51,7 @@ export default function ProfileTab({ navigation }) {
             <Button mt="5" colorScheme="indigo" variant="outline" onPress={() => createDogStart()}> + Add Dog </Button>
 
             <Button colorScheme="orange" mt='4' _text={{ color: 'white' }} onPress={() => signOutUser()} > Sign Out</Button>
-
+          
         </Box>
     )
 }

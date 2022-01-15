@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Ionicons } from "@expo/vector-icons"
 
 // maps
 import MapView, { PROVIDER_GOOGLE, Circle, Marker } from "react-native-maps";
@@ -14,7 +15,7 @@ import { getHomies, updateFireLocation } from "../../database";
 import { mapQuestKey, mapStyling } from "../../constants";
 import DogCard from '../widgets/DogCard'
 
-import { Box, Button, Center, FlatList, Heading, Spinner } from "native-base";
+import { Box, Button, Center, FlatList, Heading, Spinner, Icon } from "native-base";
 import { updateLocation } from "../../redux/slices/userSlice";
 
 export default function GuestExplore() {
@@ -209,7 +210,7 @@ export default function GuestExplore() {
           {(dogTags.length > 0) &&
             <FlatList data={dogTags} renderItem={(dog) => (
               <Box my='1' shadow={3}>
-                <DogCard dog={dog} navigation ={navigation} />
+                <DogCard dog={dog} navigation={navigation} />
               </Box>
             )
             }
@@ -224,7 +225,15 @@ export default function GuestExplore() {
           }
           {((dogTags < 1) && (loading === false)) &&
             <Center mt='5'>
-              <Heading> No Dogs Here</Heading>
+              <Button
+                px='5'
+                py='3'
+                variant="subtle"
+                colorScheme="indigo"
+                endIcon={<Icon as={Ionicons} name="paper-plane-sharp" size="sm" />}
+              >
+                Invite Friends
+              </Button>
             </Center>
           }
 

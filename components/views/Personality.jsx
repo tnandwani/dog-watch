@@ -4,7 +4,6 @@ import { Keyboard} from 'react-native';
 import { useDispatch, useSelector } from 'react-redux'
 import * as Analytics from 'expo-firebase-analytics';
 
-import RawDogCard from '../widgets/RawDogCard'
 import { startPublish, editPublish } from '../../database';
 
 import {
@@ -61,7 +60,6 @@ export default function Personality({ navigation }) {
         if (people && otherDogs && sharing && energy && training && isFinished) {
             setIsFinished(false)
         }
-
     }
 
     verify();
@@ -264,7 +262,8 @@ export default function Personality({ navigation }) {
                     {editing &&
                         <Button colorScheme="indigo"
                             isDisabled={isFinished}
-                            onPress={() => onUpdateDog()}>
+                            onPress={() => onUpdateDog()}
+                            >
                             Finish Editing
                         </Button>
                     }
