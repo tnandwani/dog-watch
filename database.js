@@ -66,7 +66,8 @@ import {
     increment,
     deleteDoc,
     arrayRemove,
-    doc
+    doc,
+    Timestamp
 } from 'firebase/firestore';
 
 import {
@@ -119,6 +120,29 @@ onAuthStateChanged(auth, user => {
 export function setScreenAnalytics(screenName) {
     Analytics.logEvent('Opened_' + screenName)
 
+}
+export function sendFeedback(type, message) {
+
+    const user = store.getState().user
+
+    if (type){
+        type = "Suggestion"
+    }
+    else{
+        type = "Issue"
+    }
+
+    addDoc(collection(db, "feedback"), {
+        uid: user.uid,
+        zone: user.zone,
+        timestamp: new Date(),
+        type: type,
+        message: message
+    }).then((result) => {
+        console.log(result)
+    }).catch((err) => {
+        console.log(err)
+    });;
 }
 
 export function viewDog(dog) {
@@ -768,7 +792,7 @@ export function deleteDog(duid, uid, navigation) {
 }
 
 
-export async function inviteFriends(){
+export async function inviteFriends() {
     const isAvailable = await SMS.isAvailableAsync();
     if (isAvailable) {
         // do your SMS stuff here

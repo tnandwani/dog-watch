@@ -235,7 +235,7 @@ export default function Personality({ navigation }) {
                         _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
                         Spay or Neutered?
                     </FormControl.Label>
-                    <Switch colorScheme="indigo" size="lg" isChecked={sn} onToggle={(v) => { console.log(v); setSn(v) }} />
+                    <Switch colorScheme="indigo" size="lg" isChecked={sn} onToggle={(v) => {setSn(v) }} />
                 </FormControl>
 
 

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import DogCard from '../widgets/DogCard'
 import { useSelector, useDispatch } from 'react-redux'
 import { Ionicons } from "@expo/vector-icons"
-
+import Feedback from '../widgets/Feedback'
 
 // UI 
 import {
@@ -11,7 +11,8 @@ import {
     Button,
     FlatList,
     Heading,
-    Icon
+    VStack,
+
 } from "native-base"
 import { getUserDetails, signOutUser } from '../../database';
 import { resetRawDog } from '../../redux/slices/rawDogSlice';
@@ -33,12 +34,12 @@ export default function ProfileTab({ navigation }) {
     return (
         <Box safeArea flex={1} p="1" py="8" w="90%" mx="auto">
             {/* add dog card for each  */}
-        
+
             <Heading size="2xl" mt='5' mb='2'>My Dogs</Heading>
             {(user.dogs.length > 0) &&
                 <FlatList data={user.dogs} renderItem={(dog) => (
                     <Box my='2'>
-                    <DogCard dog={dog} navigation={navigation} />
+                        <DogCard dog={dog} navigation={navigation} />
 
                     </Box>
                 )
@@ -48,10 +49,15 @@ export default function ProfileTab({ navigation }) {
             }
 
 
-            <Button mt="5" colorScheme="indigo" variant="outline" onPress={() => createDogStart()}> + Add Dog </Button>
+            <VStack space = {4}>
+                <Button mt="5" colorScheme="indigo" variant="outline" onPress={() => createDogStart()}> + Add Dog </Button>
+                <Button colorScheme="orange" _text={{ color: 'white' }} onPress={() => signOutUser()} > Sign Out</Button>
 
-            <Button colorScheme="orange" mt='4' _text={{ color: 'white' }} onPress={() => signOutUser()} > Sign Out</Button>
-          
+                <Feedback />
+                
+
+            </VStack>
+
         </Box>
     )
 }

@@ -209,6 +209,7 @@ export default function ExploreTab({ navigation }) {
           {((dogTags < 1) && (loading === false)) &&
             <Center mt='5'>
               <Button
+                mb={3}
                 px='5'
                 py='3'
                 variant="subtle"
