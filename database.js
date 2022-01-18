@@ -118,8 +118,7 @@ onAuthStateChanged(auth, user => {
 
 //////////////////// UI FUNCTIONS 
 export function setScreenAnalytics(screenName) {
-    Analytics.logEvent('Opened_' + screenName)
-
+    Analytics.setCurrentScreen(screenName);
 }
 export function sendFeedback(type, message) {
 
@@ -314,7 +313,7 @@ export async function compareTask(lat, long) {
     // create bubble zone query
     const latQ = query(dogsRef, where("latitude", ">=", lat - 0.15), where("latitude", "<=", lat + 0.15));
     const longQ = query(dogsRef, where("longitude", ">=", long - 0.15), where("longitude", "<=", long + 0.15));
-    Analytics.logEvent('got_homies_locations')
+    Analytics.logEvent('got_homies_via_latlong')
 
     const latSnapshot = await getDocs(latQ);
     const longSnapshot = await getDocs(longQ);
@@ -331,7 +330,6 @@ export async function compareTask(lat, long) {
         // doc.data() is never undefined for query doc snapshots
         longArray.push(doc.data())
     });
-    Analytics.logEvent('got_homies_data')
 
 
     const bubbleArray = latArray.filter(a => longArray.some(b => a.duid === b.duid));
