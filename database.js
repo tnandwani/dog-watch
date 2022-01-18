@@ -107,7 +107,7 @@ onAuthStateChanged(auth, user => {
             uid
         }))
         getUserDetails(uid);
-        Analytics.logEvent('Logged_in')
+        Analytics.logEvent('Auto_Logged_In')
 
     } else {
         store.dispatch(changeStatus('new'))
@@ -124,10 +124,9 @@ export function sendFeedback(type, message) {
 
     const user = store.getState().user
 
-    if (type){
+    if (type) {
         type = "Suggestion"
-    }
-    else{
+    } else {
         type = "Issue"
     }
 
@@ -173,26 +172,25 @@ export function signOutUser() {
 }
 
 export function createUserAccount(email, password, confirm) {
-
-
+    const uid = "new-user";
     if (password === confirm) {
         // FIREBASE
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 // Signed in 
                 // Get UID 
-                const uid = userCredential.user.uid
-                Analytics.logEvent('Create_user_start')
+                uid = userCredential.user.uid
+                Analytics.logEvent('User_Sign_Up_Started')
 
                 // Sign In
                 createUserDoc(email, uid)
             })
             .catch((error) => {
-                // analytics.logEvent("error: creating user");
-                // analytics.logEvent(error.message);
                 console.log(error.message);
                 Analytics.logEvent('fire_error', {
-                    message: error.message
+                    uid: uid,
+                    message: error.message,
+                    time: new Date()
                 })
                 store.dispatch(updateCreateAlert(error.message))
 
@@ -201,7 +199,6 @@ export function createUserAccount(email, password, confirm) {
             });
     } else {
         store.dispatch(updateCreateAlert("Passwords do not match"))
-
     }
 
 
@@ -227,18 +224,22 @@ export async function createUserDoc(email, uid) {
         });
 
         store.dispatch(changeStatus('returning'))
-        Analytics.logEvent('Create_user_finish')
+        Analytics.logEvent('User_Sign_Up_Finished')
 
 
     } catch (e) {
         console.error("Error adding document: ", e);
         Analytics.logEvent('fire_error', {
-            message: e.message
+            uid: uid,
+            message: error.message,
+            time: new Date()
         })
     }
 }
 
 export function signInUser(email, password) {
+
+    const uid = "attempting-user";
 
     signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
@@ -250,7 +251,9 @@ export function signInUser(email, password) {
 
             console.log(error.message);
             Analytics.logEvent('fire_error', {
-                message: error.message
+                uid: uid,
+                message: error.message,
+                time: new Date()
             })
             store.dispatch(updateLoginAlert(error.message))
 
@@ -276,30 +279,54 @@ export async function getUserDetails(uid) {
 
 export function reportUser(reportedDog) {
 
+
     const userRef = doc(db, "users", reportedDog.owner);
     const dogRef = doc(db, "dogs", reportedDog.duid);
+    const uid = store.getState().user.uid
 
-    // report user
-    updateDoc(userRef, {
-        reported: increment(1)
-    }).then((result) => {
-        // remove dog from local explore
-        updateDoc(dogRef, {
-            reported: increment(1)
+
+
+    if (!reportedDog.reported.contains(uid)) {
+        // report user
+        updateDoc(userRef, {
+            reported: increment(1),
+            reported: arrayUnion(union)
         }).then((result) => {
-            store.dispatch(removeTag(reportedDog.duid));
+            // remove dog from local explore
+            updateDoc(dogRef, {
+                reported: increment(1)
+            }).then((result) => {
+                Analytics.logEvent('reported_user', {
+                    reporter: uid,
+                    reported: reportedDog.owner,
+                    dog: reportedDog.duid
+                })
+                store.dispatch(removeTag(reportedDog.duid));
+
+            }).catch((err) => {
+                Analytics.logEvent('fire_error', {
+                    uid: uid,
+                    message: error.message,
+                    time: new Date()
+                })
+            });
 
         }).catch((err) => {
             Analytics.logEvent('fire_error', {
-                message: err.message
+                uid: uid,
+                message: error.message,
+                time: new Date()
             })
         });
-
-    }).catch((err) => {
-        Analytics.logEvent('fire_error', {
-            message: err.message
+    } else {
+        Analytics.logEvent('reported_user_again', {
+            reporter: uid,
+            reported: reportedDog.owner,
+            dog: reportedDog.duid
         })
-    });
+    }
+
+
 
 
 }
@@ -366,7 +393,6 @@ export async function getHomies() {
 
     let homiesArray = [];
 
-    Analytics.logEvent('got_homies_finish')
     zoneSnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
         if (doc.data().reported < 1 || doc.data().owner == uid) {
@@ -388,6 +414,7 @@ export async function getHomies() {
         }
     })
     store.dispatch(updateLoading(false));
+    Analytics.logEvent('got_homies_finish')
 
 }
 
@@ -414,15 +441,16 @@ export async function addUsertoZone(pushToken) {
                 members: arrayUnion(pushToken)
 
             }).then((resp) => {
-                Analytics.logEvent('joined_nieghborhood')
+                Analytics.logEvent('joined_neighborhood_notigang')
 
 
             }).catch((err) => {
                 console.log(err)
                 Analytics.logEvent('fire_error', {
-                    message: err.message
+                    uid: uid,
+                    message: error.message,
+                    time: new Date()
                 })
-
 
             })
         } else {
@@ -542,7 +570,9 @@ export async function startPublish(imageURI, navigation) {
                 })
                 .catch((error) => {
                     Analytics.logEvent('fire_error', {
-                        message: error.message
+                        uid: uid,
+                        message: error.message,
+                        time: new Date()
                     })
 
                 })
@@ -551,7 +581,9 @@ export async function startPublish(imageURI, navigation) {
     }).catch((error) => {
         console.log(error)
         Analytics.logEvent('fire_error', {
-            message: error.message
+            uid: uid,
+            message: error.message,
+            time: new Date()
         })
 
     })
@@ -580,7 +612,7 @@ export async function editPublish(imageURI, navigation) {
 
         setDoc(doc(db, "dogs", duid), readyDog)
             .then((resp) => {
-                Analytics.logEvent('Updated_dog')
+                Analytics.logEvent('Edited_dog_doc')
                 // add readyDog to user.dogs redux 
                 store.dispatch(changeDogInUser(readyDog))
                 // post new dog list + update coords
@@ -590,7 +622,7 @@ export async function editPublish(imageURI, navigation) {
                     longitude: readyDog.longitude,
                     latitude: readyDog.latitude,
                 }).then((resp) => {
-                    Analytics.logEvent('Created_dog_finish')
+                    Analytics.logEvent('Edit_dog_finish')
 
                     navigation.navigate('Profile')
 
@@ -598,7 +630,9 @@ export async function editPublish(imageURI, navigation) {
             })
             .catch((error) => {
                 Analytics.logEvent('fire_error', {
-                    message: error.message
+                    uid: uid,
+                    message: error.message,
+                    time: new Date()
                 })
 
             })
@@ -622,11 +656,11 @@ export async function editPublish(imageURI, navigation) {
         const storageRef = ref(storage, 'profileImages/' + duid + '.jpg');
         uploadBytes(storageRef, blob).then((snapshot) => {
             console.log('Uploaded a blob or file!');
-            Analytics.logEvent('Created_dog_photo')
+            Analytics.logEvent('Edited_dog_photo')
 
             // get download URL
             getDownloadURL(snapshot.ref).then((PURI) => {
-                Analytics.logEvent('Created_dog_photoURL')
+                Analytics.logEvent('Edited_dog_photoURL')
 
                 // add url to redux
                 store.dispatch(saveDogPic(PURI))
@@ -636,7 +670,7 @@ export async function editPublish(imageURI, navigation) {
 
                 setDoc(doc(db, "dogs", duid), readyDog)
                     .then((resp) => {
-                        Analytics.logEvent('Created_dog_doc')
+                        Analytics.logEvent('Edited_dog_doc')
                         // add readyDog to user.dogs redux 
                         store.dispatch(changeDogInUser(readyDog))
 
@@ -651,7 +685,7 @@ export async function editPublish(imageURI, navigation) {
                             longitude: readyDog.longitude,
                             latitude: readyDog.latitude,
                         }).then((resp) => {
-                            Analytics.logEvent('Created_dog_finish')
+                            Analytics.logEvent('Edited_dog_finish')
 
                             navigation.navigate('Profile')
 
@@ -659,7 +693,9 @@ export async function editPublish(imageURI, navigation) {
                     })
                     .catch((error) => {
                         Analytics.logEvent('fire_error', {
-                            message: error.message
+                            uid: uid,
+                            message: error.message,
+                            time: new Date()
                         })
 
                     })
@@ -668,7 +704,9 @@ export async function editPublish(imageURI, navigation) {
         }).catch((error) => {
             console.log(error)
             Analytics.logEvent('fire_error', {
-                message: error.message
+                uid: uid,
+                message: error.message,
+                time: new Date()
             })
 
         })
@@ -677,7 +715,8 @@ export async function editPublish(imageURI, navigation) {
 }
 
 export async function markLost(dog, EContact, index, message) {
-    Analytics.logEvent('dog_marked_lost_start')
+    Analytics.logEvent('LOST_DOG_start')
+
     let lost = true
     // send changes to redux (local UI changes)
     store.dispatch(markLostDog({
@@ -699,7 +738,7 @@ export async function markLost(dog, EContact, index, message) {
         contact: EContact,
         alert: alert
     }).then(() => {
-        Analytics.logEvent('dog_marked_lost_publicly')
+        Analytics.logEvent('LOST_DOG_marked_publicly')
 
     });
     const zone = store.getState().user.zone
@@ -710,10 +749,19 @@ export async function markLost(dog, EContact, index, message) {
                 console.log("got zone info: ", docSnap.data())
                 store.dispatch(saveZoneData(members));
 
+
                 const senderToken = store.getState().user.pushToken
                 console.log("MEMEBERS ARE: ", members)
-                sendNotificationtoZone(dog, message, members, senderToken, 'LOST DOG')
-                Analytics.logEvent('dog_lost_notification_sent')
+                sendNotificationtoZone(dog, message, members, senderToken, 'LOST DOG').then((result) => {
+                    Analytics.logEvent('LOST_DOG_notifications sent')
+
+                }).catch((err) => {
+                    Analytics.logEvent('fire_error', {
+                        uid: dog.owner,
+                        message: error.message,
+                        time: new Date()
+                    })
+                });
                 store.dispatch(addLocalAlert(alert))
             } else {
                 // doc.data() will be undefined in this case
@@ -724,7 +772,9 @@ export async function markLost(dog, EContact, index, message) {
         .catch((error) => {
             console.log("Error getting document:", error);
             Analytics.logEvent('fire_error', {
-                message: error.message
+                uid: dog.owner,
+                message: error.message,
+                time: new Date()
             })
 
         })
@@ -777,13 +827,17 @@ export function deleteDog(duid, uid, navigation) {
         }).catch((error) => {
             console.log("error", error)
             Analytics.logEvent('fire_error', {
-                message: error.message
+                uid: uid,
+                message: error.message,
+                time: new Date()
             })
         });
     }).catch((error) => {
         console.log("error", error)
         Analytics.logEvent('fire_error', {
-            message: error.message
+            uid: uid,
+            message: error.message,
+            time: new Date()
         })
     });
 
