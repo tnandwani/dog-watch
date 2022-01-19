@@ -18,7 +18,7 @@ import {
 } from 'native-base';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { MaterialIcons } from '@expo/vector-icons';
-import { reportUser } from '../../database';
+import { reportUser, sendFireError } from '../../database';
 
 export default function LostList() {
 
@@ -35,7 +35,6 @@ export default function LostList() {
 	const report = (rowMap, rowKey, data) => {
 		const reportedDog = data.item.dog;
 
-		console.log("reported duid", reportedDog)
 		reportUser(reportedDog)
 
 		// remove card 
@@ -68,12 +67,11 @@ export default function LostList() {
 					return Linking.openURL(phoneNumber);
 				}
 			})
-			.catch(err => console.log(err));
+			.catch(err => sendFireError(err));
 
 	};
 
 	const onRowDidOpen = (rowKey) => {
-		console.log('This row opened', rowKey);
 	};
 
 	const renderItem = ({ item, index }) => (

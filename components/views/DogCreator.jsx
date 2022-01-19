@@ -41,7 +41,7 @@ import {
 } from 'native-base';
 import { saveDogPic } from '../../redux/slices/rawDogSlice';
 import { breedList, mapQuestKey } from '../../constants';
-import { deleteDog } from '../../database';
+import { deleteDog, sendFireError } from '../../database';
 
 
 const breedSelects = breedList.map((breed) =>
@@ -147,7 +147,6 @@ export default function DogCreator({ navigation }) {
     };
 
     const getLocation = () => {
-        console.log("getting location");
 
         (async () => {
 
@@ -191,7 +190,6 @@ export default function DogCreator({ navigation }) {
                 .then(data => {
                     const addy = data.results[0].locations[0].postalCode
                     const zip = addy.substr(0, addy.indexOf('-'));
-                    console.log("zone", zip);
 
                     // create new location object 
                     let userLocation = {
@@ -207,7 +205,7 @@ export default function DogCreator({ navigation }) {
                     dispatch(saveLocation(userLocation));
 
                 }).catch((err) => {
-                    console.log(err)
+                    sendFireError(err)
                 });
 
 
@@ -222,7 +220,6 @@ export default function DogCreator({ navigation }) {
     let [isFinished, setIsFinished] = useState(true)
 
     let verify = () => {
-        console.log("isFinished", dogName, breed, age, gender, visibility, location)
 
         if (dogName && breed && age && gender && visibility && location && isFinished) {
             setIsFinished(false)

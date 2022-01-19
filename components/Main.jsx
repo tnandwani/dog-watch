@@ -94,12 +94,10 @@ export default function Main() {
 
             notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
                 setNotification(notification);
-                console.log("got a noty")
                 dispatch(addNotification(notification))
             });
 
             responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-                console.log(response);
             });
 
             return () => {

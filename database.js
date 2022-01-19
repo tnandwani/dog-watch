@@ -137,9 +137,13 @@ export function sendFeedback(type, message) {
         type: type,
         message: message
     }).then((result) => {
-        console.log(result)
-    }).catch((err) => {
-        console.log(err)
+        Analytics.logEvent('feedback_sent')
+    }).catch((error) => {
+        Analytics.logEvent('fire_error', {
+            uid: user.uid,
+            message: error.message,
+            time: new Date()
+        })
     });;
 }
 
@@ -186,7 +190,6 @@ export function createUserAccount(email, password, confirm) {
                 createUserDoc(email, uid)
             })
             .catch((error) => {
-                console.log(error.message);
                 Analytics.logEvent('fire_error', {
                     uid: uid,
                     message: error.message,
@@ -249,7 +252,6 @@ export function signInUser(email, password) {
         })
         .catch((error) => {
 
-            console.log(error.message);
             Analytics.logEvent('fire_error', {
                 uid: uid,
                 message: error.message,
@@ -271,7 +273,7 @@ export async function getUserDetails(uid) {
         store.dispatch(changeStatus('returning'))
 
     } else {
-        console.log("No such user!");
+        Analytics.logEvent('User_doc_not_found')
     }
 
 
@@ -303,7 +305,7 @@ export function reportUser(reportedDog) {
                 })
                 store.dispatch(removeTag(reportedDog.duid));
 
-            }).catch((err) => {
+            }).catch((error) => {
                 Analytics.logEvent('fire_error', {
                     uid: uid,
                     message: error.message,
@@ -311,7 +313,7 @@ export function reportUser(reportedDog) {
                 })
             });
 
-        }).catch((err) => {
+        }).catch((error) => {
             Analytics.logEvent('fire_error', {
                 uid: uid,
                 message: error.message,
@@ -333,14 +335,12 @@ export function reportUser(reportedDog) {
 
 //////////////////// ZONE FUNCTIONS 
 export async function compareTask(lat, long) {
-    console.log("getting lat long comparison");
+    Analytics.logEvent('got_homies_via_latlong')
 
     const dogsRef = collection(db, "dogs");
-
     // create bubble zone query
     const latQ = query(dogsRef, where("latitude", ">=", lat - 0.15), where("latitude", "<=", lat + 0.15));
     const longQ = query(dogsRef, where("longitude", ">=", long - 0.15), where("longitude", "<=", long + 0.15));
-    Analytics.logEvent('got_homies_via_latlong')
 
     const latSnapshot = await getDocs(latQ);
     const longSnapshot = await getDocs(longQ);
@@ -369,18 +369,6 @@ export async function compareTask(lat, long) {
 export async function getHomies() {
 
     Analytics.logEvent('getting_homies_start')
-
-
-    // LAT & LONG METHOD 
-    // var bubbleTask = compareTask(lat, long);
-    // bubbleTask.then((response) => {
-
-    //     console.log("response from compare: ")
-    //     console.log(response);
-    //     response.forEach((dog) => {
-    //         store.dispatch(addTag(dog))
-    //     })
-    // })
 
     // GET DOGS WITH ZIPCODE
     const zone = store.getState().user.zone
@@ -426,8 +414,12 @@ export async function addUsertoZone(pushToken) {
 
     updateDoc(userRef, {
         pushToken: pushToken
-    }).catch((err) => {
-        console.log(err)
+    }).catch((error) => {
+        Analytics.logEvent('fire_error', {
+            uid: uid,
+            message: error.message,
+            time: new Date()
+        })
     });
 
     // add to zones
@@ -444,8 +436,7 @@ export async function addUsertoZone(pushToken) {
                 Analytics.logEvent('joined_neighborhood_notigang')
 
 
-            }).catch((err) => {
-                console.log(err)
+            }).catch((error) => {
                 Analytics.logEvent('fire_error', {
                     uid: uid,
                     message: error.message,
@@ -455,7 +446,9 @@ export async function addUsertoZone(pushToken) {
             })
         } else {
             // doc.data() will be undefined in this case
-            console.log("FIRST TIME ZONER");
+            Analytics.logEvent('FIRST_TIME_ZONER', {
+                user: uid
+            })
             setDoc(doc(db, "zones", zone), {
                 members: [pushToken]
             });
@@ -477,11 +470,13 @@ export async function updateFireLocation(location) {
         longitude: location.longitude,
         latitude: location.latitude,
     }).then(() => {
-        console.log("udated user doc with loccation and pushToken")
+        Analytics.logEvent('Updated_user_Location')
     })
 
     if (pushToken) {
         addUsertoZone(pushToken, location);
+        Analytics.logEvent('Added Token to Zone')
+
     }
 
 }
@@ -522,14 +517,12 @@ export async function startPublish(imageURI, navigation) {
     const storageRef = ref(storage, 'profileImages/' + duid + '.jpg');
     uploadBytes(storageRef, blob).then((snapshot) => {
 
-        console.log('Uploaded a blob or file!');
         Analytics.logEvent('Created_dog_photo')
         store.dispatch(updateDogProgress(25))
 
 
         // get download URL
         getDownloadURL(snapshot.ref).then((PURI) => {
-            console.log('File available at', PURI);
             Analytics.logEvent('Created_dog_photoURL')
             store.dispatch(updateDogProgress(50))
 
@@ -555,7 +548,6 @@ export async function startPublish(imageURI, navigation) {
                         longitude: readyDog.longitude,
                         latitude: readyDog.latitude,
                     }).then((resp) => {
-                        console.log("finished creating dog")
                         Analytics.logEvent('Created_dog_finish')
 
                         // add dogcard to explore locally 
@@ -579,7 +571,6 @@ export async function startPublish(imageURI, navigation) {
 
         });
     }).catch((error) => {
-        console.log(error)
         Analytics.logEvent('fire_error', {
             uid: uid,
             message: error.message,
@@ -604,9 +595,6 @@ export async function editPublish(imageURI, navigation) {
 
     if (imageURI.includes("firebasestorage")) {
         // no new picture
-
-        console.log("OLD PICTURE")
-
         const readyDog = store.getState().rawDog
         // upload readyDog to dogs/
 
@@ -655,7 +643,6 @@ export async function editPublish(imageURI, navigation) {
         // upload dog photo with duid 
         const storageRef = ref(storage, 'profileImages/' + duid + '.jpg');
         uploadBytes(storageRef, blob).then((snapshot) => {
-            console.log('Uploaded a blob or file!');
             Analytics.logEvent('Edited_dog_photo')
 
             // get download URL
@@ -702,7 +689,6 @@ export async function editPublish(imageURI, navigation) {
 
             });
         }).catch((error) => {
-            console.log(error)
             Analytics.logEvent('fire_error', {
                 uid: uid,
                 message: error.message,
@@ -746,16 +732,14 @@ export async function markLost(dog, EContact, index, message) {
     getDoc(docRef).then((docSnap) => {
             if (docSnap.exists()) {
                 let members = docSnap.data().members
-                console.log("got zone info: ", docSnap.data())
                 store.dispatch(saveZoneData(members));
 
 
                 const senderToken = store.getState().user.pushToken
-                console.log("MEMEBERS ARE: ", members)
                 sendNotificationtoZone(dog, message, members, senderToken, 'LOST DOG').then((result) => {
                     Analytics.logEvent('LOST_DOG_notifications sent')
 
-                }).catch((err) => {
+                }).catch((error) => {
                     Analytics.logEvent('fire_error', {
                         uid: dog.owner,
                         message: error.message,
@@ -765,12 +749,11 @@ export async function markLost(dog, EContact, index, message) {
                 store.dispatch(addLocalAlert(alert))
             } else {
                 // doc.data() will be undefined in this case
-                console.log("No such document!");
+                Analytics.logEvent('Zone_Document_Not_Exist')
             }
 
         })
         .catch((error) => {
-            console.log("Error getting document:", error);
             Analytics.logEvent('fire_error', {
                 uid: dog.owner,
                 message: error.message,
@@ -790,7 +773,7 @@ export async function markFound(dog, index) {
         lost: lost,
         alert: null,
     }).then(() => {
-        console.log("marked public dog as found");
+        Analytics.logEvent('DOG_FOUND_marked_publicly')
     });
     // mark dog as found in user locally 
     store.dispatch(markLostDog({
@@ -803,8 +786,7 @@ export async function markFound(dog, index) {
 }
 export function deleteDog(duid, uid, navigation) {
 
-    console.log("starting delete")
-
+    Analytics.logEvent('delete_dog_started')
     // remove dog locally from explore tags
     store.dispatch(removeTag(duid));
 
@@ -825,7 +807,6 @@ export function deleteDog(duid, uid, navigation) {
             // update redux state
             navigation.navigate('Profile')
         }).catch((error) => {
-            console.log("error", error)
             Analytics.logEvent('fire_error', {
                 uid: uid,
                 message: error.message,
@@ -833,7 +814,6 @@ export function deleteDog(duid, uid, navigation) {
             })
         });
     }).catch((error) => {
-        console.log("error", error)
         Analytics.logEvent('fire_error', {
             uid: uid,
             message: error.message,
@@ -856,4 +836,16 @@ export async function inviteFriends() {
     } else {
         // misfortune... there's no SMS available on this device
     }
+}
+
+
+export function sendFireError(error) {
+
+    const uid = store.getState().user.uid;
+
+    Analytics.logEvent('fire_error', {
+        uid: uid,
+        message: error,
+        time: new Date()
+    })
 }

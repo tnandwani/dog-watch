@@ -36,7 +36,6 @@ export default function GuestExplore() {
 
 
   const getLocation = () => {
-    console.log("getting location");
 
     (async () => {
       setLocationStatus(<Spinner color="indigo.500" />);
@@ -80,8 +79,6 @@ export default function GuestExplore() {
         zone: currentAddress.postalCode,
 
       }
-      console.log(userLocation);
-
       // save state and update UI
       setLocationStatus("Location Received");
       updateFireLocation(userLocation);

@@ -11,7 +11,7 @@ import * as Location from 'expo-location';
 
 
 import { StyleSheet, View, Dimensions, Platform } from "react-native";
-import { getHomies, updateFireLocation, inviteFriends } from "../../database";
+import { getHomies, updateFireLocation, inviteFriends, sendFireError } from "../../database";
 import { mapQuestKey, mapStyling } from "../../constants";
 import DogCard from '../widgets/DogCard'
 
@@ -54,7 +54,6 @@ export default function ExploreTab({ navigation }) {
 
 
   const getLocation = () => {
-    console.log("getting location");
 
     (async () => {
 
@@ -98,7 +97,6 @@ export default function ExploreTab({ navigation }) {
         .then(data => {
           const addy = data.results[0].locations[0].postalCode
           const zip = addy.substr(0, addy.indexOf('-'));
-          console.log("zone", zip);
 
           // create new location object 
           let userLocation = {
@@ -115,7 +113,8 @@ export default function ExploreTab({ navigation }) {
           getHomies(userLocation.latitude, userLocation.longitude);
 
         }).catch((err) => {
-          console.log(err)
+          sendFireError(err);
+
         });
 
 

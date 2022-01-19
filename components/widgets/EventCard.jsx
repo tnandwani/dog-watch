@@ -18,9 +18,7 @@ import {
 export default function EventCard(props) {
   useEffect(() => { }, []);
 
-  const sayHi = () =>{
-    console.log('hi')
-  }
+ 
   return (
     <Center w="100%" mb="2">
       <Box
