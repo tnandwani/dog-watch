@@ -30,8 +30,9 @@ import { getDevice } from './redux/slices/userSlice';
 import { setScreenAnalytics } from './database';
 import { setTabScreen } from './redux/slices/interfaceSlice';
 
-//Crashalytics
+//Sentry setup 
 import * as Sentry from 'sentry-expo';
+
 
 Sentry.init({
   dsn: sentryKey,
@@ -39,8 +40,6 @@ Sentry.init({
   debug: true, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
 });
 // Access any @sentry/react-native exports via:
-
-console.log("Sentry NAME", )
 
 
 export function App() {
