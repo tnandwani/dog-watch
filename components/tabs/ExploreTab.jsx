@@ -5,6 +5,8 @@ import { Ionicons } from "@expo/vector-icons"
 // maps
 import MapView, { PROVIDER_GOOGLE, Circle } from "react-native-maps";
 import { Marker } from "react-native-maps";
+import { mapQuestKey, mapStyling } from "../../constants";
+
 // expo location
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
@@ -12,7 +14,6 @@ import * as Location from 'expo-location';
 
 import { StyleSheet, View, Dimensions, Platform } from "react-native";
 import { getHomies, updateFireLocation, inviteFriends, sendFireError } from "../../database";
-import { mapQuestKey, mapStyling } from "../../constants";
 import DogCard from '../widgets/DogCard'
 
 import { Box, Button, Center, FlatList, Heading, Spinner, Text, Fab, Icon, Badge } from "native-base";

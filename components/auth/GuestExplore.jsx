@@ -4,6 +4,8 @@ import { Ionicons } from "@expo/vector-icons"
 
 // maps
 import IMap from '../views/imap'
+import { mapQuestKey } from "../../constants";
+
 // expo location
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
@@ -16,7 +18,7 @@ import DogCard from '../widgets/DogCard'
 import { Box, Button, Center, FlatList, Heading, Spinner } from "native-base";
 import { updateLocation } from "../../redux/slices/userSlice";
 
-export default function GuestExplore() {
+export default function GuestExplore({ navigation }) {
 
   let user = useSelector((state) => state.user);
   let dogTags = useSelector((state) => state.explore.dogTags);
@@ -51,39 +53,53 @@ export default function GuestExplore() {
 
       // get coords
       let currentPin = await Location.getCurrentPositionAsync({});
-      var currentAddress = "Unverified";
 
-      // If not mobile get address
-      if (Platform.OS !== 'web') {
-        // get address
-        let reveresResult = await Location.reverseGeocodeAsync(currentPin.coords, false)
-        currentAddress = reveresResult[0];
-        // get zipcode
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: {
+            latLng: {
+              lat: currentPin.coords.latitude,
+              lng: currentPin.coords.longitude
+            }
+          },
+          options: {
+            thumbMaps: false
+          },
+          includeNearestIntersection: true,
+          includeRoadMetadata: true
+        })
 
-        // pass zipcode instead of full addess
+      };
+      fetch('http://www.mapquestapi.com/geocoding/v1/reverse?key=' + mapQuestKey, requestOptions)
+        .then(response => response.json())
+        .catch((error) => {
+          sendFireError(error, "EXPLORETAB.fetch.response");
 
+        }).then(data => {
+          const addy = data.results[0].locations[0].postalCode
+          const zip = addy.substr(0, addy.indexOf('-'));
 
-      }
-      else {
-        console.log("Web Mode")
-        // get API key for web created accounts - too expensive for only web
-        // Location.setGoogleApiKey(googleAPI)
-        // let reveresResult = await Location.reverseGeocodeAsync(currentPin.coords, false)
-        // currentAddress = reveresResult[0];
-      }
+          // create new location object 
+          let userLocation = {
+            latitude: currentPin.coords.latitude,
+            longitude: currentPin.coords.longitude,
+            zone: zip,
 
+          }
+          // save state and update UI
+          // save state and update UI
+          setLocationStatus("Location Received");
+          updateFireLocation(userLocation);
+          dispatch(updateLocation(userLocation));
+          getHomies(userLocation.latitude, userLocation.longitude);
 
-      // create new location object 
-      let userLocation = {
-        coords: currentPin.coords,
-        zone: currentAddress.postalCode,
+        }).catch((error) => {
+          sendFireError(error, "EXPLORETAB.fetch.data");
 
-      }
-      // save state and update UI
-      setLocationStatus("Location Received");
-      updateFireLocation(userLocation);
-      dispatch(updateLocation(userLocation));
-      getHomies(userLocation.coords.latitude, userLocation.coords.longitude);
+        });
+
 
 
 
@@ -109,7 +125,7 @@ export default function GuestExplore() {
         <IMap minLong={-115.28719067573549} minLat={0.12038549863730057} maxLong={-82.32820630073549} maxLat={55.2976194318208}/>
       }
       {(user.zone === 'Unverified') &&
-
+      // join button for unverfied 
         <Box position='absolute' w='100%' top='10'>
           <Center>
             <Button

@@ -87,7 +87,7 @@ import * as Analytics from 'expo-firebase-analytics';
 
 // TURN ON DEBUG MODE HERE
 Analytics.setDebugModeEnabled(true);
-
+Analytics.resetAnalyticsData();
 import {
     updateCreateAlert,
     updateDogProgress,
@@ -111,10 +111,13 @@ onAuthStateChanged(auth, user => {
             uid
         }))
         getUserDetails(uid);
-        Analytics.logEvent('auto_logged_in', uAnalytics())
+        Analytics.setUserId(uid);
+        Analytics.logEvent('auto_logged_in')
 
     } else {
         store.dispatch(changeStatus('new'))
+        Analytics.resetAnalyticsData();
+
     }
 
 });
@@ -172,6 +175,8 @@ export function signOutUser() {
 
     signOut(auth);
     store.dispatch(changeStatus('new'))
+    Analytics.resetAnalyticsData();
+
 
 }
 
@@ -252,7 +257,9 @@ export async function getUserDetails(uid) {
 
     if (docSnap.exists()) {
         let response = docSnap.data();
+
         store.dispatch(saveUserDetails(response));
+        Analytics.setUserProperties(uAnalytics())
         store.dispatch(changeStatus('returning'))
 
     } else {
@@ -363,20 +370,24 @@ export async function getHomies() {
             homiesArray.push(doc.data())
         }
     });
-    homiesArray.forEach((dog) => {
-        // for my dogs 
-        if (dog.owner == uid) {
-            store.dispatch(saveDogCards(dog))
-        }
-        // for explore map
-        if (dog.visibility == 'n') {
-            store.dispatch(addTag(dog));
-        }
-        // for lost dogs 
-        if (dog.lost == true) {
-            store.dispatch(addLocalAlert(dog.alert))
-        }
-    })
+    if (homiesArray.length > 0) {
+
+
+        homiesArray.forEach((dog) => {
+            // for my dogs 
+            if (dog.owner == uid) {
+                store.dispatch(saveDogCards(dog))
+            }
+            // for explore map
+            if (dog.visibility == 'n') {
+                store.dispatch(addTag(dog));
+            }
+            // for lost dogs 
+            if (dog.lost == true) {
+                store.dispatch(addLocalAlert(dog.alert))
+            }
+        })
+    }
     store.dispatch(updateLoading(false));
     Analytics.logEvent('got_homies_finish', uAnalytics())
 
@@ -805,8 +816,6 @@ export function uAnalytics() {
     const user = store.getState().user;
 
     return ({
-        uid: user.uid,
-        dogs: user.dogs,
         zone: user.zone,
         device: user.device
     })

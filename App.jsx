@@ -27,6 +27,8 @@ import DogCreator from "./components/views/DogCreator"; // holds user tabs
 import Personality from "./components/views/Personality";
 import { useDispatch } from 'react-redux';
 import { getDevice } from './redux/slices/userSlice';
+import { setScreenAnalytics } from './database';
+import { setTabScreen } from './redux/slices/interfaceSlice';
 
 
 
@@ -56,8 +58,17 @@ export function AppContent() {
       )}
 
       {status == "new" && (
-        <NavigationContainer theme={MyTheme}>
-          <Stack.Navigator initialRouteName="Landing">
+        <NavigationContainer theme={MyTheme} >
+          <Stack.Navigator initialRouteName="Landing" screenListeners={{
+            state: (e) => {
+              // Do something with the state
+              let screen = e.data.state
+              let currentScreen = screen.routes[screen.index].name
+              setScreenAnalytics(currentScreen);
+              dispatch(setTabScreen(currentScreen))
+
+            }
+          }}>
             <Stack.Screen
               name="Landing"
               component={LandingScreen}
@@ -80,7 +91,7 @@ export function AppContent() {
               }}
             />
             <Stack.Screen
-              name="Explore"
+              name="GuestExplore"
               component={ExploreScreen}
               options={{
                 headerShown: true,
