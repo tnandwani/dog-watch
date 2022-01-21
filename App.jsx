@@ -42,15 +42,6 @@ Sentry.init({
 // Access any @sentry/react-native exports via:
 
 
-export function App() {
-
-  return (
-    <Provider store={store}>
-      <AppContent />
-    </Provider>
-  );
-}
-
 export function AppContent() {
   const dispatch = useDispatch();
   var status = useSelector((state) => state.user.status);
@@ -76,7 +67,6 @@ export function AppContent() {
               let currentScreen = screen.routes[screen.index].name
               setScreenAnalytics(currentScreen);
               dispatch(setTabScreen(currentScreen))
-
             }
           }}>
             <Stack.Screen
@@ -145,4 +135,17 @@ export function AppContent() {
 }
 
 
-export default Sentry.Native.wrap(App);
+export default function App() {
+
+  return (
+    <Provider store={store}>
+      <AppContent />
+    </Provider>
+  );
+}
+
+
+if(Platform.OS != 'web') {
+  console.log("wrapped the app in sentry");
+  Sentry.Native.wrap(App);
+}

@@ -88,8 +88,8 @@ import * as Analytics from 'expo-firebase-analytics';
 import * as Sentry from 'sentry-expo';
 
 // TURN ON DEBUG MODE HERE
-Analytics.setDebugModeEnabled(true);
-Analytics.resetAnalyticsData();
+// Analytics.setDebugModeEnabled(true);
+// Analytics.resetAnalyticsData();
 import {
     updateCreateAlert,
     updateDogProgress,
@@ -108,17 +108,25 @@ onAuthStateChanged(auth, user => {
     if (user != null) {
         const uid = user.uid;
         const email = user.email;
+        const device = store.getState().device;
+
         store.dispatch(signInAccount({
             email,
             uid
         }))
+
+
+
         getUserDetails(uid);
         Analytics.setUserId(uid);
         Analytics.logEvent('auto_logged_in')
 
     } else {
         store.dispatch(changeStatus('new'))
-        Analytics.resetAnalyticsData();
+        // if (store.getState().user.device !== 'web') {
+        //     Analytics.resetAnalyticsData();
+        // }
+
     }
 
 });
@@ -176,9 +184,9 @@ export function signOutUser() {
 
     signOut(auth);
     store.dispatch(changeStatus('new'))
-    Analytics.resetAnalyticsData();
+    // Analytics.resetAnalyticsData();
 
-    
+
 
 }
 
@@ -262,11 +270,7 @@ export async function getUserDetails(uid) {
 
         store.dispatch(saveUserDetails(response));
         Analytics.setUserProperties(uAnalytics())
-        Sentry.Native.setUser({
-            id: response.uid,
-            email: response.email
-        })
-        
+
         store.dispatch(changeStatus('returning'))
 
     } else {
