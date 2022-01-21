@@ -4,10 +4,10 @@ import { Platform } from 'react-native';
 
 // UI
 import { NativeBaseProvider, Center, Spinner } from "native-base";
-import { MyTheme } from "./constants";
+import { MyTheme, sentryKey } from "./constants";
 
 // REDUX
-import { useSelector, Provider} from "react-redux";
+import { useSelector, Provider } from "react-redux";
 import store from "./redux/store";
 
 // NAVIGATION
@@ -30,9 +30,20 @@ import { getDevice } from './redux/slices/userSlice';
 import { setScreenAnalytics } from './database';
 import { setTabScreen } from './redux/slices/interfaceSlice';
 
+//Crashalytics
+import * as Sentry from 'sentry-expo';
+
+Sentry.init({
+  dsn: sentryKey,
+  enableInExpoDevelopment: true,
+  debug: true, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
+});
+// Access any @sentry/react-native exports via:
+
+console.log("Sentry NAME", )
 
 
-export default function App() {
+export function App() {
 
   return (
     <Provider store={store}>
@@ -47,7 +58,7 @@ export function AppContent() {
 
   dispatch(getDevice(Platform.OS));
 
-  
+
 
   return (
     <NativeBaseProvider>
@@ -133,3 +144,6 @@ export function AppContent() {
     </NativeBaseProvider>
   );
 }
+
+
+export default Sentry.Native.wrap(App);

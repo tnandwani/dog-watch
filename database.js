@@ -84,6 +84,8 @@ import {
 } from './notifcations/server';
 
 import * as Analytics from 'expo-firebase-analytics';
+//Crashalytics
+import * as Sentry from 'sentry-expo';
 
 // TURN ON DEBUG MODE HERE
 Analytics.setDebugModeEnabled(true);
@@ -260,6 +262,11 @@ export async function getUserDetails(uid) {
 
         store.dispatch(saveUserDetails(response));
         Analytics.setUserProperties(uAnalytics())
+        Sentry.Native.setUser({
+            id: response.uid,
+            email: response.email
+        })
+        
         store.dispatch(changeStatus('returning'))
 
     } else {
