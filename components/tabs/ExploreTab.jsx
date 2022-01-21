@@ -94,7 +94,10 @@ export default function ExploreTab({ navigation }) {
       };
       fetch('http://www.mapquestapi.com/geocoding/v1/reverse?key=' + mapQuestKey, requestOptions)
         .then(response => response.json())
-        .then(data => {
+        .catch((error) => {
+          sendFireError(error, "EXPLORETAB.fetch.response");
+
+        }).then(data => {
           const addy = data.results[0].locations[0].postalCode
           const zip = addy.substr(0, addy.indexOf('-'));
 
@@ -112,8 +115,8 @@ export default function ExploreTab({ navigation }) {
           dispatch(updateLocation(userLocation));
           getHomies(userLocation.latitude, userLocation.longitude);
 
-        }).catch((err) => {
-          sendFireError(err);
+        }).catch((error) => {
+          sendFireError(error, "EXPLORETAB.fetch.data");
 
         });
 

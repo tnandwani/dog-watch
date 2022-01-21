@@ -12,7 +12,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeTab from './tabs/HomeTab'
 import ExploreTab from './tabs/ExploreTab'
 import ProfileTab from './tabs/ProfileTab'
-import { addUsertoZone, setScreenAnalytics } from '../database';
+import { addUsertoZone, sendFireError, setScreenAnalytics } from '../database';
 
 
 
@@ -87,6 +87,8 @@ export default function Main() {
                 registerForPushNotificationsAsync().then(token => {
                     addUsertoZone(token)
                     dispatch(updatePushToken(token))
+                }).catch((error) => {
+                    sendFireError(error.message, "MAIN.registerForPushNotificationsAsync")
                 });
 
 

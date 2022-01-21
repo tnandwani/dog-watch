@@ -84,6 +84,10 @@ import {
 } from './notifcations/server';
 
 import * as Analytics from 'expo-firebase-analytics';
+
+// TURN ON DEBUG MODE HERE
+Analytics.setDebugModeEnabled(true);
+
 import {
     updateCreateAlert,
     updateDogProgress,
@@ -139,12 +143,8 @@ export function sendFeedback(type, message) {
     }).then((result) => {
         Analytics.logEvent('feedback_sent')
     }).catch((error) => {
-        Analytics.logEvent('fire_error', {
-            uid: user.uid,
-            message: error.message,
-            time: new Date()
-        })
-    });;
+        sendFireError(error.message, "sendFeedback.addDoc");
+    });
 }
 
 export function viewDog(dog) {
@@ -176,7 +176,6 @@ export function signOutUser() {
 }
 
 export function createUserAccount(email, password, confirm) {
-    const uid = "new-user";
     if (password === confirm) {
         // FIREBASE
         createUserWithEmailAndPassword(auth, email, password)
@@ -190,15 +189,8 @@ export function createUserAccount(email, password, confirm) {
                 createUserDoc(email, uid)
             })
             .catch((error) => {
-                Analytics.logEvent('fire_error', {
-                    uid: uid,
-                    message: error.message,
-                    time: new Date()
-                })
+                sendFireError(error.message, "createUserAccount.createUserWithEP");
                 store.dispatch(updateCreateAlert(error.message))
-
-
-                // ..
             });
     } else {
         store.dispatch(updateCreateAlert("Passwords do not match"))
@@ -230,13 +222,8 @@ export async function createUserDoc(email, uid) {
         Analytics.logEvent('User_Sign_Up_Finished')
 
 
-    } catch (e) {
-        console.error("Error adding document: ", e);
-        Analytics.logEvent('fire_error', {
-            uid: uid,
-            message: error.message,
-            time: new Date()
-        })
+    } catch (error) {
+        sendFireError(error.message, "createUserDoc.setDoc");
     }
 }
 
@@ -252,11 +239,7 @@ export function signInUser(email, password) {
         })
         .catch((error) => {
 
-            Analytics.logEvent('fire_error', {
-                uid: uid,
-                message: error.message,
-                time: new Date()
-            })
+            sendFireError(error.message, "signInUser.signInWith");
             store.dispatch(updateLoginAlert(error.message))
 
         });
@@ -306,19 +289,12 @@ export function reportUser(reportedDog) {
                 store.dispatch(removeTag(reportedDog.duid));
 
             }).catch((error) => {
-                Analytics.logEvent('fire_error', {
-                    uid: uid,
-                    message: error.message,
-                    time: new Date()
-                })
+                sendFireError(error.message, "reportUser.updateDoc.dogRef");
             });
 
         }).catch((error) => {
-            Analytics.logEvent('fire_error', {
-                uid: uid,
-                message: error.message,
-                time: new Date()
-            })
+            sendFireError(error.message, "reportUser.updateDoc.userRef");
+
         });
     } else {
         Analytics.logEvent('reported_user_again', {
@@ -415,11 +391,8 @@ export async function addUsertoZone(pushToken) {
     updateDoc(userRef, {
         pushToken: pushToken
     }).catch((error) => {
-        Analytics.logEvent('fire_error', {
-            uid: uid,
-            message: error.message,
-            time: new Date()
-        })
+        sendFireError(error.message, "addUsertoZone.updateDoc.userRef");
+
     });
 
     // add to zones
@@ -437,12 +410,7 @@ export async function addUsertoZone(pushToken) {
 
 
             }).catch((error) => {
-                Analytics.logEvent('fire_error', {
-                    uid: uid,
-                    message: error.message,
-                    time: new Date()
-                })
-
+                sendFireError(error.message, "addUsertoZone.updateDoc.zoneRef");
             })
         } else {
             // doc.data() will be undefined in this case
@@ -471,6 +439,8 @@ export async function updateFireLocation(location) {
         latitude: location.latitude,
     }).then(() => {
         Analytics.logEvent('Updated_user_Location')
+    }).catch((error) => {
+        sendFireError(error.message, "updateFireLocation.updateDoc.userRef");
     })
 
     if (pushToken) {
@@ -558,25 +528,21 @@ export async function startPublish(imageURI, navigation) {
                         store.dispatch(updateDogProgress(0))
 
 
+                    }).catch((error) => {
+                        sendFireError(error.message, "startPublish.image.updateDoc.userRef");
                     })
                 })
                 .catch((error) => {
-                    Analytics.logEvent('fire_error', {
-                        uid: uid,
-                        message: error.message,
-                        time: new Date()
-                    })
+                    sendFireError(error.message, "startPublish.setDoc.duid");
+
 
                 })
 
+        }).catch((error) => {
+            sendFireError(error.message, "startPublish.getDownloadURL");
         });
     }).catch((error) => {
-        Analytics.logEvent('fire_error', {
-            uid: uid,
-            message: error.message,
-            time: new Date()
-        })
-
+        sendFireError(error.message, "startPublish.uploadBytes");
     })
 
 }
@@ -614,15 +580,12 @@ export async function editPublish(imageURI, navigation) {
 
                     navigation.navigate('Profile')
 
+                }).catch((error) => {
+                    sendFireError(error.message, "editPublish.noimage.setDoc.duid");
                 })
             })
             .catch((error) => {
-                Analytics.logEvent('fire_error', {
-                    uid: uid,
-                    message: error.message,
-                    time: new Date()
-                })
-
+                sendFireError(error.message, "editPublish.noimage.setDoc.duid");
             })
     } else {
 
@@ -676,25 +639,19 @@ export async function editPublish(imageURI, navigation) {
 
                             navigation.navigate('Profile')
 
+                        }).catch((error) => {
+                            sendFireError(error.message, "editPublish.image.updateDoc.users");
                         })
                     })
                     .catch((error) => {
-                        Analytics.logEvent('fire_error', {
-                            uid: uid,
-                            message: error.message,
-                            time: new Date()
-                        })
+                        sendFireError(error.message, "editPublish.image.uploadBytes");
+
 
                     })
 
             });
         }).catch((error) => {
-            Analytics.logEvent('fire_error', {
-                uid: uid,
-                message: error.message,
-                time: new Date()
-            })
-
+            sendFireError(error.message, "editPublish.image.setDoc.duid");
         })
     }
 
@@ -726,6 +683,9 @@ export async function markLost(dog, EContact, index, message) {
     }).then(() => {
         Analytics.logEvent('LOST_DOG_marked_publicly')
 
+    }).catch(error => {
+        sendFireError(error.message, "markLost.updateDoc.dogRef");
+
     });
     const zone = store.getState().user.zone
     const docRef = doc(db, "zones", zone);
@@ -740,25 +700,19 @@ export async function markLost(dog, EContact, index, message) {
                     Analytics.logEvent('LOST_DOG_notifications sent')
 
                 }).catch((error) => {
-                    Analytics.logEvent('fire_error', {
-                        uid: dog.owner,
-                        message: error.message,
-                        time: new Date()
-                    })
+                    sendFireError(error.message, "markLost.getDoc.zoneRef.sendNotificationtoZone");
+
                 });
                 store.dispatch(addLocalAlert(alert))
             } else {
                 // doc.data() will be undefined in this case
-                Analytics.logEvent('Zone_Document_Not_Exist')
+                sendFireError(error.message, "markLost.getDoc.zoneRef.noZoneExist");
             }
 
         })
         .catch((error) => {
-            Analytics.logEvent('fire_error', {
-                uid: dog.owner,
-                message: error.message,
-                time: new Date()
-            })
+            sendFireError(error.message, "markLost.getDoc.zoneRef");
+
 
         })
 
@@ -774,6 +728,8 @@ export async function markFound(dog, index) {
         alert: null,
     }).then(() => {
         Analytics.logEvent('DOG_FOUND_marked_publicly')
+    }).catch((error) => {
+        sendFireError(error.message, "markFound.updateDoc");
     });
     // mark dog as found in user locally 
     store.dispatch(markLostDog({
@@ -807,18 +763,12 @@ export function deleteDog(duid, uid, navigation) {
             // update redux state
             navigation.navigate('Profile')
         }).catch((error) => {
-            Analytics.logEvent('fire_error', {
-                uid: uid,
-                message: error.message,
-                time: new Date()
-            })
+            sendFireError(error.message, "deleteDog.deleteDoc.userRef");
+
         });
     }).catch((error) => {
-        Analytics.logEvent('fire_error', {
-            uid: uid,
-            message: error.message,
-            time: new Date()
-        })
+        sendFireError(error.message, "deleteDog.deleteDoc.duid");
+
     });
 
 }
@@ -839,13 +789,16 @@ export async function inviteFriends() {
 }
 
 
-export function sendFireError(error) {
+export function sendFireError(error, func) {
 
-    const uid = store.getState().user.uid;
+
+    const user = store.getState().user;
 
     Analytics.logEvent('fire_error', {
-        uid: uid,
+        uid: user.uid, // from redux 
+        device: user.device, // from redux
         message: error,
-        time: new Date()
+        func: func,
+        time: new Date() 
     })
 }

@@ -34,7 +34,6 @@ import {
     CheckIcon,
     Box,
     Divider,
-    FlatList,
     Flex,
     Spacer,
     Spinner
@@ -45,12 +44,12 @@ import { deleteDog, sendFireError } from '../../database';
 
 
 const breedSelects = breedList.map((breed) =>
-    <Select.Item label={breed.name} value={breed.name} />
+    <Select.Item key={breed.name} label={breed.name} value={breed.name} />
 );
 
 const ageList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
 const ageSelects = ageList.map((age) =>
-    <Select.Item label={age} value={age} />
+    <Select.Item key={age} label={age} value={age} />
 );
 
 export default function DogCreator({ navigation }) {
@@ -62,10 +61,10 @@ export default function DogCreator({ navigation }) {
     }, []);
 
     // dog details 
-    const [dogName, setDogName] = useState();
-    const [breed, setBreed] = useState();
-    const [age, setAge] = useState();
-    const [gender, setGender] = useState();
+    const [dogName, setDogName] = useState(null);
+    const [breed, setBreed] = useState(null);
+    const [age, setAge] = useState(null);
+    const [gender, setGender] = useState(null);
     const [profileImage, setProfileImage] = useState(useSelector((state) => state.rawDog.profileImage));
 
     // owner
@@ -186,7 +185,10 @@ export default function DogCreator({ navigation }) {
 
             };
             fetch('http://www.mapquestapi.com/geocoding/v1/reverse?key=' + mapQuestKey, requestOptions)
-                .then(response => response.json())
+                .then(response => response.json()).catch((error) => {
+                    sendFireError(error, "EXPLORETAB.fetch.response");
+
+                })
                 .then(data => {
                     const addy = data.results[0].locations[0].postalCode
                     const zip = addy.substr(0, addy.indexOf('-'));
@@ -204,8 +206,8 @@ export default function DogCreator({ navigation }) {
                     setLocationStatus("Location Received")
                     dispatch(saveLocation(userLocation));
 
-                }).catch((err) => {
-                    sendFireError(err)
+                }).catch((error) => {
+                    sendFireError(error, "EXPLORETAB.fetch.data");
                 });
 
 

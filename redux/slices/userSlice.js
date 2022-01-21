@@ -6,7 +6,8 @@ export const userSlice = createSlice({
   name: 'user',
   initialState: {
     email: null,
-    uid: null,
+    uid: 'unknown',
+    device: 'unknown',
     latitude: null,
     longitude: null,
     zone: "Unverified",
@@ -35,6 +36,9 @@ export const userSlice = createSlice({
     saveDogCards: (state, action) => {
       state.dogs.push(action.payload);
     },
+    getDevice: (state, action) => {
+      state.device = action.payload
+    },
     changeStatus: (state, action) => {
       state.status = action.payload
     },
@@ -60,7 +64,7 @@ export const userSlice = createSlice({
       state.dogs.splice(index, 1)
     },
     reportUser: (state, action) => {
-        state.reported++;
+      state.reported++;
     },
 
   },
@@ -73,6 +77,7 @@ export const {
   saveDogCards,
   changeStatus,
   markLostDog,
+  getDevice,
   updateLocation,
   addNotification,
   changeDogInUser,

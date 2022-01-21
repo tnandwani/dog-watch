@@ -1,5 +1,8 @@
-// UI
+// REACT
 import React from 'react';
+import { Platform } from 'react-native';
+
+// UI
 import { NativeBaseProvider, Center, Spinner } from "native-base";
 import { MyTheme } from "./constants";
 
@@ -22,6 +25,8 @@ import MainScreen from "./components/Main";
 // VIEW COMPONENTS
 import DogCreator from "./components/views/DogCreator"; // holds user tabs
 import Personality from "./components/views/Personality";
+import { useDispatch } from 'react-redux';
+import { getDevice } from './redux/slices/userSlice';
 
 
 
@@ -35,7 +40,12 @@ export default function App() {
 }
 
 export function AppContent() {
+  const dispatch = useDispatch();
   var status = useSelector((state) => state.user.status);
+
+  dispatch(getDevice(Platform.OS));
+
+  
 
   return (
     <NativeBaseProvider>
