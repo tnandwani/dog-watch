@@ -17,7 +17,6 @@
     "@react-navigation/stack": "^6.0.11",
     "@reduxjs/toolkit": "^1.6.2",
     "@sentry/react-native": "^3.2.12",
-    "appwrite": "^5.0.0",
     "expo": "^43.0.0",
     "expo-application": "~4.0.0",
     "expo-constants": "~12.1.3",

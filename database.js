@@ -119,7 +119,6 @@ onAuthStateChanged(auth, user => {
     } else {
         store.dispatch(changeStatus('new'))
         Analytics.resetAnalyticsData();
-
     }
 
 });
@@ -179,6 +178,7 @@ export function signOutUser() {
     store.dispatch(changeStatus('new'))
     Analytics.resetAnalyticsData();
 
+    
 
 }
 
