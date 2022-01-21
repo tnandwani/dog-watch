@@ -40,7 +40,7 @@ import {
 } from 'native-base';
 import { saveDogPic } from '../../redux/slices/rawDogSlice';
 import { breedList, mapQuestKey } from '../../constants';
-import { deleteDog, sendFireError } from '../../database';
+import { deleteDog, sendFireError, uAnalytics } from '../../database';
 
 
 const breedSelects = breedList.map((breed) =>
@@ -56,7 +56,7 @@ export default function DogCreator({ navigation }) {
 
     useEffect(() => {
 
-        Analytics.logEvent('create_dog_opened')
+        Analytics.logEvent('create_dog_opened', uAnalytics())
 
     }, []);
 
@@ -115,7 +115,7 @@ export default function DogCreator({ navigation }) {
 
 
     const cancelCreate = () => {
-        Analytics.logEvent('create_dog_canceled')
+        Analytics.logEvent('create_dog_canceled', uAnalytics())
         navigation.goBack()
     }
 

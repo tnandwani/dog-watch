@@ -4,7 +4,7 @@ import { Keyboard} from 'react-native';
 import { useDispatch, useSelector } from 'react-redux'
 import * as Analytics from 'expo-firebase-analytics';
 
-import { startPublish, editPublish } from '../../database';
+import { startPublish, editPublish, uAnalytics } from '../../database';
 
 import {
     Heading,
@@ -33,7 +33,7 @@ export default function Personality({ navigation }) {
 
 
     useEffect(() => {
-        Analytics.logEvent('create_dog_personality_opened')
+        Analytics.logEvent('create_personality_opened', uAnalytics())
     }, []);
 
     const dispatch = useDispatch()
