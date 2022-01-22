@@ -16,7 +16,7 @@ export const userSlice = createSlice({
     status: 'loading',
     notifications: [],
     pushToken: null,
-    reported: 0
+    reported: []
   },
   reducers: {
     signInAccount: (state, action) => {

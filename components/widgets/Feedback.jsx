@@ -46,7 +46,7 @@ export default function Feedback(props) {
         <Popover.Arrow />
         <Popover.CloseButton />
         {/* @ts-ignore */}
-        <Popover.Header>Personal Details</Popover.Header>
+        <Popover.Header>Send Feedback</Popover.Header>
         <Popover.Body>
           <FormControl>
             <Center>

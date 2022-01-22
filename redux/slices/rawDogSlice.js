@@ -20,7 +20,7 @@ const detaultState = {
   email: null,
   contact: null,
   alert: null,
-  reported: 0,
+  reported: [],
   personality: {
     people: null,
     otherDogs: null,

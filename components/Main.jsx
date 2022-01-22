@@ -6,7 +6,6 @@ import { useSelector, useDispatch } from "react-redux";
 //ICONS
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
-
 // TABS 
 const Tab = createBottomTabNavigator();
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';

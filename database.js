@@ -84,7 +84,7 @@ import {
 } from './notifcations/server';
 
 import * as Analytics from 'expo-firebase-analytics';
-//Crashalytics
+
 import * as Sentry from 'sentry-expo';
 
 // TURN ON DEBUG MODE HERE
@@ -97,6 +97,9 @@ import {
     updateShowDogModal
 }
 from './redux/slices/interfaceSlice';
+import {
+    Platform
+} from 'react-native';
 ////////// APP START
 
 initializeApp(firebaseConfig)
@@ -109,6 +112,8 @@ onAuthStateChanged(auth, user => {
         const uid = user.uid;
         const email = user.email;
         const device = store.getState().device;
+
+
 
         store.dispatch(signInAccount({
             email,
@@ -197,8 +202,11 @@ export function createUserAccount(email, password, confirm) {
             .then((userCredential) => {
                 // Signed in 
                 // Get UID 
-                uid = userCredential.user.uid
-                Analytics.logEvent('User_Sign_Up_Started', uAnalytics())
+                console.log("user created as ")
+                console.log(userCredential.user.uid);
+                const uid = userCredential.user.uid;
+
+                console.log("uid is", uid);
 
                 // Sign In
                 createUserDoc(email, uid)
@@ -230,7 +238,7 @@ export async function createUserDoc(email, uid) {
             email: email,
             zone: "Unverified",
             dogs: [],
-            reported: 0
+            reported: []
         });
 
         store.dispatch(changeStatus('returning'))
@@ -268,6 +276,20 @@ export async function getUserDetails(uid) {
     if (docSnap.exists()) {
         let response = docSnap.data();
 
+        if (Platform.OS === 'web') {
+            Sentry.Browser.setUser({
+                id: response.uid,
+                email: response.email
+            })
+            Sentry.Browser.setTag("zone", response.zone)
+        } else {
+            Sentry.Native.setUser({
+                id: uid,
+                email: email
+            })
+            Sentry.Native.setTag("zone", response.zone)
+
+        }
         store.dispatch(saveUserDetails(response));
         Analytics.setUserProperties(uAnalytics())
 
@@ -281,6 +303,7 @@ export async function getUserDetails(uid) {
 }
 
 export function reportUser(reportedDog) {
+    console.log("reportedDog", reportedDog);
 
 
     const userRef = doc(db, "users", reportedDog.owner);
@@ -290,15 +313,15 @@ export function reportUser(reportedDog) {
 
 
 
-    if (!reportedDog.reported.contains(uid)) {
+
+    if (!reportedDog.reported.includes(uid)) {
         // report user
         updateDoc(userRef, {
-            reported: increment(1),
-            reported: arrayUnion(union)
+            reported: arrayUnion(uid)
         }).then((result) => {
             // remove dog from local explore
             updateDoc(dogRef, {
-                reported: increment(1)
+                reported: arrayUnion(uid)
             }).then((result) => {
                 Analytics.logEvent('reported_user', {
                     uid: uid,
@@ -701,6 +724,7 @@ export async function markLost(dog, EContact, index, message) {
         alert: alert
     }).then(() => {
         Analytics.logEvent('LOST_DOG_marked_publicly', uAnalytics)
+        store.dispatch(addLocalAlert(alert))
 
     }).catch(error => {
         sendFireError(error.message, "markLost.updateDoc.dogRef");
@@ -714,10 +738,10 @@ export async function markLost(dog, EContact, index, message) {
                 store.dispatch(saveZoneData(members));
 
 
+
                 const senderToken = store.getState().user.pushToken
                 sendNotificationtoZone(dog, message, members, senderToken, 'LOST DOG').then((result) => {
                     Analytics.logEvent('LOST_DOG_notifications_sent', uAnalytics())
-                    store.dispatch(addLocalAlert(alert))
 
                 }).catch((error) => {
                     sendFireError(error.message, "markLost.getDoc.zoneRef.sendNotificationtoZone");

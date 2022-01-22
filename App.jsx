@@ -1,6 +1,6 @@
 // REACT
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 
 // UI
 import { NativeBaseProvider, Center, Spinner } from "native-base";
@@ -37,9 +37,10 @@ import * as Sentry from 'sentry-expo';
 Sentry.init({
   dsn: sentryKey,
   enableInExpoDevelopment: true,
+  release: 'dog-watch@v0.01',
   debug: true, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
 });
-// Access any @sentry/react-native exports via:
+
 
 
 export function AppContent() {
@@ -47,8 +48,6 @@ export function AppContent() {
   var status = useSelector((state) => state.user.status);
 
   dispatch(getDevice(Platform.OS));
-
-
 
   return (
     <NativeBaseProvider>
@@ -134,7 +133,6 @@ export function AppContent() {
   );
 }
 
-
 export default function App() {
 
   return (
@@ -145,7 +143,11 @@ export default function App() {
 }
 
 
-if(Platform.OS != 'web') {
-  console.log("wrapped the app in sentry");
+
+
+if (Platform.OS != 'web') {
   Sentry.Native.wrap(App);
+}
+else{
+  Sentry.Browser.wrap(App)
 }

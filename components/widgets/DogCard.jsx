@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Image, Keyboard } from "react-native";
-
+import Report from "./Report";
 import {
   Box,
   Heading,
   AspectRatio,
   Text,
+  Pressable,
   Center,
   Stack,
   HStack,
@@ -20,7 +21,7 @@ import {
 } from "native-base";
 
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { markLost, markFound, viewDog } from "../../database";
+import { markLost, markFound, viewDog, reportUser } from "../../database";
 import { updateDogView, updateShowDogModal } from "../../redux/slices/exploreSlice";
 import { importDog } from "../../redux/slices/rawDogSlice";
 
@@ -155,6 +156,7 @@ export default function DogCard(props) {
         </Modal.Content>
       </Modal>
 
+      {/* Dog CARD */}
       <Box
         w="100%"
         rounded="lg"
@@ -172,119 +174,115 @@ export default function DogCard(props) {
           backgroundColor: "gray.50",
         }}
       >
-        <HStack w="100%">
-          <Center w="25%">
-            <AspectRatio w="115%" ratio={9 / 9}>
-              <Image
-                source={{
-                  uri: props.dog.item.profileImage,
-                }}
-                alt="image"
-              />
-            </AspectRatio>
-          </Center>
-          <Box w="55%" ml='3'>
-            <Stack p="4" space={2}>
-              <Heading size="md" ml="-1">
+        <Pressable onPress={() => viewDog(props.dog.item)}>
 
-                {props.dog.item.dogName}
-              </Heading>
-              <Text
-                fontSize="xs"
-                _light={{
-                  color: "violet.500",
-                }}
-                _dark={{
-                  color: "violet.400",
-                }}
-                fontWeight="500"
-                ml="-0.5"
-                mt="-1"
-              >
-
-                {props.dog.item.breed}
-              </Text>
-
-              <Text
-                color="coolGray.600"
-                _dark={{
-                  color: "warmGray.200",
-                }}
-                fontWeight="300"
-              >
-
-                {props.dog.item.age + " Years Old"}
-              </Text>
-            </Stack>
-          </Box>
-          <Box w="20%" mr='3' mt='2'>
-            <Center>
-              <VStack space={5} >
-
-                {(props.dog.item.owner === uid) &&
-                  <Box>
-                    {/* IF DOG NOT LOST */}
-                    {(!props.dog.item.lost) &&
-                      <Box>
-                        <IconButton
-                          onPress={() => setShowAlertModal(true)}
-                          _icon={{
-                            as: MaterialCommunityIcons,
-                            name: "bell-alert",
-                            size: 'sm',
-                            color: 'red.400'
-                          }}
-                        />
-                      </Box>
-                    }
-                    {/* IF LOST DOG */}
-                    {(props.dog.item.lost) &&
-                      <Box>
-                        <IconButton
-                          onPress={() => setShowCancelModal(true)}
-                          _icon={{
-                            as: MaterialCommunityIcons,
-                            name: "bell-cancel",
-                            size: 'sm',
-                            color: 'emerald.400'
-                          }}
-                        />
-                      </Box>
-                    }
-
-
-                    <Box>
-                      <IconButton
-                        onPress={() => editDog()}
-                        _icon={{
-                          as: MaterialIcons,
-                          name: "edit",
-                          size: 'sm',
-                        }}
-                      />
-                    </Box>
-                  </Box>
-                }
-                {(props.dog.item.owner !== uid) &&
-                  <Box>
-                    <Box>
-                      <IconButton
-                        onPress={() => viewDog(props.dog.item)}
-                        _icon={{
-                          as: MaterialCommunityIcons,
-                          name: "eye",
-                          size: 'sm',
-                        }}
-                      />
-                    </Box>
-                  </Box>
-                }
-
-
-              </VStack>
+          <HStack w="100%">
+            <Center w="25%">
+              <AspectRatio w="115%" ratio={9 / 9}>
+                <Image
+                  source={{
+                    uri: props.dog.item.profileImage,
+                  }}
+                  alt="image"
+                />
+              </AspectRatio>
             </Center>
-          </Box>
-        </HStack>
+            <Box w="55%" ml='3'>
+              <Stack p="4" space={2}>
+                <Heading size="md" ml="-1">
+
+                  {props.dog.item.dogName}
+                </Heading>
+                <Text
+                  fontSize="xs"
+                  _light={{
+                    color: "violet.500",
+                  }}
+                  _dark={{
+                    color: "violet.400",
+                  }}
+                  fontWeight="500"
+                  ml="-0.5"
+                  mt="-1"
+                >
+
+                  {props.dog.item.breed}
+                </Text>
+
+                <Text
+                  color="coolGray.600"
+                  _dark={{
+                    color: "warmGray.200",
+                  }}
+                  fontWeight="300"
+                >
+
+                  {props.dog.item.age + " Years Old"}
+                </Text>
+              </Stack>
+            </Box>
+            <Box w="20%" mr='3' mt='2'>
+              <Center>
+                <VStack space={5} >
+
+                  {(props.dog.item.owner === uid) &&
+                    <Box>
+                      {/* IF DOG NOT LOST */}
+                      {(!props.dog.item.lost) &&
+                        <Box>
+                          <IconButton
+                            onPress={() => setShowAlertModal(true)}
+                            _icon={{
+                              as: MaterialCommunityIcons,
+                              name: "bell-alert",
+                              size: 'sm',
+                              color: 'red.400'
+                            }}
+                          />
+                        </Box>
+                      }
+                      {/* IF LOST DOG */}
+                      {(props.dog.item.lost) &&
+                        <Box>
+                          <IconButton
+                            onPress={() => setShowCancelModal(true)}
+                            _icon={{
+                              as: MaterialCommunityIcons,
+                              name: "bell-cancel",
+                              size: 'sm',
+                              color: 'emerald.400'
+                            }}
+                          />
+                        </Box>
+                      }
+
+
+                      <Box>
+                        <IconButton
+                          onPress={() => editDog()}
+                          _icon={{
+                            as: MaterialIcons,
+                            name: "edit",
+                            size: 'sm',
+                          }}
+                        />
+                      </Box>
+                    </Box>
+                  }
+                  {(props.dog.item.owner !== uid) &&
+                      <Box>
+                      <Report dog={props.dog.item}/>
+                      </Box>
+                  }
+    
+
+
+                </VStack>
+              </Center>
+            </Box>
+          </HStack>
+        </Pressable>
+
       </Box>
     </Center>
   );

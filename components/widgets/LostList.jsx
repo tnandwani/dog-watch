@@ -18,7 +18,7 @@ import {
 } from 'native-base';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { MaterialIcons } from '@expo/vector-icons';
-import { reportUser, sendFireError } from '../../database';
+import { reportUser, sendFireError, viewDog } from '../../database';
 
 export default function LostList() {
 
@@ -35,6 +35,7 @@ export default function LostList() {
 	const report = (rowMap, rowKey, data) => {
 		const reportedDog = data.item.dog;
 
+		console.log("reporting:", reportedDog);
 		reportUser(reportedDog)
 
 		// remove card 
@@ -76,7 +77,7 @@ export default function LostList() {
 
 	const renderItem = ({ item, index }) => (
 		<Box>
-			<Pressable onPress={() => alert('You touched me')} bg="#F9FAFB">
+			<Pressable onPress={() => viewDog(item.dog)} bg="#F9FAFB">
 				<Box
 					px={1}
 					py={3}
