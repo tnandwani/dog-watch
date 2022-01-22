@@ -1,6 +1,8 @@
 // REACT
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Platform, View } from 'react-native';
+//Sentry setup 
+import * as Sentry from 'sentry-expo';
 
 // UI
 import { NativeBaseProvider, Center, Spinner } from "native-base";
@@ -27,11 +29,19 @@ import DogCreator from "./components/views/DogCreator"; // holds user tabs
 import Personality from "./components/views/Personality";
 import { useDispatch } from 'react-redux';
 import { getDevice } from './redux/slices/userSlice';
-import { setScreenAnalytics } from './database';
+
+
+if (Platform.OS != 'web') {
+  Sentry.Native.wrap(App);
+}
+else {
+  Sentry.Browser.wrap(App)
+}
+
 import { setTabScreen } from './redux/slices/interfaceSlice';
 
-//Sentry setup 
-import * as Sentry from 'sentry-expo';
+
+import { setScreenAnalytics } from './database';
 
 
 Sentry.init({
@@ -140,14 +150,4 @@ export default function App() {
       <AppContent />
     </Provider>
   );
-}
-
-
-
-
-if (Platform.OS != 'web') {
-  Sentry.Native.wrap(App);
-}
-else{
-  Sentry.Browser.wrap(App)
 }

@@ -102,6 +102,8 @@ import {
 } from 'react-native';
 ////////// APP START
 
+
+console.log("DATABASE LOADING")
 initializeApp(firebaseConfig)
 const auth = getAuth();
 const storage = getStorage();
@@ -123,6 +125,7 @@ onAuthStateChanged(auth, user => {
 
 
         getUserDetails(uid);
+        
         Analytics.setUserId(uid);
         Analytics.logEvent('auto_logged_in')
 
@@ -275,21 +278,22 @@ export async function getUserDetails(uid) {
 
     if (docSnap.exists()) {
         let response = docSnap.data();
-
+        
         if (Platform.OS === 'web') {
             Sentry.Browser.setUser({
                 id: response.uid,
-                email: response.email
+                // email: response.email
             })
             Sentry.Browser.setTag("zone", response.zone)
         } else {
             Sentry.Native.setUser({
                 id: uid,
-                email: email
+                // email: email
             })
             Sentry.Native.setTag("zone", response.zone)
 
         }
+
         store.dispatch(saveUserDetails(response));
         Analytics.setUserProperties(uAnalytics())
 
