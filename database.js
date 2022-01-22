@@ -293,7 +293,6 @@ export async function getUserDetails(uid) {
             Sentry.Native.setTag("zone", response.zone)
 
         }
-
         store.dispatch(saveUserDetails(response));
         Analytics.setUserProperties(uAnalytics())
 

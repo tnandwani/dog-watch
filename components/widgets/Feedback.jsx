@@ -24,20 +24,18 @@ export default function Feedback(props) {
   const initialFocusRef = React.useRef(null)
   let [message, setMessage] = useState(null)
   let [suggestion, setSuggestion] = useState(true)
-  let [toggler, setToggler] = useState(false)
   const toast = useToast()
 
   return (
     <Popover
       initialFocusRef={initialFocusRef}
-      isOpen = {toggler}
       trigger={(triggerProps) => {
         return <Button
           leftIcon={<Icon as={Ionicons} name="paw" size="sm" />}
           endIcon={<Icon as={Ionicons} name="paw" size="sm" />}
-          colorScheme="indigo" 
+          colorScheme="indigo"
           {...triggerProps}
-          onPress={() => {setToggler(true)}}>
+        >
           Send Feedback
         </Button>
       }}
@@ -45,16 +43,16 @@ export default function Feedback(props) {
       <Popover.Content width="56">
         <Popover.Arrow />
         <Popover.CloseButton />
-        {/* @ts-ignore */}
+
         <Popover.Header>Send Feedback</Popover.Header>
         <Popover.Body>
           <FormControl>
             <Center>
 
               <HStack>
-                <Heading size={'xs'} fontWeight={'light'}>Issue</Heading>
+                <Heading size={'sm'} fontWeight={'light'}>Issue</Heading>
                 <Switch mx={3} colorScheme="indigo" isChecked={suggestion} onToggle={(v) => { setSuggestion(v) }} />
-                <Heading size={'xs'} fontWeight={'light'}>Suggestion</Heading>
+                <Heading size={'sm'} fontWeight={'light'}>Suggestion</Heading>
 
 
               </HStack>
@@ -85,7 +83,8 @@ export default function Feedback(props) {
               sendFeedback(suggestion, message); setToggler(false); toast.show({
                 description: "Thanks for the Feedback!",
                 mb: '3'
-              }) }}>Send</Button>
+              })
+            }}>Send</Button>
           </Button.Group>
         </Popover.Footer>
       </Popover.Content>
