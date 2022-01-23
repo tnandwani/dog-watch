@@ -12,7 +12,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeTab from './tabs/HomeTab'
 import ExploreTab from './tabs/ExploreTab'
 import ProfileTab from './tabs/ProfileTab'
-import { addMembertoZone, setScreenAnalytics } from '../database';
+import { addUsertoZone, sendFireError, setScreenAnalytics } from '../database';
 
 
 
@@ -85,8 +85,10 @@ export default function Main() {
             }
             else {
                 registerForPushNotificationsAsync().then(token => {
-                    addMembertoZone(token)
+                    addUsertoZone(token)
                     dispatch(updatePushToken(token))
+                }).catch((error) => {
+                    sendFireError(error.message, "MAIN.registerForPushNotificationsAsync")
                 });
 
 
@@ -94,12 +96,10 @@ export default function Main() {
 
             notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
                 setNotification(notification);
-                console.log("got a noty")
                 dispatch(addNotification(notification))
             });
 
             responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-                console.log(response);
             });
 
             return () => {

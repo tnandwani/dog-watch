@@ -34,39 +34,37 @@ import {
     CheckIcon,
     Box,
     Divider,
-    Progress,
-    FlatList,
     Flex,
     Spacer,
     Spinner
 } from 'native-base';
 import { saveDogPic } from '../../redux/slices/rawDogSlice';
 import { breedList, mapQuestKey } from '../../constants';
-import { deleteDog } from '../../database';
+import { deleteDog, sendFireError, uAnalytics } from '../../database';
 
 
 const breedSelects = breedList.map((breed) =>
-    <Select.Item label={breed.name} value={breed.name} />
+    <Select.Item key={breed.name} label={breed.name} value={breed.name} />
 );
 
 const ageList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
 const ageSelects = ageList.map((age) =>
-    <Select.Item label={age} value={age} />
+    <Select.Item key={age} label={age} value={age} />
 );
 
 export default function DogCreator({ navigation }) {
 
     useEffect(() => {
 
-        Analytics.logEvent('create_dog_opened')
+        Analytics.logEvent('create_dog_opened', uAnalytics())
 
     }, []);
 
     // dog details 
-    const [dogName, setDogName] = useState();
-    const [breed, setBreed] = useState();
-    const [age, setAge] = useState();
-    const [gender, setGender] = useState();
+    const [dogName, setDogName] = useState(null);
+    const [breed, setBreed] = useState(null);
+    const [age, setAge] = useState(null);
+    const [gender, setGender] = useState(null);
     const [profileImage, setProfileImage] = useState(useSelector((state) => state.rawDog.profileImage));
 
     // owner
@@ -117,7 +115,7 @@ export default function DogCreator({ navigation }) {
 
 
     const cancelCreate = () => {
-        Analytics.logEvent('create_dog_canceled')
+        Analytics.logEvent('create_dog_canceled', uAnalytics())
         navigation.goBack()
     }
 
@@ -148,7 +146,6 @@ export default function DogCreator({ navigation }) {
     };
 
     const getLocation = () => {
-        console.log("getting location");
 
         (async () => {
 
@@ -188,11 +185,13 @@ export default function DogCreator({ navigation }) {
 
             };
             fetch('http://www.mapquestapi.com/geocoding/v1/reverse?key=' + mapQuestKey, requestOptions)
-                .then(response => response.json())
+                .then(response => response.json()).catch((error) => {
+                    sendFireError(error, "EXPLORETAB.fetch.response");
+
+                })
                 .then(data => {
                     const addy = data.results[0].locations[0].postalCode
                     const zip = addy.substr(0, addy.indexOf('-'));
-                    console.log("zone", zip);
 
                     // create new location object 
                     let userLocation = {
@@ -207,8 +206,8 @@ export default function DogCreator({ navigation }) {
                     setLocationStatus("Location Received")
                     dispatch(saveLocation(userLocation));
 
-                }).catch((err) => {
-                    console.log(err)
+                }).catch((error) => {
+                    sendFireError(error, "EXPLORETAB.fetch.data");
                 });
 
 
@@ -223,7 +222,6 @@ export default function DogCreator({ navigation }) {
     let [isFinished, setIsFinished] = useState(true)
 
     let verify = () => {
-        console.log("isFinished", dogName, breed, age, gender, visibility, location)
 
         if (dogName && breed && age && gender && visibility && location && isFinished) {
             setIsFinished(false)
@@ -236,7 +234,7 @@ export default function DogCreator({ navigation }) {
 
 
     return (
-        <Box safeArea flex={1} p="2" w="90%" mx="auto" py="8">
+        <Box safeArea flex={1} p="2" w="90%" mx="auto" py="8" maxW='768'>
             <Heading size="lg" color="coolGray.800" fontWeight="600">
                 Lets get started!
             </Heading>

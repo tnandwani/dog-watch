@@ -19,6 +19,8 @@ const detaultState = {
   owner: null,
   email: null,
   contact: null,
+  alert: null,
+  reported: [],
   personality: {
     people: null,
     otherDogs: null,

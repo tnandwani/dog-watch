@@ -6,7 +6,8 @@ export const userSlice = createSlice({
   name: 'user',
   initialState: {
     email: null,
-    uid: null,
+    uid: 'unknown',
+    device: 'unknown',
     latitude: null,
     longitude: null,
     zone: "Unverified",
@@ -15,16 +16,12 @@ export const userSlice = createSlice({
     status: 'loading',
     notifications: [],
     pushToken: null,
+    reported: []
   },
   reducers: {
-    saveUserAccount: (state, action) => {
-      state.email = action.payload.email
-      state.uid = action.payload.uid
-    },
     signInAccount: (state, action) => {
       state.email = action.payload.email
       state.uid = action.payload.uid
-      state.username = action.payload.name
     },
     saveUserDetails: (state, action) => {
       state.email = action.payload.email
@@ -32,21 +29,18 @@ export const userSlice = createSlice({
       state.zone = action.payload.zone
       state.latitude = action.payload.latitude
       state.longitude = action.payload.longitude
-      state.dogs = action.payload.dogs
       state.pushToken = action.payload.pushToken
+      state.reported = action.payload.reported
+
     },
     saveDogCards: (state, action) => {
-      if (!state.dogCards.includes(action.payload)) {
-        state.dogCards.push(action.payload)
-      }
+      state.dogs.push(action.payload);
+    },
+    getDevice: (state, action) => {
+      state.device = action.payload
     },
     changeStatus: (state, action) => {
       state.status = action.payload
-    },
-    addDogtoUser: (state, action) => {
-      if (!state.dogs.includes(action.payload)) {
-        state.dogs.push(action.payload)
-      }
     },
     markLostDog: (state, action) => {
       state.dogs[action.payload.index].lost = action.payload.lost
@@ -68,7 +62,9 @@ export const userSlice = createSlice({
     removeDogfromUser: (state, action) => {
       const index = state.dogs.findIndex(dog => dog.duid === action.payload.duid);
       state.dogs.splice(index, 1)
-
+    },
+    reportUser: (state, action) => {
+      state.reported++;
     },
 
   },
@@ -76,17 +72,17 @@ export const userSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
-  saveUserAccount,
   signInAccount,
   saveUserDetails,
   saveDogCards,
   changeStatus,
-  addDogtoUser,
   markLostDog,
+  getDevice,
   updateLocation,
   addNotification,
   changeDogInUser,
-  removeDogfromUser
+  removeDogfromUser,
+  reportUser
 
 } = userSlice.actions
 

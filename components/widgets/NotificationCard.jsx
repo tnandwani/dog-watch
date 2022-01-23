@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Image } from "react-native";
 import { Linking, Alert, Platform } from 'react-native';
-import { viewDog } from "../../database";
+import { sendFireError, viewDog } from "../../database";
 
 import {
   Box,
@@ -46,7 +46,7 @@ export default function NotificationCard(props) {
           return Linking.openURL(phoneNumber);
         }
       })
-      .catch(err => console.log(err));
+      .catch(err => sendFireError(err, "linking call error"));
   };
 
   

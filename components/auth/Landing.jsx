@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import { Text, Button, Stack, Icon, Center, Heading } from "native-base"
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
@@ -38,7 +38,7 @@ export default function Landing({ navigation }) {
                 <Button
                     colorScheme="teal"
                     leftIcon={<Icon as={MaterialIcons} name="compass" size="md" />}
-                    onPress={() => navigation.navigate("Explore")}
+                    onPress={() => navigation.navigate("GuestExplore")}
                 >
                     Explore
                 </Button>

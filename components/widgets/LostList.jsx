@@ -4,71 +4,53 @@ import { useSelector, useDispatch } from "react-redux";
 import { Linking, Alert, Platform } from 'react-native';
 
 import {
-	NativeBaseProvider,
 	Box,
 	Text,
 	Pressable,
-	Heading,
-	IconButton,
 	Icon,
 	HStack,
+	useToast,
 	Avatar,
 	VStack,
-	Spacer,
 } from 'native-base';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { MaterialIcons } from '@expo/vector-icons';
+import { reportUser, sendFireError, viewDog } from '../../database';
 
 export default function LostList() {
-	const data = [
-		{
-			id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-			fullName: 'Afreen Khan',
-			timeStamp: '12:47 PM',
-			recentText: 'Good Day!',
-			avatarUrl:
-				'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-		},
-		{
-			id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-			fullName: 'Sujita Mathur',
-			timeStamp: '11:11 PM',
-			recentText: 'Cheer up, there!',
-			avatarUrl:
-				'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyEaZqT3fHeNrPGcnjLLX1v_W4mvBlgpwxnA&usqp=CAU',
-		},
-		{
-			id: '58694a0f-3da1-471f-bd96-145571e29d72',
-			fullName: 'Anci Barroco',
-			timeStamp: '6:22 PM',
-			recentText: 'Good Day!',
-			avatarUrl: 'https://miro.medium.com/max/1400/0*0fClPmIScV5pTLoE.jpg',
-		},
-		{
-			id: '68694a0f-3da1-431f-bd56-142371e29d72',
-			fullName: 'Aniket Kumar',
-			timeStamp: '8:56 PM',
-			recentText: 'All the best',
-			avatarUrl:
-				'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr01zI37DYuR8bMV5exWQBSw28C1v_71CAh8d7GP1mplcmTgQA6Q66Oo--QedAN1B4E1k&usqp=CAU',
-		},
-		{
-			id: '28694a0f-3da1-471f-bd96-142456e29d72',
-			fullName: 'Kiara',
-			timeStamp: '12:47 PM',
-			recentText: 'I will call today.',
-			avatarUrl:
-				'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBwgu1A5zgPSvfE83nurkuzNEoXs9DMNr8Ww&usqp=CAU',
-		},
-	];
 
 	let lostData = useSelector((state) => state.explore.myZone.lost);
+	let uid = useSelector((state) => state.user.uid);
 
 	const [listData, setListData] = useState(lostData);
+	const toast = useToast()
 
-	const report = (rowMap, rowKey) => {
-		alert("reported")
+	const closeRow = (rowMap, rowKey) => {
+		if (rowMap[rowKey]) {
+			rowMap[rowKey].closeRow();
+		}
+	};
 
+	const report = (rowMap, rowKey, data) => {
+		const reportedDog = data.item;
+
+		if (reportedDog.owner === uid) {
+			alert("Cant report yourself. Kinda sus.")
+		} else {
+			reportUser(reportedDog)
+
+			// remove card 
+			closeRow(rowMap, rowKey);
+			const newData = [...listData];
+			const prevIndex = listData.findIndex((item) => item.key === rowKey);
+			newData.splice(prevIndex, 1);
+			setListData(newData);
+			toast.show({
+				description: "User has been reported!",
+				mb: '3'
+			})
+		}
+		
 	};
 
 	const callDog = (rowMap, rowKey, phone) => {
@@ -93,72 +75,66 @@ export default function LostList() {
 					return Linking.openURL(phoneNumber);
 				}
 			})
-			.catch(err => console.log(err));
+			.catch(err => sendFireError(err));
 
 	};
 
 	const onRowDidOpen = (rowKey) => {
-		console.log('This row opened', rowKey);
 	};
 
 	const renderItem = ({ item, index }) => (
 		<Box>
-			<Pressable onPress={() => alert('You touched me')} bg="#F9FAFB">
+			<Pressable onPress={() => viewDog(item)} bg="#F9FAFB">
 				<Box
 					px={1}
 					py={3}
 				>
-					<HStack alignItems="center" space={3}>
-						<Avatar size="80px" source={{ uri: item.dog.profileImage }} />
-						<VStack space={1}>
-							<Text
-								fontSize="lg"
-								color="coolGray.800"
-								_dark={{ color: 'warmGray.50' }} bold>
-								{item.dog.dogName}
-							</Text>
-							<Text
-								fontSize="sm"
-								_light={{
+					<HStack space={3}>
+						<Box >
+							<Avatar source={{ uri: item.profileImage }} />
+
+						</Box>
+						<Box alignSelf="flex-start" w='60%' >
+
+							<VStack>
+								<Text _light={{
 									color: "violet.500",
 								}}
-								_dark={{
-									color: "violet.400",
-								}}
-								fontWeight="500"
-								ml="-0.5"
-								mt="-1"
-							>
+									_dark={{
+										color: "violet.400",
+									}}
+									bold>
+									{item.dogName}
+								</Text>
 
-								{item.dog.breed}
-							</Text>
-							<Text
-								color="coolGray.600"
-								_dark={{
-									color: "warmGray.200",
-								}}
-								fontWeight="300"
-							>
+								<Text fontSize='xs' color="coolGray.600" _dark={{ color: 'warmGray.200' }}>{item.alert.message}</Text>
 
-								{"Lost on: " + item.date}
+							</VStack>
+						</Box>
+						<Box>
+							<Text fontSize="xs" color="red.400" _dark={{ color: 'red.400' }} alignSelf="flex-start">
+								{item.alert.date}
 							</Text>
-						</VStack>
-						<Spacer />
+						</Box>
+
+
 
 					</HStack>
+
 				</Box>
 			</Pressable>
 		</Box >
 	);
 
 	const renderHiddenItem = (data, rowMap) => (
+
 		<HStack flex="1" pl="2">
 			<Pressable
 				w="70"
 				ml="auto"
 				bg="red.400"
 				justifyContent="center"
-				onPress={() => report(rowMap, data.item.key)}
+				onPress={() => report(rowMap, data.item.key, data)}
 				_pressed={{
 					opacity: 0.5,
 				}}>

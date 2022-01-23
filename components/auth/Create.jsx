@@ -49,7 +49,7 @@ export default function Step3({ navigation }) {
                         _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
                         Email
                     </FormControl.Label>
-                    <Input type='email' onChangeText={(value) => setEmail(value)} />
+                    <Input type='email' onChangeText={(value) => setEmail(value)} autoComplete='email'/>
                 </FormControl>
 
                 <FormControl>

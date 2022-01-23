@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Ionicons } from "@expo/vector-icons"
 
 // maps
 import MapView, { PROVIDER_GOOGLE, Circle } from "react-native-maps";
 import { Marker } from "react-native-maps";
+import { mapQuestKey, mapStyling } from "../../constants";
+
 // expo location
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 
 
 import { StyleSheet, View, Dimensions, Platform } from "react-native";
-import { getHomies, getZoneData, updateFireLocation } from "../../database";
-import { mapQuestKey, mapStyling } from "../../constants";
+import { getHomies, updateFireLocation, inviteFriends, sendFireError } from "../../database";
 import DogCard from '../widgets/DogCard'
 
 import { Box, Button, Center, FlatList, Heading, Spinner, Text, Fab, Icon, Badge } from "native-base";
@@ -40,7 +42,9 @@ export default function ExploreTab({ navigation }) {
   useEffect(() => {
     //
 
-    getZoneData();
+    //
+
+
     if (user.zone != "Unverified") {
       getHomies(user.latitude, user.longitude);
     }
@@ -51,7 +55,6 @@ export default function ExploreTab({ navigation }) {
 
 
   const getLocation = () => {
-    console.log("getting location");
 
     (async () => {
 
@@ -92,10 +95,12 @@ export default function ExploreTab({ navigation }) {
       };
       fetch('http://www.mapquestapi.com/geocoding/v1/reverse?key=' + mapQuestKey, requestOptions)
         .then(response => response.json())
-        .then(data => {
+        .catch((error) => {
+          sendFireError(error, "EXPLORETAB.fetch.response");
+
+        }).then(data => {
           const addy = data.results[0].locations[0].postalCode
           const zip = addy.substr(0, addy.indexOf('-'));
-          console.log("zone", zip);
 
           // create new location object 
           let userLocation = {
@@ -111,8 +116,9 @@ export default function ExploreTab({ navigation }) {
           dispatch(updateLocation(userLocation));
           getHomies(userLocation.latitude, userLocation.longitude);
 
-        }).catch((err) => {
-          console.log(err)
+        }).catch((error) => {
+          sendFireError(error, "EXPLORETAB.fetch.data");
+
         });
 
 
@@ -125,7 +131,10 @@ export default function ExploreTab({ navigation }) {
 
   if (Platform.OS === "web") {
     return (
+
       <Center flex={1}>
+
+        <Badge colorScheme="danger" variant="subtle" >Map Unavailable on Web</Badge>
         <LostModal />
 
         <DogViewModal />
@@ -149,12 +158,9 @@ export default function ExploreTab({ navigation }) {
             />
           </Box>
 
-
-
         }
 
         <Box position='absolute' top='10' >
-          <Badge colorScheme="danger" variant="subtle" >Map Not Available on Web</Badge>
           {(user.zone === 'Unverified') &&
             <Box>
               <Button
@@ -204,7 +210,16 @@ export default function ExploreTab({ navigation }) {
           }
           {((dogTags < 1) && (loading === false)) &&
             <Center mt='5'>
-              <Heading> No Dogs Here</Heading>
+              <Button
+                mb={3}
+                px='5'
+                py='3'
+                variant="subtle"
+                colorScheme="indigo"
+                endIcon={<Icon as={Ionicons} name="paper-plane-sharp" size="sm" />}
+              >
+                Invite Friends
+              </Button>
             </Center>
           }
 
@@ -212,58 +227,60 @@ export default function ExploreTab({ navigation }) {
       </Center>
     );
   }
-  return (
-    <View style={styles.container}>
-      <LostModal />
+  else {
+    return (
+      // mobile container
+      <View style={styles.container}>
+        <LostModal />
 
-      <DogViewModal />
+        <DogViewModal />
 
-      {(screen === 'Explore') && (user.zone !== 'Unverified') &&
-        <Box>
-          <Fab
-            borderRadius="full"
-            onPress={() => dispatch(updateShowLostModal(true))}
-            colorScheme="indigo"
-            mt='20'
-            placement="top-left"
-            icon={
-              <Icon
-                color="white"
-                as={<MaterialIcons name="lightbulb" />}
-                size="4"
-              />
-            }
-            label="View Lost Dogs"
-          />
-        </Box>
-
-      }
-      {(user.zone !== 'Unverified') &&
-        <MapView
-          style={styles.map}
-          provider={PROVIDER_GOOGLE}
-          maxZoomLevel={12}
-          customMapStyle={mapStyling}
-          initialRegion={{
-            latitude: user.latitude,
-            longitude: user.longitude,
-            longitudeDelta: 0.2,
-            latitudeDelta: 0.2,
-          }}
-        >
-
-          {dogTags.map((dog, index) => (
-            <Marker
-              key={index}
-              coordinate={{ latitude: dog.latitude, longitude: dog.longitude }}
-              title={dog.dogName}
-              key={dog.duid}
-              description={dog.breed + '  (' + dog.age + ')'}
-              onPress={() => dispatch(updateDogView(dog))}
+        {(screen === 'Explore') && (user.zone !== 'Unverified') &&
+          <Box>
+            <Fab
+              borderRadius="full"
+              onPress={() => dispatch(updateShowLostModal(true))}
+              colorScheme="indigo"
+              mt='20'
+              placement="top-left"
+              icon={
+                <Icon
+                  color="white"
+                  as={<MaterialIcons name="lightbulb" />}
+                  size="4"
+                />
+              }
+              label={"View Lost Dogs (" + lostDogs.length + ')'}
             />
-          ))}
+          </Box>
 
-          {/* <Circle center={{
+        }
+        {(user.zone !== 'Unverified') &&
+          <MapView
+            style={styles.map}
+            provider={PROVIDER_GOOGLE}
+            maxZoomLevel={12}
+            customMapStyle={mapStyling}
+            initialRegion={{
+              latitude: user.latitude,
+              longitude: user.longitude,
+              longitudeDelta: 0.2,
+              latitudeDelta: 0.2,
+            }}
+          >
+
+            {dogTags.map((dog, index) => (
+              <Marker
+                key={index}
+                coordinate={{ latitude: dog.latitude, longitude: dog.longitude }}
+                title={dog.dogName}
+                key={dog.duid}
+                description={dog.breed + '  (' + dog.age + ')'}
+                onPress={() => dispatch(updateDogView(dog))}
+              />
+            ))}
+
+            {/* <Circle center={{
             latitude: user.latitude,
             longitude: user.longitude,
             latitudeDelta: 0.0922,
@@ -273,92 +290,101 @@ export default function ExploreTab({ navigation }) {
             strokeWidth={0}
             fillColor='rgba(99,102,241, 0.6)'
           /> */}
-        </MapView>
+          </MapView>
 
-      }
-      {(user.zone === 'Unverified') &&
-        <MapView
-          style={styles.map}
-          provider={PROVIDER_GOOGLE}
-          maxZoomLevel={12}
-          customMapStyle={mapStyling}
-          initialRegion={{
-            latitude: 39.8283,
-            longitude: -98.5795,
-            longitudeDelta: 50.0,
-            latitudeDelta: 50.0,
-          }}
-        />
+        }
+        {(user.zone === 'Unverified') &&
+          <MapView
+            style={styles.map}
+            provider={PROVIDER_GOOGLE}
+            maxZoomLevel={12}
+            customMapStyle={mapStyling}
+            initialRegion={{
+              latitude: 39.8283,
+              longitude: -98.5795,
+              longitudeDelta: 50.0,
+              latitudeDelta: 50.0,
+            }}
+          />
 
-      }
+        }
 
-      {(user.zone === 'Unverified') &&
+        {(user.zone === 'Unverified') &&
 
-        <Box position='absolute' w='100%' top='20'
+          <Box position='absolute' w='100%' top='20'
 
-        >
-          <Center>
-            <Button
-              w='95%'
-              h='20'
-              colorScheme="indigo"
-              _text={{ color: "white" }}
-              shadow="7"
-              onPress={getLocation}
-            >
-              Join The Watch
-            </Button>
-            <Box mt='3'>
-              {locationStatus}
+          >
+            <Center>
+              <Button
+                w='95%'
+                h='20'
+                colorScheme="indigo"
+                _text={{ color: "white" }}
+                shadow="7"
+                onPress={getLocation}
+              >
+                Join The Watch
+              </Button>
+              <Box mt='3'>
+                {locationStatus}
 
-            </Box>
-          </Center>
-
-        </Box>
-
-
-      }
-
-      {(user.zone !== 'Unverified') &&
-
-
-        <Box
-          position='absolute'
-          w="100%"
-          padding='2'
-          bottom='10'
-          rounded="xl"
-          shadow={7}
-          overflow="hidden"
-
-        >
-
-          {dogView &&
-            <FlatList data={[dogView]} renderItem={(dog) => (
-              <Box my='1'>
-                <DogCard dog={dog} navigation={navigation} />
               </Box>
-            )
+            </Center>
+
+          </Box>
+
+
+        }
+
+        {(user.zone !== 'Unverified') &&
+
+
+          <Box
+            position='absolute'
+            w="100%"
+            padding='2'
+            bottom='10'
+            rounded="xl"
+            shadow={7}
+            overflow="hidden"
+
+          >
+
+            {dogView &&
+              <FlatList data={[dogView]} renderItem={(dog) => (
+                <Box my='1'>
+                  <DogCard dog={dog} navigation={navigation} />
+                </Box>
+              )
+              }
+                keyExtractor={(dog) => dog.duid}
+              />
             }
-              keyExtractor={(dog) => dog.duid}
-            />
-          }
-          {(loading === true) &&
-            <Center mt='5'>
-              <Spinner color="white" />
-            </Center>
-          }
-          {((dogTags < 1) && (loading === false)) &&
-            <Center mt='5'>
-              <Heading> No Dogs Here</Heading>
-            </Center>
-          }
+            {(loading === true) &&
+              <Center mt='5'>
+                <Spinner color="white" />
+              </Center>
+            }
+            {((dogTags < 1) && (loading === false)) &&
+              <Center mt='5'>
+                <Button
+                  px='5'
+                  py='3'
+                  onPress={() => inviteFriends()}
+                  variant="subtle"
+                  colorScheme="indigo"
+                  endIcon={<Icon as={Ionicons} name="paper-plane-sharp" size="sm" />}
+                >
+                  Invite Friends
+                </Button>
+              </Center>
+            }
+          </Box>
+        }
+      </View>
+    );
+  }
 
-        </Box>
-
-      }
-    </View>
-  );
 }
 
 const styles = StyleSheet.create({
