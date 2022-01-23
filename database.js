@@ -176,6 +176,10 @@ export function viewDog(dog) {
 
 }
 
+export function fLogEvent(name){
+    Analytics.logEvent(name);
+}
+
 //////////////////// USER AUTH FUNCTIONS 
 
 export function signOutUser() {

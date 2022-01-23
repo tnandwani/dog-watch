@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import {
@@ -21,7 +21,6 @@ export default function Login({ navigation }) {
   const [password, setPassword] = useState();
 
   const loginAlert = useSelector((state) => state.interface.alerts.login)
-
 
   return (
     <Box safeArea flex={1} p="2" py="8" w="90%" mx="auto" maxW='768'>

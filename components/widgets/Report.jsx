@@ -23,8 +23,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 export default function Report(props) {
   useEffect(() => { }, []);
   const initialFocusRef = React.useRef(null)
-  let [message, setMessage] = useState(null)
-  let [suggestion, setSuggestion] = useState(true)
+
   const toast = useToast()
 
   return (
