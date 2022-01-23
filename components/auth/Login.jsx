@@ -24,7 +24,7 @@ export default function Login({ navigation }) {
 
 
   return (
-    <Box safeArea flex={1} p="2" py="8" w="90%" mx="auto">
+    <Box safeArea flex={1} p="2" py="8" w="90%" mx="auto" maxW='768'>
       <Heading size="lg" fontWeight="600" color="coolGray.800">
         Welcome Back
       </Heading>

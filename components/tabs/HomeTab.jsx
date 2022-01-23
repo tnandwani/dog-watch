@@ -39,7 +39,7 @@ export default function HomeTab() {
   const myZone = useSelector((state) => state.explore.myZone)
 
   return (
-    <Box m="4">
+    <Box m="4" maxW='768'>
 
 
       <Resources />

@@ -14,7 +14,6 @@ export const exploreSlice = createSlice({
     myZone: {
       members: [],
       lost: [],
-      found: [],
     },
     dogView: null,
   },
@@ -49,14 +48,18 @@ export const exploreSlice = createSlice({
       const index = state.myZone.lost.findIndex(alert => alert.duid === action.payload);
       state.myZone.lost.splice(index, 1);
     },
-    addLocalAlert: (state, action) => {
+    addLostDog: (state, action) => {
       state.myZone.lost.push(action.payload)
     },
     removeTag: (state, action) => {
+      // remove from explore
       const indexExplore = state.dogTags.findIndex(tags => tags.duid === action.payload);
       state.dogTags.splice(indexExplore, 1);
-      const indexLost = state.myZone.lost.findIndex(alert => alert.duid === action.payload);
+      // remove from lost
+      const indexLost = state.myZone.lost.findIndex(dog => dog.duid === action.payload);
       state.myZone.lost.splice(indexLost, 1);
+
+      state.dogView = null;
     },
   },
 })
@@ -72,7 +75,7 @@ export const {
   saveZoneData,
   updateDogView,
   foundZoneDog,
-  addLocalAlert,
+  addLostDog,
   removeTag
 } = exploreSlice.actions
 

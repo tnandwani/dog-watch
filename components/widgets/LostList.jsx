@@ -4,17 +4,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { Linking, Alert, Platform } from 'react-native';
 
 import {
-	NativeBaseProvider,
 	Box,
 	Text,
 	Pressable,
-	Heading,
-	IconButton,
 	Icon,
 	HStack,
+	useToast,
 	Avatar,
 	VStack,
-	Spacer,
 } from 'native-base';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -23,8 +20,10 @@ import { reportUser, sendFireError, viewDog } from '../../database';
 export default function LostList() {
 
 	let lostData = useSelector((state) => state.explore.myZone.lost);
+	let uid = useSelector((state) => state.user.uid);
 
 	const [listData, setListData] = useState(lostData);
+	const toast = useToast()
 
 	const closeRow = (rowMap, rowKey) => {
 		if (rowMap[rowKey]) {
@@ -33,17 +32,25 @@ export default function LostList() {
 	};
 
 	const report = (rowMap, rowKey, data) => {
-		const reportedDog = data.item.dog;
+		const reportedDog = data.item;
 
-		console.log("reporting:", reportedDog);
-		reportUser(reportedDog)
+		if (reportedDog.owner === uid) {
+			alert("Cant report yourself. Kinda sus.")
+		} else {
+			reportUser(reportedDog)
 
-		// remove card 
-		closeRow(rowMap, rowKey);
-		const newData = [...listData];
-		const prevIndex = listData.findIndex((item) => item.key === rowKey);
-		newData.splice(prevIndex, 1);
-		setListData(newData);
+			// remove card 
+			closeRow(rowMap, rowKey);
+			const newData = [...listData];
+			const prevIndex = listData.findIndex((item) => item.key === rowKey);
+			newData.splice(prevIndex, 1);
+			setListData(newData);
+			toast.show({
+				description: "User has been reported!",
+				mb: '3'
+			})
+		}
+		
 	};
 
 	const callDog = (rowMap, rowKey, phone) => {
@@ -77,49 +84,43 @@ export default function LostList() {
 
 	const renderItem = ({ item, index }) => (
 		<Box>
-			<Pressable onPress={() => viewDog(item.dog)} bg="#F9FAFB">
+			<Pressable onPress={() => viewDog(item)} bg="#F9FAFB">
 				<Box
 					px={1}
 					py={3}
 				>
-					<HStack alignItems="center" space={3}>
-						<Avatar size="80px" source={{ uri: item.dog.profileImage }} />
-						<VStack space={1}>
-							<Text
-								fontSize="lg"
-								color="coolGray.800"
-								_dark={{ color: 'warmGray.50' }} bold>
-								{item.dog.dogName}
-							</Text>
-							<Text
-								fontSize="sm"
-								_light={{
+					<HStack space={3}>
+						<Box >
+							<Avatar source={{ uri: item.profileImage }} />
+
+						</Box>
+						<Box alignSelf="flex-start" w='60%' >
+
+							<VStack>
+								<Text _light={{
 									color: "violet.500",
 								}}
-								_dark={{
-									color: "violet.400",
-								}}
-								fontWeight="500"
-								ml="-0.5"
-								mt="-1"
-							>
+									_dark={{
+										color: "violet.400",
+									}}
+									bold>
+									{item.dogName}
+								</Text>
 
-								{item.dog.breed}
-							</Text>
-							<Text
-								color="coolGray.600"
-								_dark={{
-									color: "warmGray.200",
-								}}
-								fontWeight="300"
-							>
+								<Text fontSize='xs' color="coolGray.600" _dark={{ color: 'warmGray.200' }}>{item.alert.message}</Text>
 
-								{"Lost on: " + item.date}
+							</VStack>
+						</Box>
+						<Box>
+							<Text fontSize="xs" color="red.400" _dark={{ color: 'red.400' }} alignSelf="flex-start">
+								{item.alert.date}
 							</Text>
-						</VStack>
-						<Spacer />
+						</Box>
+
+
 
 					</HStack>
+
 				</Box>
 			</Pressable>
 		</Box >

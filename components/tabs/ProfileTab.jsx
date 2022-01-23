@@ -32,7 +32,7 @@ export default function ProfileTab({ navigation }) {
     }
 
     return (
-        <Box safeArea flex={1} p="1" py="8" w="90%" mx="auto">
+        <Box safeArea flex={1} p="1" py="8" w="90%" mx="auto" maxW='768'>
             {/* add dog card for each  */}
 
             <Heading size="2xl" mt='5' mb='2'>My Dogs</Heading>
@@ -53,9 +53,7 @@ export default function ProfileTab({ navigation }) {
                 <Button mt="5" colorScheme="indigo" variant="outline" onPress={() => createDogStart()}> + Add Dog </Button>
                 <Button colorScheme="orange" _text={{ color: 'white' }} onPress={() => signOutUser()} > Sign Out</Button>
 
-                <Feedback />
-                
-
+                <Feedback />             
             </VStack>
 
         </Box>

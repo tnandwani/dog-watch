@@ -80,7 +80,8 @@ export default function Feedback(props) {
         <Popover.Footer>
           <Button.Group>
             <Button colorScheme="indigo" onPress={() => {
-              sendFeedback(suggestion, message); setToggler(false); toast.show({
+              sendFeedback(suggestion, message); 
+              toast.show({
                 description: "Thanks for the Feedback!",
                 mb: '3'
               })

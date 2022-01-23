@@ -82,7 +82,7 @@ export default function Personality({ navigation }) {
     }
 
     return (
-        <Box safeArea flex={1} p="2" w="90%" mx="auto" py="8">
+        <Box safeArea flex={1} p="2" w="90%" mx="auto" py="8" maxW='768'>
             <Heading size="lg" color="coolGray.800" fontWeight="600">
                 Tell us more about your friend...
             </Heading>

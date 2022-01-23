@@ -25,18 +25,15 @@ export default function Report(props) {
   const initialFocusRef = React.useRef(null)
   let [message, setMessage] = useState(null)
   let [suggestion, setSuggestion] = useState(true)
-  let [toggler, setToggler] = useState(false)
   const toast = useToast()
-
-  console.log("reporting props", props);
 
   return (
     <Popover
+      placement="left"
       initialFocusRef={initialFocusRef}
-      isOpen = {toggler}
       trigger={(triggerProps) => {
         return <IconButton
-          onPress={() => reportUser(props.dog)}
+          {...triggerProps}
           _icon={{
             as: MaterialIcons,
             name: "report",
@@ -49,13 +46,18 @@ export default function Report(props) {
         <Popover.Arrow />
         <Popover.CloseButton />
         {/* @ts-ignore */}
-        <Popover.Header>Report User</Popover.Header>
-        <Popover.Body>
-        
-        </Popover.Body>
+        <Popover.Header>Report User?</Popover.Header>
         <Popover.Footer>
           <Button.Group>
-            <Button colorScheme="indigo">Send</Button>
+            <Button
+              onPress={() => {
+                reportUser(props.dog)
+                toast.show({
+                  description: "User has been reported!",
+                  mb: '3'
+                })
+              }}
+              variant='outline' colorScheme="red">Confirm</Button>
           </Button.Group>
         </Popover.Footer>
       </Popover.Content>

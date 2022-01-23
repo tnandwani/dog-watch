@@ -34,6 +34,7 @@ import {
     saveZoneData,
     updateDogView,
     updateLoading,
+    addLostDog,
 } from "./redux/slices/exploreSlice";
 
 // FIREBASE
@@ -103,7 +104,6 @@ import {
 ////////// APP START
 
 
-console.log("DATABASE LOADING")
 initializeApp(firebaseConfig)
 const auth = getAuth();
 const storage = getStorage();
@@ -125,7 +125,7 @@ onAuthStateChanged(auth, user => {
 
 
         getUserDetails(uid);
-        
+
         Analytics.setUserId(uid);
         Analytics.logEvent('auto_logged_in')
 
@@ -205,12 +205,7 @@ export function createUserAccount(email, password, confirm) {
             .then((userCredential) => {
                 // Signed in 
                 // Get UID 
-                console.log("user created as ")
-                console.log(userCredential.user.uid);
                 const uid = userCredential.user.uid;
-
-                console.log("uid is", uid);
-
                 // Sign In
                 createUserDoc(email, uid)
             })
@@ -279,6 +274,8 @@ export async function getUserDetails(uid) {
     if (docSnap.exists()) {
         let response = docSnap.data();
         
+
+        // initialize analytics per user details
         if (Platform.OS === 'web') {
             Sentry.Browser.setUser({
                 id: response.uid,
@@ -306,17 +303,12 @@ export async function getUserDetails(uid) {
 }
 
 export function reportUser(reportedDog) {
-    console.log("reportedDog", reportedDog);
-
-
     const userRef = doc(db, "users", reportedDog.owner);
     const dogRef = doc(db, "dogs", reportedDog.duid);
     const uid = store.getState().user.uid
     const device = store.getState().user.device
 
-
-
-
+    // if already reported. double check
     if (!reportedDog.reported.includes(uid)) {
         // report user
         updateDoc(userRef, {
@@ -410,18 +402,24 @@ export async function getHomies() {
     if (homiesArray.length > 0) {
 
 
+        // got all dogs in zone 
         homiesArray.forEach((dog) => {
-            // for my dogs 
+
+            // get my dogs 
             if (dog.owner == uid) {
                 store.dispatch(saveDogCards(dog))
             }
-            // for explore map
-            if (dog.visibility == 'n') {
-                store.dispatch(addTag(dog));
-            }
-            // for lost dogs 
-            if (dog.lost == true) {
-                store.dispatch(addLocalAlert(dog.alert))
+            // if not reported by user
+            if (!dog.reported.includes(uid)) {
+                // get visible dogs
+                if (dog.visibility == 'n') {
+                    store.dispatch(addTag(dog));
+                }
+                // fget lost dogs
+                if (dog.lost == true) {
+                    store.dispatch(addLostDog(dog))
+
+                }
             }
         })
     }
@@ -705,6 +703,7 @@ export async function editPublish(imageURI, navigation) {
 export async function markLost(dog, EContact, index, message) {
     Analytics.logEvent('LOST_DOG_start', uAnalytics)
 
+
     let lost = true
     // send changes to redux (local UI changes)
     store.dispatch(markLostDog({
@@ -716,9 +715,10 @@ export async function markLost(dog, EContact, index, message) {
         duid: dog.duid,
         date: new Date().toLocaleDateString('en-us'),
         message: message,
-        dog: dog,
         contact: EContact,
     }
+
+
     // mark LOST in DOGS/duid
     const dogRef = doc(db, "dogs", dog.duid);
     updateDoc(dogRef, {
@@ -727,7 +727,11 @@ export async function markLost(dog, EContact, index, message) {
         alert: alert
     }).then(() => {
         Analytics.logEvent('LOST_DOG_marked_publicly', uAnalytics)
-        store.dispatch(addLocalAlert(alert))
+        // change dog var
+        dog.lost = true;
+        dog.contact = EContact;
+        dog.alert = alert;
+        store.dispatch(addLostDog(dog))
 
     }).catch(error => {
         sendFireError(error.message, "markLost.updateDoc.dogRef");
