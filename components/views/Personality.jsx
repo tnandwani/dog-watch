@@ -16,12 +16,9 @@ import {
     Progress,
     Slider,
     Box,
-    Divider,
     TextArea,
     Icon,
-    Switch,
-    Spinner
-} from 'native-base';
+    Switch} from 'native-base';
 
 
 // ICONS

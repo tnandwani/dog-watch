@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { Ionicons } from "@expo/vector-icons"
 
 // maps
-import MapView, { PROVIDER_GOOGLE, Circle } from "react-native-maps";
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { Marker } from "react-native-maps";
 import { mapQuestKey, mapStyling } from "../../constants";
 
@@ -16,9 +16,8 @@ import { StyleSheet, View, Dimensions, Platform } from "react-native";
 import { getHomies, updateFireLocation, inviteFriends, sendFireError } from "../../database";
 import DogCard from '../widgets/DogCard'
 
-import { Box, Button, Center, FlatList, Heading, Spinner, Text, Fab, Icon, Badge } from "native-base";
+import { Box, Button, Center, FlatList, Spinner, Fab, Icon, Badge } from "native-base";
 import { updateLocation } from "../../redux/slices/userSlice";
-import { saveLocation } from "../../redux/slices/rawDogSlice";
 import { updateDogView, updateLoading } from "../../redux/slices/exploreSlice";
 import { MaterialIcons } from '@expo/vector-icons';
 import { updateShowLostModal } from "../../redux/slices/interfaceSlice";

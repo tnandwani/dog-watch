@@ -1,28 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 
 import NotificationCard from '../widgets/NotificationCard';
-import EventCard from "../widgets/EventCard";
 import Resources from '../views/Resources'
 
 // UI
 import {
   Box,
-  Button,
-  Center,
   VStack,
-  Flex,
-  Spacer,
-  HStack,
   Heading,
   Divider,
   FlatList,
 } from "native-base";
 
-import { MaterialIcons } from "@expo/vector-icons";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import DogViewModal from "../modals/DogViewModal";
 
 
 export default function HomeTab() {

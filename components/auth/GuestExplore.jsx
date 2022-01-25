@@ -11,11 +11,11 @@ import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 
 
-import { StyleSheet, View, Dimensions, Platform } from "react-native";
+import { View, Platform } from "react-native";
 import { getHomies, updateFireLocation } from "../../database";
 import DogCard from '../widgets/DogCard'
 
-import { Box, Button, Center, FlatList, Heading, Spinner } from "native-base";
+import { Box, Button, Center, FlatList, Spinner } from "native-base";
 import { updateLocation } from "../../redux/slices/userSlice";
 
 export default function GuestExplore({ navigation }) {

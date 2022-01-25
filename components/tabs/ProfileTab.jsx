@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, {  } from 'react'
 
 import DogCard from '../widgets/DogCard'
 import { useSelector, useDispatch } from 'react-redux'
-import { Ionicons } from "@expo/vector-icons"
 import Feedback from '../widgets/Feedback'
 
 // UI 
@@ -14,7 +13,7 @@ import {
     VStack,
 
 } from "native-base"
-import { getUserDetails, signOutUser } from '../../database';
+import { signOutUser } from '../../database';
 import { resetRawDog } from '../../redux/slices/rawDogSlice';
 
 export default function ProfileTab({ navigation }) {

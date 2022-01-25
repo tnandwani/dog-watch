@@ -1,21 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { Keyboard } from "react-native";
-import { reportUser, sendFeedback } from "../../database";
+import React, { useEffect } from "react";
+import { reportUser } from "../../database";
 // UI 
 import {
-  Box,
   Button,
   Popover,
-  HStack,
-  Icon,
-  Center,
-  Heading,
-  TextArea,
   IconButton,
-  Switch,
   useToast,
-  FormControl,
 } from "native-base"
 
 import { MaterialIcons } from '@expo/vector-icons';

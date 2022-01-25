@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, {  } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Image } from "react-native";
 
 import {
   VStack,
@@ -10,15 +9,11 @@ import {
   Box,
   Icon,
   Switch,
-  Button,
   Modal,
 } from 'native-base';
 // ICONS
-import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { savePersonality } from '../../redux/slices/rawDogSlice';
 
-import { updateDogView } from "../../redux/slices/exploreSlice";
 import { updateShowDogModal } from "../../redux/slices/interfaceSlice";
 
 export default function DogViewModal(props) {
