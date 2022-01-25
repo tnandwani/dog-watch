@@ -119,12 +119,6 @@ export default function ExploreTab({ navigation }) {
           sendFireError(error, "EXPLORETAB.fetch.data");
 
         });
-
-
-
-
-
-
     })();
   }
 
