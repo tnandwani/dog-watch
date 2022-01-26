@@ -27,7 +27,7 @@ A COMMUNITY FOR DOG OWNERS
 
 
 **DEPLOYING**
-## EXPO
+## EXPO & TestFlight
 expo publish
 ## WEB 
 npm run deploy-hosting

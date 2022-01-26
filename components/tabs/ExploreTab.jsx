@@ -16,7 +16,7 @@ import { StyleSheet, View, Dimensions, Platform } from "react-native";
 import { getHomies, updateFireLocation, inviteFriends, sendFireError } from "../../database";
 import DogCard from '../widgets/DogCard'
 
-import { Box, Button, Center, FlatList, Spinner, Text, Fab, Icon, Badge, Flex, VStack, useToast } from "native-base";
+import { Box, Button, Center, FlatList, Spinner, Text, Fab, Icon, Badge, Flex, VStack, useToast, Heading, Divider } from "native-base";
 import { updateLocation } from "../../redux/slices/userSlice";
 import { updateDogView, updateLoading } from "../../redux/slices/exploreSlice";
 import { MaterialIcons } from '@expo/vector-icons';
@@ -34,18 +34,22 @@ export default function ExploreTab({ navigation }) {
 
   let loading = useSelector((state) => state.explore.loading);
   const [locationStatus, setLocationStatus] = useState('');
+  let [safeAreaNeeded, setSafeAreaNeeded] = useState(0);
+  let [safeAreaNeededX, setSafeAreaNeededX] = useState(2);
 
+  console.log(Platform.OS);
+
+ 
   const toast = useToast()
-
-  const sendInvite= ()=> {
-    if(Platform.OS === 'web'){
+  const sendInvite = () => {
+    if (Platform.OS === 'web') {
 
       toast.show({
         description: "Invite copied to Clipboard",
         mb: '3'
       })
     }
-    else{
+    else {
       inviteFriends()
     }
 
@@ -53,6 +57,11 @@ export default function ExploreTab({ navigation }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    if (Platform.OS == "web") {
+      setSafeAreaNeeded(8)
+      setSafeAreaNeededX(5)
+
+    }
 
     if (user.zone != "Unverified") {
       getHomies(user.latitude, user.longitude);
@@ -129,86 +138,101 @@ export default function ExploreTab({ navigation }) {
     })();
   }
 
-  return (
-    <Center>
-      {/* modals  */}
-      <LostModal />
-      <DogViewModal />
+  // if still loading
 
-      {/* UI */}
-      <VStack w='100%' maxW={768} h="100%" >
-        {/* MAP */}
-        {Platform.OS !== 'web' &&
-          <Box mt='-5%' minH="50%" bg='indigo.300'>
-            <Gmap lat={user.latitude} long={user.longitude} />
-          </Box>
-        }
-        {/* DRAWER */}
-        <Center my='2' bg="red.400" rounded='lg' _text={{
-          color: "white",
-          fontWeight: "bold"
-        }} height="20%" shadow={2}>
-          Maps Unavailable on Web
-        </Center>
+  if (loading === true) {
+    return (
+      <Center my='3'>
+        <Spinner color="indigo" />
+      </Center>
+    );
+  }
+  // if ready
+  if (loading === false) {
 
-        <Box m='2' >
-          {(loading === true) &&
-            <Center my='3'>
-              <Spinner color="indigo" />
-            </Center>
-          }
-          {(user.zone !== 'Unverified') &&
+    return (
+      <Center>
+        {/* modals  */}
+        <LostModal />
+        <DogViewModal />
 
-            <Box>
-              <Button colorScheme="indigo" onPress={() => dispatch(updateShowLostModal(true))} mb={2}>{"View Lost Dogs (" + lostDogs.length + ')'}</Button>
-              {/* CARDS */}
-              <FlatList data={dogTags} renderItem={(dog) => (
-                <Box my='1'>
-                  <DogCard dog={dog} navigation={navigation} />
-                </Box>
-              )
-              }
-                keyExtractor={(dog) => dog.duid}
-              />
-              <Button
-                mb={3}
-                px='5'
-                py='3'
-                mt='2'
-                variant="subtle"
-                colorScheme="indigo" 
-                onPress={() => sendInvite()}
-                endIcon={<Icon as={Ionicons} name="paper-plane-sharp" size="sm" />}
-              >
-                Invite Friends
-              </Button>
+        {/* UI */}
+        <VStack w='100%' maxW={768} h="100%" >
+
+          {/* MOBILE - SHOW MAP */}
+          {Platform.OS !== 'web' &&
+            <Box mt='-5%' minH="50%" bg='indigo.300'>
+              <Gmap lat={user.latitude} long={user.longitude} />
             </Box>
           }
-          {(user.zone === 'Unverified') &&
+          {/* WEB - SHOW WARNING */}
 
-            <Box>
-              <Button
-                w='95%'
-                mt='2'
-                colorScheme="indigo"
-                _text={{ color: "white" }}
-                shadow="7"
-                onPress={getLocation}
-              >
-                Join The Watch
-              </Button>
-              <Box mt='3'>
-                {locationStatus}
+          {/* ALL PLATFORMS */}
+          <Box m='2'>
+            {(user.zone === 'Unverified') &&
+              <Box>
+                <Button
+                  w='95%'
+                  mt='2'
+                  colorScheme="indigo"
+                  _text={{ color: "white" }}
+                  shadow="7"
+                  onPress={getLocation}
+                >
+                  Join The Watch
+                </Button>
+                <Box mt='3'>
+                  {locationStatus}
+
+                </Box>
+              </Box>
+            }
+            {(user.zone !== 'Unverified') &&
+              <Box safeAreaTop={safeAreaNeeded} safeAreaX={safeAreaNeededX} >
+                <Heading size="xl" color="coolGray.800" fontWeight="600" bold>
+                  Your Zone
+                </Heading>
+                <Heading my="1" color="coolGray.600" fontWeight="medium" size="xs">
+                  {user.zone}
+                </Heading>
+                <Divider my="2" />
+                <Button colorScheme="indigo" onPress={() => dispatch(updateShowLostModal(true))} mb={2}>{"View Lost Dogs (" + lostDogs.length + ')'}</Button>
+                {/* CARDS */}
+                <FlatList data={dogTags} renderItem={(dog) => (
+                  <Box my='1'>
+                    <DogCard dog={dog} navigation={navigation} />
+                  </Box>
+                )
+                }
+                  keyExtractor={(dog) => dog.duid}
+                />
+                <Button
+                  mb={3}
+                  px='5'
+                  py='3'
+                  mt='2'
+                  variant="subtle"
+                  colorScheme="indigo"
+                  onPress={() => sendInvite()}
+                  endIcon={<Icon as={Ionicons} name="paper-plane-sharp" size="sm" />}
+                >
+                  Invite Friends
+                </Button>
+                <Center>
+                  <Text fontWeight='thin' fontSize="xs">© Dog Watch by Hutch Studios</Text>
+                </Center>
+                
 
               </Box>
-            </Box>
-          }
-        </Box>
+            }
 
-      </VStack>
+          </Box>
 
-    </Center>
-  )
+        </VStack>
+
+      </Center>
+    )
+  }
 
 
 }
