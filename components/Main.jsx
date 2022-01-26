@@ -9,7 +9,6 @@ import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 // TABS 
 const Tab = createBottomTabNavigator();
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeTab from './tabs/HomeTab'
 import ExploreTab from './tabs/ExploreTab'
 import ProfileTab from './tabs/ProfileTab'
 import { addUsertoZone, sendFireError, setScreenAnalytics } from '../database';

@@ -154,12 +154,12 @@ export default function DogCreator({ navigation }) {
 
             setLocationStatus(<Spinner color="indigo.500" />);
             if (Platform.OS === 'android' && !Constants.isDevice) {
-                setErrorMessage('Oops, this will not work on Snack in an Android emulator. Try it on your device!');
+                sendFireError('Permission to access location was denied', 'Location_Permission_Eror');
                 return;
             }
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
-                setErrorMessage('Permission to access location was denied');
+                sendFireError('Permission to access location was denied', 'Location_Permission_Eror');
                 return;
             }
 
