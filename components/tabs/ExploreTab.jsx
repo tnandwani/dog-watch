@@ -16,7 +16,7 @@ import { StyleSheet, View, Dimensions, Platform } from "react-native";
 import { getHomies, updateFireLocation, inviteFriends, sendFireError } from "../../database";
 import DogCard from '../widgets/DogCard'
 
-import { Box, Button, Center, FlatList, Spinner, Fab, Icon, Badge, Flex, VStack, Container } from "native-base";
+import { Box, Button, Center, FlatList, Spinner,Text, Fab, Icon, Badge, Flex, VStack, Container } from "native-base";
 import { updateLocation } from "../../redux/slices/userSlice";
 import { updateDogView, updateLoading } from "../../redux/slices/exploreSlice";
 import { MaterialIcons } from '@expo/vector-icons';
@@ -86,7 +86,7 @@ export default function ExploreTab({ navigation }) {
         })
 
       };
-      fetch('http://www.mapquestapi.com/geocoding/v1/reverse?key=' + mapQuestKey, requestOptions)
+      fetch('https://www.mapquestapi.com/geocoding/v1/reverse?key=' + mapQuestKey, requestOptions)
         .then(response => response.json())
         .catch((error) => {
           sendFireError(error, "EXPLORETAB.fetch.response");
@@ -118,8 +118,11 @@ export default function ExploreTab({ navigation }) {
 
   return (
     <Center>
+      {/* modals  */}
       <LostModal />
       <DogViewModal />
+
+      {/* UI */}
       <VStack w='100%' maxW={768} h="100%" >
         {/* MAP */}
         {Platform.OS !== 'web' &&
@@ -128,6 +131,12 @@ export default function ExploreTab({ navigation }) {
           </Box>
         }
         {/* CARDS */}
+        <Center my = '2' bg="red.400" rounded='lg' _text={{
+          color: "white",
+          fontWeight: "bold"
+        }} height="20%" shadow={2}>
+          Maps Unavailable on Web
+        </Center>
         <Box m='2' >
           {(loading === true) &&
             <Center my='3'>
