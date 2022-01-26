@@ -72,7 +72,7 @@ export default function GuestExplore({ navigation }) {
         })
 
       };
-      fetch('http://www.mapquestapi.com/geocoding/v1/reverse?key=' + mapQuestKey, requestOptions)
+      fetch('https://www.mapquestapi.com/geocoding/v1/reverse?key=' + mapQuestKey, requestOptions)
         .then(response => response.json())
         .catch((error) => {
           sendFireError(error, "EXPLORETAB.fetch.response");
