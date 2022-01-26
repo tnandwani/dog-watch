@@ -203,7 +203,6 @@ export default function DogCard(props) {
                   }}
                   fontWeight="500"
                   ml="-0.5"
-                  mt="-1"
                 >
 
                   {props.dog.item.breed}

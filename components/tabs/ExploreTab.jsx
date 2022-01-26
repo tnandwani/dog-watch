@@ -161,7 +161,7 @@ export default function ExploreTab({ navigation }) {
 
           {/* MOBILE - SHOW MAP */}
           {Platform.OS !== 'web' &&
-            <Box mt='-5%' minH="50%" bg='indigo.300'>
+            <Box mt='-5%' minH="35%" bg='indigo.300'>
               <Gmap lat={user.latitude} long={user.longitude} />
             </Box>
           }
