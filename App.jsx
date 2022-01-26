@@ -20,7 +20,7 @@ const Stack = createStackNavigator();
 import LandingScreen from "./components/auth/Landing";
 import LoginScreen from "./components/auth/Login";
 import CreateScreen from "./components/auth/Create";
-import ExploreScreen from "./components/auth/GuestExplore";
+import ExploreScreen from "./components/tabs/ExploreTab";
 
 // TAB HOLDER
 import MainScreen from "./components/Main";
@@ -100,7 +100,7 @@ export function AppContent() {
               }}
             />
             <Stack.Screen
-              name="GuestExplore"
+              name="Guest Explore"
               component={ExploreScreen}
               options={{
                 headerShown: true,

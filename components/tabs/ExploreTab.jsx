@@ -16,18 +16,18 @@ import { StyleSheet, View, Dimensions, Platform } from "react-native";
 import { getHomies, updateFireLocation, inviteFriends, sendFireError } from "../../database";
 import DogCard from '../widgets/DogCard'
 
-import { Box, Button, Center, FlatList, Spinner, Fab, Icon, Badge } from "native-base";
+import { Box, Button, Center, FlatList, Spinner, Fab, Icon, Badge, Flex, VStack, Container } from "native-base";
 import { updateLocation } from "../../redux/slices/userSlice";
 import { updateDogView, updateLoading } from "../../redux/slices/exploreSlice";
 import { MaterialIcons } from '@expo/vector-icons';
 import { updateShowLostModal } from "../../redux/slices/interfaceSlice";
 import LostModal from '../modals/LostModal';
 import DogViewModal from '../modals/DogViewModal';
+import Gmap from "../views/Gmap";
 
 
 export default function ExploreTab({ navigation }) {
 
-  let screen = useSelector((state) => state.interface.screen);
   let user = useSelector((state) => state.user);
   let dogTags = useSelector((state) => state.explore.dogTags);
   let lostDogs = useSelector((state) => state.explore.myZone.lost);
@@ -38,11 +38,8 @@ export default function ExploreTab({ navigation }) {
   let dogView = useSelector((state) => state.explore.dogView);
 
   const dispatch = useDispatch();
+
   useEffect(() => {
-    //
-
-    //
-
 
     if (user.zone != "Unverified") {
       getHomies(user.latitude, user.longitude);
@@ -56,9 +53,6 @@ export default function ExploreTab({ navigation }) {
   const getLocation = () => {
 
     (async () => {
-
-      // get API key for web created accounts - too expensive for only web
-      // Location.setGoogleApiKey(googleAPI)
 
       setLocationStatus(<Spinner color="indigo.500" />);
       if (Platform.OS === 'android' && !Constants.isDevice) {
@@ -122,39 +116,40 @@ export default function ExploreTab({ navigation }) {
     })();
   }
 
-  if (Platform.OS === "web") {
-    return (
-
-      <Center flex={1}>
-
-        <Badge colorScheme="danger" variant="subtle" >Map Unavailable on Web</Badge>
-        <LostModal />
-
-        <DogViewModal />
-
-        {(screen === 'Explore') && (user.zone !== 'Unverified') &&
-          <Box>
-            <Fab
-              borderRadius="full"
-              onPress={() => dispatch(updateShowLostModal(true))}
-              colorScheme="indigo"
-              mt='20'
-              placement="top-left"
-              icon={
-                <Icon
-                  color="white"
-                  as={<MaterialIcons name="lightbulb" />}
-                  size="4"
-                />
-              }
-              label={"View Lost Dogs (" + lostDogs.length + ')'}
-            />
+  return (
+    <Center>
+      <LostModal />
+      <DogViewModal />
+      <VStack w='100%' maxW={768} h="100%" >
+        {/* MAP */}
+        {Platform.OS !== 'web' &&
+          <Box mt='-5%' minH="50%" bg='indigo.300'>
+            <Gmap lat={user.latitude} long={user.longitude} />
           </Box>
-
         }
+        {/* CARDS */}
+        <Box m='2' >
+          {(loading === true) &&
+            <Center my='3'>
+              <Spinner color="indigo" />
+            </Center>
+          }
+          {(user.zone !== 'Unverified') &&
 
-        <Box position='absolute' top='10' >
+            <Box>
+              <Button colorScheme="indigo" onPress={() => dispatch(updateShowLostModal(true))} mb={2}>{"View Lost Dogs (" + lostDogs.length + ')'}</Button>
+              <FlatList data={dogTags} renderItem={(dog) => (
+                <Box my='1'>
+                  <DogCard dog={dog} navigation={navigation} />
+                </Box>
+              )
+              }
+                keyExtractor={(dog) => dog.duid}
+              />
+            </Box>
+          }
           {(user.zone === 'Unverified') &&
+
             <Box>
               <Button
                 w='95%'
@@ -171,212 +166,14 @@ export default function ExploreTab({ navigation }) {
 
               </Box>
             </Box>
-
           }
-
         </Box>
-        <Box
-          position='absolute'
-          w="100%"
-          padding='2'
-          bottom='0'
-          rounded="xl"
-          shadow={7}
-          overflow="hidden"
 
-        >
+      </VStack>
 
-          {dogView &&
-            <FlatList data={[dogView]} renderItem={(dog) => (
-              <Box my='1'>
-                <DogCard dog={dog} navigation={navigation} />
-              </Box>
-            )
-            }
-              keyExtractor={(dog) => dog.duid}
-            />
-          }
-          {(loading === true) &&
-            <Center mt='5'>
-              <Spinner color="white" />
-            </Center>
-          }
-          {((dogTags < 1) && (loading === false)) &&
-            <Center mt='5'>
-              <Button
-                mb={3}
-                px='5'
-                py='3'
-                variant="subtle"
-                colorScheme="indigo"
-                endIcon={<Icon as={Ionicons} name="paper-plane-sharp" size="sm" />}
-              >
-                Invite Friends
-              </Button>
-            </Center>
-          }
+    </Center>
+  )
 
-        </Box>
-      </Center>
-    );
-  }
-  else {
-    return (
-      // mobile container
-      <View style={styles.container}>
-        <LostModal />
-
-        <DogViewModal />
-
-        {(screen === 'Explore') && (user.zone !== 'Unverified') &&
-          <Box>
-            <Fab
-              borderRadius="full"
-              onPress={() => dispatch(updateShowLostModal(true))}
-              colorScheme="indigo"
-              mt='20'
-              placement="top-left"
-              icon={
-                <Icon
-                  color="white"
-                  as={<MaterialIcons name="lightbulb" />}
-                  size="4"
-                />
-              }
-              label={"View Lost Dogs (" + lostDogs.length + ')'}
-            />
-          </Box>
-
-        }
-        {(user.zone !== 'Unverified') &&
-          <MapView
-            style={styles.map}
-            provider={PROVIDER_GOOGLE}
-            maxZoomLevel={12}
-            customMapStyle={mapStyling}
-            initialRegion={{
-              latitude: user.latitude,
-              longitude: user.longitude,
-              longitudeDelta: 0.2,
-              latitudeDelta: 0.2,
-            }}
-          >
-
-            {dogTags.map((dog, index) => (
-              <Marker
-                key={index}
-                coordinate={{ latitude: dog.latitude, longitude: dog.longitude }}
-                title={dog.dogName}
-                key={dog.duid}
-                description={dog.breed + '  (' + dog.age + ')'}
-                onPress={() => dispatch(updateDogView(dog))}
-              />
-            ))}
-
-            {/* <Circle center={{
-            latitude: user.latitude,
-            longitude: user.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-            radius={1610}
-            strokeWidth={0}
-            fillColor='rgba(99,102,241, 0.6)'
-          /> */}
-          </MapView>
-
-        }
-        {(user.zone === 'Unverified') &&
-          <MapView
-            style={styles.map}
-            provider={PROVIDER_GOOGLE}
-            maxZoomLevel={12}
-            customMapStyle={mapStyling}
-            initialRegion={{
-              latitude: 39.8283,
-              longitude: -98.5795,
-              longitudeDelta: 50.0,
-              latitudeDelta: 50.0,
-            }}
-          />
-
-        }
-
-        {(user.zone === 'Unverified') &&
-
-          <Box position='absolute' w='100%' top='20'
-
-          >
-            <Center>
-              <Button
-                w='95%'
-                h='20'
-                colorScheme="indigo"
-                _text={{ color: "white" }}
-                shadow="7"
-                onPress={getLocation}
-              >
-                Join The Watch
-              </Button>
-              <Box mt='3'>
-                {locationStatus}
-
-              </Box>
-            </Center>
-
-          </Box>
-
-
-        }
-
-        {(user.zone !== 'Unverified') &&
-
-
-          <Box
-            position='absolute'
-            w="100%"
-            padding='2'
-            bottom='10'
-            rounded="xl"
-            shadow={7}
-            overflow="hidden"
-
-          >
-
-            {dogView &&
-              <FlatList data={[dogView]} renderItem={(dog) => (
-                <Box my='1'>
-                  <DogCard dog={dog} navigation={navigation} />
-                </Box>
-              )
-              }
-                keyExtractor={(dog) => dog.duid}
-              />
-            }
-            {(loading === true) &&
-              <Center mt='5'>
-                <Spinner color="white" />
-              </Center>
-            }
-            {((dogTags < 1) && (loading === false)) &&
-              <Center mt='5'>
-                <Button
-                  px='5'
-                  py='3'
-                  onPress={() => inviteFriends()}
-                  variant="subtle"
-                  colorScheme="indigo"
-                  endIcon={<Icon as={Ionicons} name="paper-plane-sharp" size="sm" />}
-                >
-                  Invite Friends
-                </Button>
-              </Center>
-            }
-          </Box>
-        }
-      </View>
-    );
-  }
 
 }
 

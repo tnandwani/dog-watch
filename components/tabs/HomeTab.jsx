@@ -2,16 +2,12 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux'
 
 
-import NotificationCard from '../widgets/NotificationCard';
 import Resources from '../views/Resources'
 
 // UI
 import {
   Box,
-  VStack,
-  Heading,
   Divider,
-  FlatList,
 } from "native-base";
 
 
@@ -36,27 +32,6 @@ export default function HomeTab() {
       <Resources />
       <Divider thickness="3" my="4" />
 
-
-      <Heading>Lost Dogs Nearby</Heading>
-
-      <VStack w="100%" mt="3">
-        {(myZone.lost.length > 0) &&
-          <FlatList data={myZone.lost} renderItem={(noti) => (
-            <Box>
-              <NotificationCard data={noti.item} />
-
-            </Box>
-          )
-          }
-            keyExtractor={(noti) => noti.dog.duid}
-          />
-        }
-        {(myZone.lost.length < 1) &&
-          <Text>No Lost Dogs!</Text>
-        }
-å
-      </VStack>
-       
       {/* <Divider thickness="3" my="2" />
 
       <HStack justifyContent="space-between">
