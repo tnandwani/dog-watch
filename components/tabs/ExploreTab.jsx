@@ -16,7 +16,7 @@ import { StyleSheet, View, Dimensions, Platform } from "react-native";
 import { getHomies, updateFireLocation, inviteFriends, sendFireError } from "../../database";
 import DogCard from '../widgets/DogCard'
 
-import { Box, Button, Center, FlatList, Spinner,Text, Fab, Icon, Badge, Flex, VStack, Container } from "native-base";
+import { Box, Button, Center, FlatList, Spinner, Text, Fab, Icon, Badge, Flex, VStack, useToast } from "native-base";
 import { updateLocation } from "../../redux/slices/userSlice";
 import { updateDogView, updateLoading } from "../../redux/slices/exploreSlice";
 import { MaterialIcons } from '@expo/vector-icons';
@@ -35,8 +35,21 @@ export default function ExploreTab({ navigation }) {
   let loading = useSelector((state) => state.explore.loading);
   const [locationStatus, setLocationStatus] = useState('');
 
-  let dogView = useSelector((state) => state.explore.dogView);
+  const toast = useToast()
 
+  const sendInvite= ()=> {
+    if(Platform.OS === 'web'){
+
+      toast.show({
+        description: "Invite copied to Clipboard",
+        mb: '3'
+      })
+    }
+    else{
+      inviteFriends()
+    }
+
+  }
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -130,13 +143,14 @@ export default function ExploreTab({ navigation }) {
             <Gmap lat={user.latitude} long={user.longitude} />
           </Box>
         }
-        {/* CARDS */}
-        <Center my = '2' bg="red.400" rounded='lg' _text={{
+        {/* DRAWER */}
+        <Center my='2' bg="red.400" rounded='lg' _text={{
           color: "white",
           fontWeight: "bold"
         }} height="20%" shadow={2}>
           Maps Unavailable on Web
         </Center>
+
         <Box m='2' >
           {(loading === true) &&
             <Center my='3'>
@@ -147,6 +161,7 @@ export default function ExploreTab({ navigation }) {
 
             <Box>
               <Button colorScheme="indigo" onPress={() => dispatch(updateShowLostModal(true))} mb={2}>{"View Lost Dogs (" + lostDogs.length + ')'}</Button>
+              {/* CARDS */}
               <FlatList data={dogTags} renderItem={(dog) => (
                 <Box my='1'>
                   <DogCard dog={dog} navigation={navigation} />
@@ -155,6 +170,18 @@ export default function ExploreTab({ navigation }) {
               }
                 keyExtractor={(dog) => dog.duid}
               />
+              <Button
+                mb={3}
+                px='5'
+                py='3'
+                mt='2'
+                variant="subtle"
+                colorScheme="indigo" 
+                onPress={() => sendInvite()}
+                endIcon={<Icon as={Ionicons} name="paper-plane-sharp" size="sm" />}
+              >
+                Invite Friends
+              </Button>
             </Box>
           }
           {(user.zone === 'Unverified') &&

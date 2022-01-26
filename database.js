@@ -840,7 +840,7 @@ export async function inviteFriends() {
         );
 
     } else {
-        // misfortune... there's no SMS available on this device
+        alert("Invite copied to Clipboard")
     }
 }
 
