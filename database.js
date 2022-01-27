@@ -162,6 +162,13 @@ export function sendFeedback(type, message) {
         message: message
     }).then((result) => {
         Analytics.logEvent('feedback_sent', uAnalytics())
+        // initialize analytics per user details
+        if (Platform.OS === 'web') {
+            Sentry.Browser.captureMessage(message)
+
+        } else {
+            Sentry.Native.captureMessage(message)
+        }
     }).catch((error) => {
         sendFireError(error.message, "sendFeedback.addDoc");
     });
@@ -176,7 +183,7 @@ export function viewDog(dog) {
 
 }
 
-export function fLogEvent(name){
+export function fLogEvent(name) {
     Analytics.logEvent(name);
 }
 
@@ -277,20 +284,21 @@ export async function getUserDetails(uid) {
 
     if (docSnap.exists()) {
         let response = docSnap.data();
-        
+
 
         // initialize analytics per user details
         if (Platform.OS === 'web') {
             Sentry.Browser.setUser({
                 id: response.uid,
-                // email: response.email
+                email: response.email
             })
             Sentry.Browser.setTag("zone", response.zone)
         } else {
             Sentry.Native.setUser({
-                id: uid,
-                // email: email
+                id: response.uid,
+                email: response.email
             })
+
             Sentry.Native.setTag("zone", response.zone)
 
         }

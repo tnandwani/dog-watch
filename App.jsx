@@ -46,6 +46,13 @@ import { setScreenAnalytics } from './database';
 
 Sentry.init({
   dsn: sentryKey,
+  beforeSend(event, hint) {
+    // Check if it is an exception, and if so, show the report dialog
+    if (event.exception) {
+      Sentry.showReportDialog({ eventId: event.event_id });
+    }
+    return event;
+  },
   enableInExpoDevelopment: true,
   release: 'dog-watch@v0.01',
   debug: true, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production

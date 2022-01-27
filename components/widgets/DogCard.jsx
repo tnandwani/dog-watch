@@ -188,7 +188,7 @@ export default function DogCard(props) {
               </AspectRatio>
             </Center>
             <Box w="55%" ml='3'>
-              <Stack p="4" space={2}>
+              <Stack p="4" space={1}>
                 <Heading size="md" ml="-1">
 
                   {props.dog.item.dogName}
