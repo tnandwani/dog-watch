@@ -149,9 +149,9 @@ export function sendFeedback(type, message) {
     const user = store.getState().user
 
     if (type) {
-        type = "Suggestion"
+        type = "Suggestion: "
     } else {
-        type = "Issue"
+        type = "Issue: "
     }
 
     addDoc(collection(db, "feedback"), {
@@ -164,10 +164,10 @@ export function sendFeedback(type, message) {
         Analytics.logEvent('feedback_sent', uAnalytics())
         // initialize analytics per user details
         if (Platform.OS === 'web') {
-            Sentry.Browser.captureMessage(message)
+            Sentry.Browser.captureMessage(type + message)
 
         } else {
-            Sentry.Native.captureMessage(message)
+            Sentry.Native.captureMessage(type + message)
         }
     }).catch((error) => {
         sendFireError(error.message, "sendFeedback.addDoc");

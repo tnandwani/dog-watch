@@ -37,9 +37,8 @@ export default function ExploreTab({ navigation }) {
   let [safeAreaNeeded, setSafeAreaNeeded] = useState(0);
   let [safeAreaNeededX, setSafeAreaNeededX] = useState(2);
 
-  console.log(Platform.OS);
 
- 
+
   const toast = useToast()
   const sendInvite = () => {
     if (Platform.OS === 'web') {
@@ -62,9 +61,10 @@ export default function ExploreTab({ navigation }) {
       setSafeAreaNeededX(5)
 
     }
-
     if (user.zone != "Unverified") {
-      getHomies(user.latitude, user.longitude);
+      if (dogTags.length < 1) {
+        getHomies(user.latitude, user.longitude);
+      }
     }
     else {
       dispatch(updateLoading(false));
@@ -161,7 +161,7 @@ export default function ExploreTab({ navigation }) {
 
           {/* MOBILE - SHOW MAP */}
           {Platform.OS !== 'web' &&
-            <Box mt='-5%' minH="35%" bg='indigo.300'>
+            <Box mt='-5%' m='-1' minH="35%" bg='indigo.300'>
               <Gmap lat={user.latitude} long={user.longitude} />
             </Box>
           }
@@ -172,7 +172,7 @@ export default function ExploreTab({ navigation }) {
             {(user.zone === 'Unverified') &&
               <Box>
                 <Button
-                  w='95%'
+                  w='100%'
                   mt='2'
                   colorScheme="indigo"
                   _text={{ color: "white" }}
@@ -221,7 +221,7 @@ export default function ExploreTab({ navigation }) {
                 <Center>
                   <Text fontWeight='thin' fontSize="xs">© Dog Watch by Hutch Studios</Text>
                 </Center>
-                
+
 
               </Box>
             }
