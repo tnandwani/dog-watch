@@ -41,6 +41,7 @@ import {
 import { saveDogPic } from '../../redux/slices/rawDogSlice';
 import { breedList, mapQuestKey } from '../../constants';
 import { deleteDog, sendFireError, uAnalytics } from '../../database';
+import { AndroidAudioContentType } from 'expo-notifications';
 
 
 const breedSelects = breedList.map((breed) =>
@@ -191,7 +192,16 @@ export default function DogCreator({ navigation }) {
                 })
                 .then(data => {
                     const addy = data.results[0].locations[0].postalCode
-                    const zip = addy.substr(0, addy.indexOf('-'));
+                    let zip;
+                    
+                    if (addy.includes("-")){
+                        zip = addy.substr(0, addy.indexOf('-'));
+
+                    }
+                    else{
+                        zip = addy
+                    }
+                    
 
                     // create new location object 
                     let userLocation = {
