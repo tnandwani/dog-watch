@@ -524,82 +524,134 @@ export async function startPublish(imageURI, navigation) {
     // add duid to redux
     store.dispatch(createDUID(duid));
 
-    // convert image to blob
-    const blob = await new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.onload = function () {
-            resolve(xhr.response);
-        };
-        xhr.onerror = function (e) {
-            reject(new TypeError("Network request failed"));
-        };
-        xhr.responseType = "blob";
-        xhr.open("GET", imageURI, true);
-        xhr.send(null);
-    });
 
-    store.dispatch(updateDogProgress(10))
-    // upload dog photo with duid 
-    const storageRef = ref(storage, 'profileImages/' + duid + '.jpg');
-    uploadBytes(storageRef, blob).then((snapshot) => {
-
-        Analytics.logEvent('Created_dog_photo', uAnalytics())
-        store.dispatch(updateDogProgress(25))
-
-
-        // get download URL
-        getDownloadURL(snapshot.ref).then((PURI) => {
-            Analytics.logEvent('Created_dog_photoURL', uAnalytics())
-            store.dispatch(updateDogProgress(50))
-
-
-            // add url to redux
-            store.dispatch(saveDogPic(PURI))
-
-            const readyDog = store.getState().rawDog
-            // upload readyDog to dogs/
-
-            setDoc(doc(db, "dogs", duid), readyDog)
-                .then((resp) => {
-                    Analytics.logEvent('Created_dog_doc', uAnalytics())
-                    store.dispatch(updateDogProgress(75))
-
-                    // add readyDog to user.dogs redux 
-                    store.dispatch(saveDogCards(readyDog))
-                    // post new dog list + update coords
-                    const userRef = doc(db, "users", uid);
-                    updateDoc(userRef, {
-                        dogs: arrayUnion(duid),
-                        zone: readyDog.zone,
-                        longitude: readyDog.longitude,
-                        latitude: readyDog.latitude,
-                    }).then((resp) => {
-                        Analytics.logEvent('add_dog_to_user', uAnalytics())
-
-                        // add dogcard to explore locally 
-                        store.dispatch(addTag(readyDog));
-
-                        store.dispatch(updateDogProgress(100))
-                        navigation.navigate('Profile')
-                        store.dispatch(updateDogProgress(0))
-                        Analytics.logEvent('Created_dog_finish', uAnalytics())
-
-                    }).catch((error) => {
-                        sendFireError(error.message, "startPublish.image.updateDoc.userRef");
-                    })
-                })
-                .catch((error) => {
-                    sendFireError(error.message, "startPublish.setDoc.duid");
-
-
-                })
-
-        }).catch((error) => {
-            sendFireError(error.message, "startPublish.getDownloadURL");
+    // no pic selected 
+    if (imageURI != 'https://freesvg.org/img/Dog-Leash.png') {
+        // convert image to blob
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                resolve(xhr.response);
+            };
+            xhr.onerror = function (e) {
+                reject(new TypeError("Network request failed"));
+            };
+            xhr.responseType = "blob";
+            xhr.open("GET", imageURI, true);
+            xhr.send(null);
         });
-    }).catch((error) => {
-        sendFireError(error.message, "startPublish.uploadBytes");
-    })
+
+        store.dispatch(updateDogProgress(10))
+        // upload dog photo with duid 
+        const storageRef = ref(storage, 'profileImages/' + duid + '.jpg');
+        uploadBytes(storageRef, blob).then((snapshot) => {
+
+            Analytics.logEvent('Created_dog_photo', uAnalytics())
+            store.dispatch(updateDogProgress(25))
+
+
+            // get download URL
+            getDownloadURL(snapshot.ref).then((PURI) => {
+                Analytics.logEvent('Created_dog_photoURL', uAnalytics())
+                store.dispatch(updateDogProgress(50))
+
+
+                // add url to redux
+                store.dispatch(saveDogPic(PURI))
+
+                const readyDog = store.getState().rawDog
+                // upload readyDog to dogs/
+
+                setDoc(doc(db, "dogs", duid), readyDog)
+                    .then((resp) => {
+                        Analytics.logEvent('Created_dog_doc', uAnalytics())
+                        store.dispatch(updateDogProgress(75))
+
+                        // add readyDog to user.dogs redux 
+                        store.dispatch(saveDogCards(readyDog))
+                        // post new dog list + update coords
+                        const userRef = doc(db, "users", uid);
+                        updateDoc(userRef, {
+                            dogs: arrayUnion(duid),
+                            zone: readyDog.zone,
+                            longitude: readyDog.longitude,
+                            latitude: readyDog.latitude,
+                        }).then((resp) => {
+                            Analytics.logEvent('add_dog_to_user', uAnalytics())
+
+                            // add dogcard to explore locally 
+                            store.dispatch(addTag(readyDog));
+
+                            store.dispatch(updateDogProgress(100))
+                            navigation.navigate('Profile')
+                            store.dispatch(updateDogProgress(0))
+                            Analytics.logEvent('Created_dog_finish', uAnalytics())
+
+                        }).catch((error) => {
+                            sendFireError(error.message, "startPublish.image.updateDoc.userRef");
+                        })
+                    })
+                    .catch((error) => {
+                        sendFireError(error.message, "startPublish.setDoc.duid");
+
+
+                    })
+
+            }).catch((error) => {
+                sendFireError(error.message, "startPublish.getDownloadURL");
+            });
+        }).catch((error) => {
+            sendFireError(error.message, "startPublish.uploadBytes");
+        })
+
+    } else {
+        let PURI = imageURI;
+        Analytics.logEvent('Created_dog_photoURL', uAnalytics())
+        store.dispatch(updateDogProgress(50))
+
+
+        // add url to redux
+        store.dispatch(saveDogPic(PURI))
+
+        const readyDog = store.getState().rawDog
+        // upload readyDog to dogs/
+
+        setDoc(doc(db, "dogs", duid), readyDog)
+            .then((resp) => {
+                Analytics.logEvent('Created_dog_doc', uAnalytics())
+                store.dispatch(updateDogProgress(75))
+
+                // add readyDog to user.dogs redux 
+                store.dispatch(saveDogCards(readyDog))
+                // post new dog list + update coords
+                const userRef = doc(db, "users", uid);
+                updateDoc(userRef, {
+                    dogs: arrayUnion(duid),
+                    zone: readyDog.zone,
+                    longitude: readyDog.longitude,
+                    latitude: readyDog.latitude,
+                }).then((resp) => {
+                    Analytics.logEvent('add_dog_to_user', uAnalytics())
+
+                    // add dogcard to explore locally 
+                    store.dispatch(addTag(readyDog));
+
+                    store.dispatch(updateDogProgress(100))
+                    navigation.navigate('Profile')
+                    store.dispatch(updateDogProgress(0))
+                    Analytics.logEvent('Created_dog_finish', uAnalytics())
+
+                }).catch((error) => {
+                    sendFireError(error.message, "startPublish.image.updateDoc.userRef");
+                })
+            })
+            .catch((error) => {
+                sendFireError(error.message, "startPublish.setDoc.duid");
+
+
+            })
+    }
+
 
 }
 
@@ -856,8 +908,11 @@ export async function inviteFriends() {
 export function sendFireError(error, func) {
 
 
-    console.log({error, func});
-    
+    console.log({
+        error,
+        func
+    });
+
     const user = store.getState().user;
 
     Analytics.logEvent('fire_error', {

@@ -2,24 +2,21 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Ionicons } from "@expo/vector-icons"
 
-// maps
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import { Marker } from "react-native-maps";
-import { mapQuestKey, mapStyling } from "../../constants";
+
+import { mapQuestKey } from "../../constants";
 
 // expo location
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 
 
-import { StyleSheet, View, Dimensions, Platform } from "react-native";
+import { StyleSheet, Dimensions, Platform } from "react-native";
 import { getHomies, updateFireLocation, inviteFriends, sendFireError, sendSentryMessage } from "../../database";
 import DogCard from '../widgets/DogCard'
 
 import { Box, Button, Center, FlatList, Spinner, Text, Fab, Icon, Badge, Flex, VStack, useToast, Heading, Divider } from "native-base";
 import { updateLocation } from "../../redux/slices/userSlice";
-import { updateDogView, updateLoading } from "../../redux/slices/exploreSlice";
-import { MaterialIcons } from '@expo/vector-icons';
+import {  updateLoading } from "../../redux/slices/exploreSlice";
 import { updateShowLostModal } from "../../redux/slices/interfaceSlice";
 import LostModal from '../modals/LostModal';
 import DogViewModal from '../modals/DogViewModal';

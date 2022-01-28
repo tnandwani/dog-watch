@@ -39,19 +39,24 @@ export default function DogCard(props) {
   const [message, setMessage] = useState();
   let uid = useSelector((state) => state.user.uid);
   let dogView = useSelector((state) => state.explore.dogView);
+  const [imageURL, setImageURL] = useState(require('./default-dog.png'));
 
   useEffect(() => {
     // dog card loaded
-
+    if (props.dog.item.profileImage!== "https://freesvg.org/img/Dog-Leash.png") {
+      console.log("not default")
+      setImageURL(props.dog.item.profileImage)
+    }
   }, []);
 
-  const editDog = () => {
 
+  const editDog = () => {
     // pass dog to rawDog
     dispatch(importDog(props.dog.item))
-    props.navigation.navigate('DogCreator')
-
+    
     // open Dog Creator 
+    props.navigation.navigate('DogCreator')
+    
 
 
   }
@@ -187,7 +192,7 @@ export default function DogCard(props) {
                     // onLoadStart={() => { console.log("load start"); setIsLoaded(false) }}
                 
                     source={{
-                      uri: props.dog.item.profileImage,
+                      uri: imageURL,
                       // uri: "https://i.ytimg.com/vi/MPV2METPeJU/maxresdefault.jpg",
                     }}
                     onLoad={() => setIsLoaded(true)}
