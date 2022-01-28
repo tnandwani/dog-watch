@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Image, Keyboard } from "react-native";
+import { Keyboard } from "react-native";
 import Report from "./Report";
 import {
   Box,
@@ -8,6 +8,7 @@ import {
   AspectRatio,
   Text,
   Pressable,
+  Image,
   Center,
   Skeleton,
   Stack,
@@ -178,22 +179,18 @@ export default function DogCard(props) {
 
           <HStack w="100%">
             <Center w="25%">
-              <Skeleton isLoaded={isLoaded} flex="1" h="100" w="115%"  rounded="md" startColor="indigo.400">
+              <Skeleton isLoaded={isLoaded} flex="1" h="100" w="100%"  rounded="md" startColor="indigo.400">
 
                 <AspectRatio w="115%" ratio={9 / 9}>
                   <Image
 
                     // onLoadStart={() => { console.log("load start"); setIsLoaded(false) }}
-                    onLoadEnd={() => {
-                      console.log("pic loaded: using online to save usage");
-                      setTimeout(() => {
-                        setIsLoaded(true)
-                      }, 5000 )
-                    }}
+                
                     source={{
-                      // uri: props.dog.item.profileImage,
-                      uri: "https://i.ytimg.com/vi/MPV2METPeJU/maxresdefault.jpg",
+                      uri: props.dog.item.profileImage,
+                      // uri: "https://i.ytimg.com/vi/MPV2METPeJU/maxresdefault.jpg",
                     }}
+                    onLoad={() => setIsLoaded(true)}
                     alt="image"
                   />
 
