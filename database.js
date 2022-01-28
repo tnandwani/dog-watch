@@ -88,8 +88,7 @@ import * as Analytics from 'expo-firebase-analytics';
 
 import * as Sentry from 'sentry-expo';
 
-// TURN ON DEBUG MODE HERE
-// Analytics.setDebugModeEnabled(true);
+
 // Analytics.resetAnalyticsData();
 import {
     updateCreateAlert,
@@ -102,6 +101,11 @@ import {
     Platform
 } from 'react-native';
 ////////// APP START
+
+if (Platform.OS !== 'web') {
+    // TURN ON DEBUG MODE HERE
+    Analytics.setDebugModeEnabled(true);
+}
 
 
 initializeApp(firebaseConfig)
@@ -163,12 +167,8 @@ export function sendFeedback(type, message) {
     }).then((result) => {
         Analytics.logEvent('feedback_sent', uAnalytics())
         // initialize analytics per user details
-        if (Platform.OS === 'web') {
-            Sentry.Browser.captureMessage(type + message)
+        sendSentryMessage(type + message)
 
-        } else {
-            Sentry.Native.captureMessage(type + message)
-        }
     }).catch((error) => {
         sendFireError(error.message, "sendFeedback.addDoc");
     });
@@ -856,6 +856,8 @@ export async function inviteFriends() {
 export function sendFireError(error, func) {
 
 
+    console.log({error, func});
+    
     const user = store.getState().user;
 
     Analytics.logEvent('fire_error', {
@@ -873,4 +875,14 @@ export function uAnalytics() {
         zone: user.zone,
         device: user.device
     })
+}
+
+export function sendSentryMessage(message) {
+    if (Platform.OS === 'web') {
+        Sentry.Browser.captureMessage(message)
+
+    } else {
+        Sentry.Native.captureMessage(message)
+    }
+
 }

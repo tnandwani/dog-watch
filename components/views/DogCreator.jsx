@@ -40,7 +40,7 @@ import {
 } from 'native-base';
 import { saveDogPic } from '../../redux/slices/rawDogSlice';
 import { breedList, mapQuestKey } from '../../constants';
-import { deleteDog, sendFireError, uAnalytics } from '../../database';
+import { deleteDog, sendFireError, sendSentryMessage, uAnalytics } from '../../database';
 import { AndroidAudioContentType } from 'expo-notifications';
 
 
@@ -66,7 +66,7 @@ export default function DogCreator({ navigation }) {
     const [breed, setBreed] = useState(null);
     const [age, setAge] = useState(null);
     const [gender, setGender] = useState(null);
-    const [profileImage, setProfileImage] = useState(useSelector((state) => state.rawDog.profileImage));
+    const [profileImage, setProfileImage] = useState("https://freesvg.org/img/Dog-Leash.png");
 
     // owner
     // const [contact, setContact] = useState();
@@ -192,15 +192,12 @@ export default function DogCreator({ navigation }) {
                 })
                 .then(data => {
                     const addy = data.results[0].locations[0].postalCode
-                    let zip;
-                    
-                    if (addy.includes("-")){
+                    sendSentryMessage(JSON.stringify(addy))
+                    let zip = addy
+                    if (addy.includes("-")) {
                         zip = addy.substr(0, addy.indexOf('-'));
+                    }
 
-                    }
-                    else{
-                        zip = addy
-                    }
                     
 
                     // create new location object 

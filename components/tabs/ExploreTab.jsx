@@ -13,7 +13,7 @@ import * as Location from 'expo-location';
 
 
 import { StyleSheet, View, Dimensions, Platform } from "react-native";
-import { getHomies, updateFireLocation, inviteFriends, sendFireError } from "../../database";
+import { getHomies, updateFireLocation, inviteFriends, sendFireError, sendSentryMessage } from "../../database";
 import DogCard from '../widgets/DogCard'
 
 import { Box, Button, Center, FlatList, Spinner, Text, Fab, Icon, Badge, Flex, VStack, useToast, Heading, Divider } from "native-base";
@@ -112,18 +112,15 @@ export default function ExploreTab({ navigation }) {
         .then(response => response.json())
         .catch((error) => {
           sendFireError(error, "EXPLORETAB.fetch.response");
-
         }).then(data => {
           const addy = data.results[0].locations[0].postalCode
-          let zip;
+          sendSentryMessage(JSON.stringify(addy))
+
+          let zip = addy
           if (addy.includes("-")) {
             zip = addy.substr(0, addy.indexOf('-'));
           }
-          else {
-            zip = addy
-          }
-
-
+    
           // create new location object 
           let userLocation = {
             latitude: currentPin.coords.latitude,

@@ -9,6 +9,7 @@ import {
   Text,
   Pressable,
   Center,
+  Skeleton,
   Stack,
   HStack,
   VStack,
@@ -32,10 +33,9 @@ export default function DogCard(props) {
   const [showAlertModal, setShowAlertModal] = useState(false)
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [showDogModal, setShowDogModal] = useState(false)
-
+  const [isLoaded, setIsLoaded] = useState(false);
   const [EContact, setEContact] = useState();
   const [message, setMessage] = useState();
-
   let uid = useSelector((state) => state.user.uid);
   let dogView = useSelector((state) => state.explore.dogView);
 
@@ -178,14 +178,29 @@ export default function DogCard(props) {
 
           <HStack w="100%">
             <Center w="25%">
-              <AspectRatio w="115%" ratio={9 / 9}>
-                <Image
-                  source={{
-                    uri: props.dog.item.profileImage,
-                  }}
-                  alt="image"
-                />
-              </AspectRatio>
+              <Skeleton isLoaded={isLoaded} flex="1" h="100" w="115%"  rounded="md" startColor="indigo.400">
+
+                <AspectRatio w="115%" ratio={9 / 9}>
+                  <Image
+
+                    // onLoadStart={() => { console.log("load start"); setIsLoaded(false) }}
+                    onLoadEnd={() => {
+                      console.log("pic loaded: using online to save usage");
+                      setTimeout(() => {
+                        setIsLoaded(true)
+                      }, 5000 )
+                    }}
+                    source={{
+                      // uri: props.dog.item.profileImage,
+                      uri: "https://i.ytimg.com/vi/MPV2METPeJU/maxresdefault.jpg",
+                    }}
+                    alt="image"
+                  />
+
+
+                </AspectRatio>
+              </Skeleton>
+
             </Center>
             <Box w="55%" ml='3'>
               <Stack p="4" space={1}>
@@ -268,12 +283,12 @@ export default function DogCard(props) {
                       </Box>
                     </Box>
                   }
-                  {(props.dog.item.owner !== uid) &&
-                      <Box>
-                      <Report dog={props.dog.item}/>
-                      </Box>
+                  {(props.dog.item.owner !== uid && uid != "unknown") &&
+                    <Box>
+                      <Report dog={props.dog.item} />
+                    </Box>
                   }
-    
+
 
 
                 </VStack>
