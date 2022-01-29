@@ -71,7 +71,6 @@ export default function Main() {
     const [notification, setNotification] = useState(false);
     const notificationListener = useRef();
     const responseListener = useRef();
-    let userToken = useSelector((state) => state.user.pushToken);
 
     const dispatch = useDispatch()
 
@@ -79,20 +78,12 @@ export default function Main() {
 
         // If mobile
         if (Platform.OS !== 'web') {
-            if (userToken) {
-                dispatch(updatePushToken(userToken))
-            }
-            else {
-                registerForPushNotificationsAsync().then(token => {
-                    addUsertoZone(token)
-                    dispatch(updatePushToken(token))
-                }).catch((error) => {
-                    sendFireError(error.message, "MAIN.registerForPushNotificationsAsync")
-                });
-
-
-            }
-
+            registerForPushNotificationsAsync().then(token => {
+                addUsertoZone(token)
+                dispatch(updatePushToken(token))
+            }).catch((error) => {
+                sendFireError(error.message, "MAIN.registerForPushNotificationsAsync")
+            });
             notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
                 setNotification(notification);
                 dispatch(addNotification(notification))
