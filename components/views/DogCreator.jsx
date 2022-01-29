@@ -331,7 +331,7 @@ export default function DogCreator({ navigation }) {
                     <FormControl w='49%'>
                         <FormControl.Label
                             _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
-                            Privacy
+                            Visibility
                         </FormControl.Label>
                         <Select
                             selectedValue={visibility}
@@ -342,8 +342,8 @@ export default function DogCreator({ navigation }) {
                             }}
                             onValueChange={(value) => updateVisibility(value)}
                         >
-                            <Select.Item label="Neighborhood" value="n" />
-                            <Select.Item label="Emergencies" value="e" />
+                            <Select.Item label="Only Me" value="n" />
+                            <Select.Item label="My Neighborhood" value="e" />
 
                         </Select>
                     </FormControl>
@@ -352,7 +352,7 @@ export default function DogCreator({ navigation }) {
 
                 <FormControl>
                     <FormControl.HelperText>
-                        {locationHelper}
+                        {/* {locationHelper} */}
                     </FormControl.HelperText>
                     <Button mt="4" colorScheme="indigo" _text={{ color: 'white' }} shadow="7" onPress={getLocation}  > Set as Home </Button>
 

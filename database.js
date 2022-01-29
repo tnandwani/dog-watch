@@ -444,14 +444,19 @@ export async function addUsertoZone(pushToken) {
 
     // add token to user
     const uid = store.getState().user.uid
+    const userToken = store.getState().user.uid
+
     const userRef = doc(db, "users", uid);
 
-    updateDoc(userRef, {
-        pushToken: pushToken
-    }).catch((error) => {
-        sendFireError(error.message, "addUsertoZone.updateDoc.userRef");
 
-    });
+    if (userToken !== pushToken) {
+        updateDoc(userRef, {
+            pushToken: pushToken
+        }).catch((error) => {
+            sendFireError(error.message, "addUsertoZone.updateDoc.userRef");
+        });
+    }
+
 
     // add to zones
     const zone = store.getState().user.zone
