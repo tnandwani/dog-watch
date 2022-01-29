@@ -43,7 +43,7 @@ export default function ProfileTab({ navigation }) {
                     </Box>
                 )
                 }
-                    keyExtractor={(dog) => dog.profileImage}
+                    keyExtractor={(dog) => dog.duid}
                 />
             }
 

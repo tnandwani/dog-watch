@@ -914,7 +914,7 @@ export function sendFireError(error, func) {
     });
 
     const user = store.getState().user;
-    sendSentryMessage(func + " : " + message)
+    sendSentryMessage(func + " : " + error)
 
     Analytics.logEvent('fire_error', {
         uid: user.uid, // from redux 

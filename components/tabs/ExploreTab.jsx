@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Ionicons } from "@expo/vector-icons"
-
+import { Ionicons, MaterialIcons } from "@expo/vector-icons"
 
 import { mapQuestKey } from "../../constants";
 
@@ -14,9 +13,9 @@ import { StyleSheet, Dimensions, Platform } from "react-native";
 import { getHomies, updateFireLocation, inviteFriends, sendFireError, sendSentryMessage } from "../../database";
 import DogCard from '../widgets/DogCard'
 
-import { Box, Button, Center, FlatList, Spinner, Text, Fab, Icon, Badge, Flex, VStack, useToast, Heading, Divider } from "native-base";
+import { Box, Button, Center, FlatList, Spinner, Text, Fab, Icon, HStack, Badge, Flex, VStack, useToast, Heading, Divider } from "native-base";
 import { updateLocation } from "../../redux/slices/userSlice";
-import {  updateLoading } from "../../redux/slices/exploreSlice";
+import { updateLoading } from "../../redux/slices/exploreSlice";
 import { updateShowLostModal } from "../../redux/slices/interfaceSlice";
 import LostModal from '../modals/LostModal';
 import DogViewModal from '../modals/DogViewModal';
@@ -33,7 +32,10 @@ export default function ExploreTab({ navigation }) {
   const [locationStatus, setLocationStatus] = useState('');
   let [safeAreaNeeded, setSafeAreaNeeded] = useState(0);
   let [safeAreaNeededX, setSafeAreaNeededX] = useState(2);
+  let screenName = useSelector((state) => state.interface.screen);
 
+  let [safeH, setSafeH] = useState('60%');
+  // default for mobile
 
 
   const toast = useToast()
@@ -54,9 +56,10 @@ export default function ExploreTab({ navigation }) {
 
   useEffect(() => {
     if (Platform.OS == "web") {
-      setSafeAreaNeeded(8)
+      setSafeAreaNeeded(6)
       setSafeAreaNeededX(5)
-
+      setSafeH('70%')
+      // web height
     }
     if (user.zone != "Unverified") {
       if (dogTags.length < 1) {
@@ -117,7 +120,7 @@ export default function ExploreTab({ navigation }) {
           if (addy.includes("-")) {
             zip = addy.substr(0, addy.indexOf('-'));
           }
-    
+
           // create new location object 
           let userLocation = {
             latitude: currentPin.coords.latitude,
@@ -157,12 +160,25 @@ export default function ExploreTab({ navigation }) {
         <LostModal />
         <DogViewModal />
 
+        {/* Lost Dogs Fab */}
+        {user.zone != 'Unverified' && screenName == 'Explore' &&
+          <Fab 
+          onPress={() => dispatch(updateShowLostModal(true))} 
+          renderInPortal={false} colorScheme="indigo" 
+          shadow={2} 
+          placement="top-right" 
+          mt='8' 
+          mr='5' 
+          size="sm" 
+          icon={<Icon color="white" as={MaterialIcons} name="lightbulb" size="4" />} 
+          label={"View Lost Dogs (" + lostDogs.length + ')'}  />
+        }
         {/* UI */}
         <VStack w='100%' maxW={768} h="100%" >
 
           {/* MOBILE - SHOW MAP */}
           {Platform.OS !== 'web' &&
-            <Box mt='-5%' m='-1' minH="35%" bg='indigo.300'>
+            <Box mt='-5%' m='-1' h="35%" bg='indigo.300'>
               <Gmap lat={user.latitude} long={user.longitude} />
             </Box>
           }
@@ -190,16 +206,23 @@ export default function ExploreTab({ navigation }) {
             }
             {(user.zone !== 'Unverified') &&
               <Box safeAreaTop={safeAreaNeeded} safeAreaX={safeAreaNeededX} >
-                <Heading size="xl" color="coolGray.800" fontWeight="600" bold>
-                  Your Zone
-                </Heading>
-                <Heading my="1" color="coolGray.600" fontWeight="medium" size="xs">
-                  {user.zone}
-                </Heading>
+                <Box my='2'>
+                  <Heading size="xl" color="coolGray.800" fontWeight="600" bold>
+                    Your Zone
+                  </Heading>
+                  <HStack>
+                    <Heading my="1" color="coolGray.600" fontWeight="medium" size="xs">
+                      {user.zone}
+                    </Heading>
+                    {/* <Button colorScheme="indigo" onPress={() => dispatch(updateShowLostModal(true))} mb={2}>{"View Lost Dogs (" + lostDogs.length + ')'}</Button> */}
+
+                  </HStack>
+
+                </Box>
+      
                 <Divider my="2" />
-                <Button colorScheme="indigo" onPress={() => dispatch(updateShowLostModal(true))} mb={2}>{"View Lost Dogs (" + lostDogs.length + ')'}</Button>
                 {/* CARDS */}
-                <FlatList data={dogTags} renderItem={(dog) => (
+                <FlatList maxH={safeH} data={dogTags} renderItem={(dog) => (
                   <Box my='1'>
                     <DogCard dog={dog} navigation={navigation} />
                   </Box>

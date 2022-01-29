@@ -80,10 +80,9 @@ export default function DogCreator({ navigation }) {
     const [locationStatus, setLocationStatus] = useState("No Location Recieved");
     const [locationHelper, setLocationHelper] = useState("Visibility based on privacy");
 
-
     const dispatch = useDispatch()
 
-
+    // redux updaters
     const updateName = (n) => {
         setDogName(n);
         dispatch(saveDogName(n));
@@ -100,7 +99,6 @@ export default function DogCreator({ navigation }) {
         setGender(g);
         dispatch(saveDogGender(g));
     }
-
     const updateVisibility = (g) => {
         setVisibility(g);
         if (g == 'n') {
@@ -113,13 +111,11 @@ export default function DogCreator({ navigation }) {
         dispatch(saveVisibility(g));
     }
 
-
-
+    // UI functions
     const cancelCreate = () => {
         Analytics.logEvent('create_dog_canceled', uAnalytics())
         navigation.goBack()
     }
-
     const pickImage = async () => {
         if (Platform.OS !== 'web') {
             const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -145,7 +141,6 @@ export default function DogCreator({ navigation }) {
 
         }
     };
-
     const getLocation = () => {
 
         (async () => {
@@ -241,7 +236,7 @@ export default function DogCreator({ navigation }) {
 
 
     return (
-        <Box safeArea flex={1} p="2" w="90%" mx="auto" py="8" maxW='768'>
+        <Box safeAreaTop flex={1} p="2" w="90%" mx="auto" pt="8" maxW='768'>
             <Heading size="lg" color="coolGray.800" fontWeight="600">
                 Lets get started!
             </Heading>
