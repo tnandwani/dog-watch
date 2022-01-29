@@ -12,7 +12,7 @@ const detaultState = {
   gender: null,
   age: null,
   visibility: null,
-  profileImage: "https://freesvg.org/img/Dog-Leash.png",
+  profileImage: "https://cdn.pixabay.com/photo/2013/11/28/11/31/dog-220273_960_720.jpg",
   latitude: null,
   longitude: null,
   zone: "Unverified",

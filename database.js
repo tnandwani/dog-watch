@@ -526,7 +526,7 @@ export async function startPublish(imageURI, navigation) {
 
 
     // no pic selected 
-    if (imageURI != 'https://freesvg.org/img/Dog-Leash.png') {
+    if (imageURI != 'https://cdn.pixabay.com/photo/2013/11/28/11/31/dog-220273_960_720.jpg') {
         // convert image to blob
         const blob = await new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
