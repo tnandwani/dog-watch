@@ -188,12 +188,10 @@ export default function DogCard(props) {
 
                 <AspectRatio w="115%" ratio={9 / 9}>
                   <Image
-
-                    // onLoadStart={() => { console.log("load start"); setIsLoaded(false) }}
                 
                     source={{
-                      uri: imageURL,
-                      // uri: "https://i.ytimg.com/vi/MPV2METPeJU/maxresdefault.jpg",
+                      // uri: imageURL,
+                      uri: "https://i.ytimg.com/vi/MPV2METPeJU/maxresdefault.jpg",
                     }}
                     onLoad={() => setIsLoaded(true)}
                     alt="image"
