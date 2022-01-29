@@ -507,7 +507,6 @@ export async function updateFireLocation(location) {
     if (pushToken) {
         addUsertoZone(pushToken, location);
         Analytics.logEvent('Added_Token_to_Zone', uAnalytics())
-
     }
 
 }

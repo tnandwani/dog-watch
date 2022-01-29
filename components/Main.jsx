@@ -7,7 +7,6 @@ import { useSelector, useDispatch } from "react-redux";
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 // TABS 
-const Tab = createBottomTabNavigator();
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ExploreTab from './tabs/ExploreTab'
 import ProfileTab from './tabs/ProfileTab'
@@ -21,6 +20,10 @@ import * as Notifications from 'expo-notifications';
 import { updatePushToken } from '../redux/slices/exploreSlice';
 import { addNotification } from '../redux/slices/userSlice';
 import { setTabScreen } from '../redux/slices/interfaceSlice';
+
+
+const Tab = createBottomTabNavigator();
+
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
