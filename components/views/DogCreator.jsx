@@ -66,7 +66,7 @@ export default function DogCreator({ navigation }) {
     const [breed, setBreed] = useState(null);
     const [age, setAge] = useState(null);
     const [gender, setGender] = useState(null);
-    const [profileImage, setProfileImage] = useState("https://cdn.pixabay.com/photo/2013/11/28/11/31/dog-220273_960_720.jpg");
+    const [profileImage, setProfileImage] = useState(useSelector((state) => state.rawDog.profileImage));
 
     // owner
     // const [contact, setContact] = useState();

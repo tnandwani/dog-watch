@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Image,Keyboard } from "react-native";
+import { Image,  Keyboard } from "react-native";
 import Report from "./Report";
 import {
   Box,
