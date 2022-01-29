@@ -186,8 +186,8 @@ export default function DogCard(props) {
                     onLoad={() => setIsLoaded(true)}
                     w='100%'
                     source={{
-                      uri: props.dog.item.profileImage,
-                      // uri: "https://i.ytimg.com/vi/MPV2METPeJU/maxresdefault.jpg",
+                      // uri: props.dog.item.profileImage,
+                      uri: "https://i.ytimg.com/vi/MPV2METPeJU/maxresdefault.jpg",
                     }}
                     alt="image"
                   />
