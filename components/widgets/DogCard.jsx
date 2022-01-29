@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Keyboard } from "react-native";
+import { Image,Keyboard } from "react-native";
 import Report from "./Report";
 import {
   Box,
@@ -8,7 +8,6 @@ import {
   AspectRatio,
   Text,
   Pressable,
-  Image,
   Center,
   Skeleton,
   Stack,
@@ -39,15 +38,10 @@ export default function DogCard(props) {
   const [message, setMessage] = useState();
   let uid = useSelector((state) => state.user.uid);
   let dogView = useSelector((state) => state.explore.dogView);
-  const [imageURL, setImageURL] = useState("https://freesvg.org/img/Dog-Leash.png");
 
   useEffect(() => {
     // dog card loaded
-    if (props.dog.item.profileImage!== "https://freesvg.org/img/Dog-Leash.png") {
-      console.log("not default")
-      console.log(props.dog.item.profileImage)
-      setImageURL(props.dog.item.profileImage)
-    }
+
   }, []);
 
 
@@ -192,7 +186,7 @@ export default function DogCard(props) {
                     onLoad={() => setIsLoaded(true)}
                     w='100%'
                     source={{
-                      uri: imageURL,
+                      uri: props.dog.item.profileImage,
                       // uri: "https://i.ytimg.com/vi/MPV2METPeJU/maxresdefault.jpg",
                     }}
                     alt="image"

@@ -19,18 +19,8 @@ export default function RawDogCard(props) {
     let breed = useSelector((state) => state.rawDog.breed)
     let age = useSelector((state) => state.rawDog.age)
     let zone = useSelector((state) => state.rawDog.zone)
-    const [imageURL, setImageURL] = useState(require('./default-dog.png'));
-
-
     const [isLoaded, setIsLoaded] = useState(false);
 
-    useEffect(() => {
-        // dog card loaded
-        if (props.image !== "https://freesvg.org/img/Dog-Leash.png") {
-            console.log("not default")
-            setImageURL(props.image)
-        }
-    }, []);
 
    
 
@@ -62,7 +52,7 @@ export default function RawDogCard(props) {
                                 <Image
 
                                     source={{
-                                        uri: imageURL,
+                                        uri: props.image,
                                     }}
                                     onLoad={() => setIsLoaded(true)}
 
