@@ -58,7 +58,7 @@ export default function ExploreTab({ navigation }) {
     if (Platform.OS == "web") {
       setSafeAreaNeeded(6)
       setSafeAreaNeededX(5)
-      setSafeH('80%')
+      setSafeH('75%')
       // web height
     }
 
