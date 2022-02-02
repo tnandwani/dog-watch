@@ -19,8 +19,9 @@ import {
     saveUserDetails,
     signInAccount,
     markLostDog,
-    changeDogInUser,
-    removeDogfromUser
+    removeDogfromUser,
+    updateLocation,
+    changeDogInUser
 } from "./redux/slices/userSlice";
 import {
     createDUID,
@@ -46,6 +47,7 @@ import {
 // auth 
 import {
     getAuth,
+    signInAnonymously,
     onAuthStateChanged,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
@@ -119,22 +121,29 @@ onAuthStateChanged(auth, user => {
         const email = user.email;
         const device = store.getState().device;
 
+        if (!email) {
+            store.dispatch(signInAccount({
+                uid
+            }))
+            store.dispatch(changeStatus('new'))
 
+        } else {
+            store.dispatch(signInAccount({
+                email,
+                uid
+            }))
+            getUserDetails(uid);
 
-        store.dispatch(signInAccount({
-            email,
-            uid
-        }))
+        }
 
-
-
-        getUserDetails(uid);
 
         Analytics.setUserId(uid);
         Analytics.logEvent('auto_logged_in')
 
     } else {
         store.dispatch(changeStatus('new'))
+
+
         // if (store.getState().user.device !== 'web') {
         //     Analytics.resetAnalyticsData();
         // }
@@ -189,6 +198,23 @@ export function fLogEvent(name) {
 
 //////////////////// USER AUTH FUNCTIONS 
 
+export async function signAnon() {
+
+    signInAnonymously(auth)
+        .then(() => {
+            console.log("success");
+            store.dispatch(changeStatus('new'))
+
+            // Signed in..
+        })
+        .catch((error) => {
+            console.log("failed");
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // ...
+        });
+}
+0
 export function signOutUser() {
     const {
         email,
@@ -210,6 +236,7 @@ export function signOutUser() {
 }
 
 export function createUserAccount(email, password, confirm) {
+    signOut(auth);
     if (password === confirm) {
         // FIREBASE
         createUserWithEmailAndPassword(auth, email, password)
@@ -262,6 +289,7 @@ export async function createUserDoc(email, uid) {
 export function signInUser(email, password) {
 
     const uid = "attempting-user";
+    signOut(auth);
 
     signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
@@ -278,6 +306,8 @@ export function signInUser(email, password) {
 }
 
 export async function getUserDetails(uid) {
+
+    getMyHomies(uid);
 
     const docRef = doc(db, "users", uid);
     const docSnap = await getDoc(docRef);
@@ -390,6 +420,17 @@ export async function compareTask(lat, long) {
     return bubbleArray;
 }
 
+export async function getMyHomies(uid) {
+    const dogsRef = collection(db, "dogs");
+
+    const userQ = query(dogsRef, where("owner", "==", uid));
+    const myDogs = await getDocs(userQ);
+
+    myDogs.forEach((doc) => {
+        store.dispatch(saveDogCards(doc.data()))
+    });
+
+}
 export async function getHomies() {
 
     Analytics.logEvent('getting_homies_start', uAnalytics())
@@ -418,9 +459,9 @@ export async function getHomies() {
         homiesArray.forEach((dog) => {
 
             // get my dogs 
-            if (dog.owner == uid) {
-                store.dispatch(saveDogCards(dog))
-            }
+            // if (dog.owner == uid) {
+            //     store.dispatch(saveDogCards(dog))
+            // }
             // if not reported by user
             if (!dog.reported.includes(uid)) {
                 // get visible dogs
@@ -575,6 +616,22 @@ export async function startPublish(imageURI, navigation) {
                         store.dispatch(saveDogCards(readyDog))
                         // post new dog list + update coords
                         const userRef = doc(db, "users", uid);
+
+                          if (store.getState().user.zone != readyDog.zone) {
+                           store.dispatch(updateLocation({
+                               zone: readyDog.zone,
+                               longitude: readyDog.longitude,
+                               latitude: readyDog.latitude,
+                           }))
+                           getHomies();
+
+                       } else {
+                           store.dispatch(updateLocation({
+                               zone: readyDog.zone,
+                               longitude: readyDog.longitude,
+                               latitude: readyDog.latitude,
+                           }))
+                       }
                         updateDoc(userRef, {
                             dogs: arrayUnion(duid),
                             zone: readyDog.zone,
@@ -629,6 +686,26 @@ export async function startPublish(imageURI, navigation) {
                 store.dispatch(saveDogCards(readyDog))
                 // post new dog list + update coords
                 const userRef = doc(db, "users", uid);
+
+                          if (store.getState().user.zone != readyDog.zone) {
+                    store.dispatch(updateLocation({
+                        zone: readyDog.zone,
+                        longitude: readyDog.longitude,
+                        latitude: readyDog.latitude,
+                    }))
+                    getHomies();
+
+                } else {
+                    store.dispatch(updateLocation({
+                        zone: readyDog.zone,
+                        longitude: readyDog.longitude,
+                        latitude: readyDog.latitude,
+                    }))
+                }
+
+
+
+                getHomies();
                 updateDoc(userRef, {
                     dogs: arrayUnion(duid),
                     zone: readyDog.zone,
@@ -669,19 +746,20 @@ export async function editPublish(imageURI, navigation) {
     // create dog duid 
     const duid = store.getState().rawDog.duid
 
+    const readyDog = store.getState().rawDog
+    store.dispatch(changeDogInUser(readyDog))
 
     // check if image uploaded 
 
     if (imageURI.includes("firebasestorage")) {
         // no new picture
-        const readyDog = store.getState().rawDog
+
         // upload readyDog to dogs/
 
         setDoc(doc(db, "dogs", duid), readyDog)
             .then((resp) => {
                 Analytics.logEvent('Edited_dog_doc', uAnalytics())
                 // add readyDog to user.dogs redux 
-                store.dispatch(changeDogInUser(readyDog))
                 // post new dog list + update coords
                 const userRef = doc(db, "users", uid);
                 updateDoc(userRef, {
@@ -690,6 +768,21 @@ export async function editPublish(imageURI, navigation) {
                     latitude: readyDog.latitude,
                 }).then((resp) => {
                     Analytics.logEvent('Edit_dog_finish', uAnalytics)
+                          if (store.getState().user.zone != readyDog.zone) {
+                      store.dispatch(updateLocation({
+                          zone: readyDog.zone,
+                          longitude: readyDog.longitude,
+                          latitude: readyDog.latitude,
+                      }))
+                      getHomies();
+
+                  } else {
+                      store.dispatch(updateLocation({
+                          zone: readyDog.zone,
+                          longitude: readyDog.longitude,
+                          latitude: readyDog.latitude,
+                      }))
+                  }
                     navigation.navigate('Profile')
                 }).catch((error) => {
                     sendFireError(error.message, "editPublish.noimage.setDoc.duid");
@@ -729,24 +822,36 @@ export async function editPublish(imageURI, navigation) {
                 const readyDog = store.getState().rawDog
                 // upload readyDog to dogs/
 
+
+
                 setDoc(doc(db, "dogs", duid), readyDog)
                     .then((resp) => {
                         Analytics.logEvent('Edited_dog_doc_wPhoto', uAnalytics)
-                        // add readyDog to user.dogs redux 
-                        store.dispatch(changeDogInUser(readyDog))
-
-                        // get list with new dog
-                        const newList = store.getState().user.dogs
 
                         // post new dog list + update coords
                         const userRef = doc(db, "users", uid);
                         updateDoc(userRef, {
-                            dogs: newList,
                             zone: readyDog.zone,
                             longitude: readyDog.longitude,
                             latitude: readyDog.latitude,
                         }).then((resp) => {
                             Analytics.logEvent('Edited_dog_finish_wPhoto', uAnalytics())
+                            // updateFire Loca
+                          if (store.getState().user.zone != readyDog.zone) {
+                              store.dispatch(updateLocation({
+                                  zone: readyDog.zone,
+                                  longitude: readyDog.longitude,
+                                  latitude: readyDog.latitude,
+                              }))
+                              getHomies();
+
+                          } else {
+                              store.dispatch(updateLocation({
+                                  zone: readyDog.zone,
+                                  longitude: readyDog.longitude,
+                                  latitude: readyDog.latitude,
+                              }))
+                          }
 
                             navigation.navigate('Profile')
 

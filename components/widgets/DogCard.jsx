@@ -37,6 +37,8 @@ export default function DogCard(props) {
   const [EContact, setEContact] = useState();
   const [message, setMessage] = useState();
   let uid = useSelector((state) => state.user.uid);
+  let email = useSelector((state) => state.user.email);
+
   let dogView = useSelector((state) => state.explore.dogView);
 
   useEffect(() => {
@@ -186,8 +188,8 @@ export default function DogCard(props) {
                     onLoad={() => setIsLoaded(true)}
                     w='100%'
                     source={{
-                      // uri: props.dog.item.profileImage,
-                      uri: "https://i.ytimg.com/vi/MPV2METPeJU/maxresdefault.jpg",
+                      uri: props.dog.item.profileImage,
+                      // uri: "https://i.ytimg.com/vi/MPV2METPeJU/maxresdefault.jpg",
                     }}
                     alt="image"
                   />
@@ -278,7 +280,7 @@ export default function DogCard(props) {
                       </Box>
                     </Box>
                   }
-                  {(props.dog.item.owner !== uid && uid != "unknown") &&
+                  {(props.dog.item.owner !== uid && email) &&
                     <Box>
                       <Report dog={props.dog.item} />
                     </Box>

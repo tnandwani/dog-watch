@@ -2,6 +2,10 @@ import {
   createSlice
 } from '@reduxjs/toolkit'
 
+import {
+  getHomies
+} from '../../database';
+
 export const userSlice = createSlice({
   name: 'user',
   initialState: {
@@ -47,9 +51,18 @@ export const userSlice = createSlice({
       state.dogs[action.payload.index].contact = action.payload.EContact
     },
     updateLocation: (state, action) => {
-      state.zone = action.payload.zone
-      state.latitude = action.payload.latitude
-      state.longitude = action.payload.longitude
+
+      if (state.zone == 'Unverified' && action.payload.zone != 'Unverified' && typeof action.payload.zone == 'string') {
+        // first time getting zone
+        state.zone = action.payload.zone
+        state.latitude = action.payload.latitude
+        state.longitude = action.payload.longitude
+      } else {
+        state.zone = action.payload.zone
+        state.latitude = action.payload.latitude
+        state.longitude = action.payload.longitude
+      }
+
 
     },
     addNotification: (state, action) => {

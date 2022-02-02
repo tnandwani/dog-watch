@@ -10,7 +10,7 @@ import * as Location from 'expo-location';
 
 
 import { StyleSheet, Dimensions, Platform } from "react-native";
-import { getHomies, updateFireLocation, inviteFriends, sendFireError, sendSentryMessage } from "../../database";
+import { getHomies, updateFireLocation, inviteFriends, sendFireError, sendSentryMessage, signAnon} from "../../database";
 import DogCard from '../widgets/DogCard'
 
 import { Box, Button, Center, FlatList, Spinner, Text, Fab, Icon, HStack, Badge, Flex, VStack, useToast, Heading, Divider } from "native-base";
@@ -58,17 +58,31 @@ export default function ExploreTab({ navigation }) {
     if (Platform.OS == "web") {
       setSafeAreaNeeded(6)
       setSafeAreaNeededX(5)
-      setSafeH('70%')
+      setSafeH('80%')
       // web height
     }
-    if (user.zone != "Unverified") {
-      if (dogTags.length < 1) {
-        getHomies(user.latitude, user.longitude);
-      }
+
+    // 
+    if (user.uid === 'unknown') {
+      console.log('anon here');
+      signAnon();
     }
     else {
-      dispatch(updateLoading(false));
+      // if zone exists
+      if (user.zone != "Unverified") {
+        // if no cards loaded 
+        if (dogTags.length < 1) {
+          getHomies();
+
+        }
+      }
+      // show join neighborood splash
+      else {
+        dispatch(updateLoading(false));
+      }
     }
+
+ 
   }, []);
 
 
@@ -162,16 +176,16 @@ export default function ExploreTab({ navigation }) {
 
         {/* Lost Dogs Fab */}
         {user.zone != 'Unverified' && screenName == 'Explore' &&
-          <Fab 
-          onPress={() => dispatch(updateShowLostModal(true))} 
-          renderInPortal={false} colorScheme="indigo" 
-          shadow={2} 
-          placement="top-right" 
-          mt='8' 
-          mr='5' 
-          size="sm" 
-          icon={<Icon color="white" as={MaterialIcons} name="lightbulb" size="4" />} 
-          label={"View Lost Dogs (" + lostDogs.length + ')'}  />
+          <Fab
+            onPress={() => dispatch(updateShowLostModal(true))}
+            renderInPortal={false} colorScheme="indigo"
+            shadow={2}
+            placement="top-right"
+            mt='8'
+            mr='5'
+            size="sm"
+            icon={<Icon color="white" as={MaterialIcons} name="lightbulb" size="4" />}
+            label={"View Lost Dogs (" + lostDogs.length + ')'} />
         }
         {/* UI */}
         <VStack w='100%' maxW={768} h="100%" >
@@ -219,7 +233,7 @@ export default function ExploreTab({ navigation }) {
                   </HStack>
 
                 </Box>
-      
+
                 <Divider my="2" />
                 {/* CARDS */}
                 <FlatList maxH={safeH} data={dogTags} renderItem={(dog) => (

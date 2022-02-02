@@ -29,6 +29,7 @@ import {
     HStack,
     FormControl,
     Input,
+    Popover,
     Button,
     Select,
     CheckIcon,
@@ -81,6 +82,7 @@ export default function DogCreator({ navigation }) {
     const [locationHelper, setLocationHelper] = useState("Visibility based on privacy");
 
     const dispatch = useDispatch()
+    const initialFocusRef = React.useRef(null)
 
     // redux updaters
     const updateName = (n) => {
@@ -193,7 +195,7 @@ export default function DogCreator({ navigation }) {
                         zip = addy.substr(0, addy.indexOf('-'));
                     }
 
-                    
+
 
                     // create new location object 
                     let userLocation = {
@@ -342,8 +344,8 @@ export default function DogCreator({ navigation }) {
                             }}
                             onValueChange={(value) => updateVisibility(value)}
                         >
-                            <Select.Item label="Only Me" value="n" />
-                            <Select.Item label="My Neighborhood" value="e" />
+                            <Select.Item label="Only Me" value="e" />
+                            <Select.Item label="My Neighborhood" value="n" />
 
                         </Select>
                     </FormControl>
@@ -381,13 +383,37 @@ export default function DogCreator({ navigation }) {
                         Cancel
                     </Button>
                     {editing &&
-                        <Button variant="outline" colorScheme="red" onPress={() => deleteDog(duid, uid, navigation)}>
-                            Delete Dog
-                        </Button>
+                        <Popover
+                            placement="top"
+                            initialFocusRef={initialFocusRef}
+                            trigger={(triggerProps) => {
+                                return (<Button  {...triggerProps} variant="outline" colorScheme="red" >
+                                    Delete Dog
+                                </Button>
+                                )
+                            }}
+                        >
+                            <Popover.Content width="56">
+                                <Popover.Arrow />
+                                <Popover.CloseButton />
+                                {/* @ts-ignore */}
+                                <Popover.Header>Are you sure?</Popover.Header>
+                                <Popover.Body>Dog will be deleted permanently. You will need to recreate them if needed.</Popover.Body>
+
+                                <Popover.Footer>
+                                    <Button.Group>
+                                        <Button
+                                            onPress={() => deleteDog(duid, uid, navigation)}
+                                            variant='outline' colorScheme="red">Confirm</Button>
+                                    </Button.Group>
+                                </Popover.Footer>
+                            </Popover.Content>
+                        </Popover>
+
                     }
                     {editing &&
                         <Button colorScheme="indigo" onPress={() => navigation.navigate("Personality")}>
-                            Edit Personality
+                            Next
                         </Button>
                     }
                     {!editing &&
