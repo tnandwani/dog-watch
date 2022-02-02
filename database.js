@@ -274,7 +274,8 @@ export async function createUserDoc(email, uid) {
             email: email,
             zone: "Unverified",
             dogs: [],
-            reported: []
+            reported: [],
+            created: new Date().toUTCString()
         });
 
         store.dispatch(changeStatus('returning'))
@@ -453,8 +454,6 @@ export async function getHomies() {
         }
     });
     if (homiesArray.length > 0) {
-
-
         // got all dogs in zone 
         homiesArray.forEach((dog) => {
 

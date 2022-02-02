@@ -344,8 +344,8 @@ export default function DogCreator({ navigation }) {
                             }}
                             onValueChange={(value) => updateVisibility(value)}
                         >
-                            <Select.Item label="Only Me" value="e" />
                             <Select.Item label="My Neighborhood" value="n" />
+                            <Select.Item label="Only Me" value="e" />
 
                         </Select>
                     </FormControl>

@@ -6,6 +6,7 @@ import {
 const detaultState = {
   dogName: 'Dog Name',
   editing: false,
+  updated: null,
   duid: null,
   breed: null,
   lost: false,
@@ -68,6 +69,7 @@ export const rawDogSlice = createSlice({
     },
     // personality 
     savePersonality: (state, action) => {
+      state.updated = new Date().toUTCString()
       state.personality = action.payload
     },
     createDUID: (state, action) => {
