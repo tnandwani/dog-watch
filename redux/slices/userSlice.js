@@ -11,6 +11,7 @@ export const userSlice = createSlice({
   initialState: {
     email: null,
     uid: 'unknown',
+    created: null,
     device: 'unknown',
     latitude: null,
     longitude: null,
@@ -28,8 +29,10 @@ export const userSlice = createSlice({
       state.uid = action.payload.uid
     },
     saveUserDetails: (state, action) => {
+
       state.email = action.payload.email
       state.uid = action.payload.uid
+      state.created = time
       state.zone = action.payload.zone
       state.latitude = action.payload.latitude
       state.longitude = action.payload.longitude
