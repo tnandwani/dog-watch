@@ -81,19 +81,17 @@ export default function Personality({ navigation }) {
     return (
         <Box safeArea flex={1} p="2" w="90%" mx="auto" py="8" maxW='768'>
             <Heading size="lg" color="coolGray.800" fontWeight="600">
-                Tell us more about your friend...
-            </Heading>
-            <Heading mt="1" color="coolGray.600" fontWeight="medium" size="xs">
                 Keep everyone safe! Be honest
             </Heading>
+   
 
-            <VStack space={3} mt="5">
+            <VStack space={2} mt="3">
 
-                <FormControl mb='2'>
+                <FormControl >
 
                     <FormControl.Label
                         _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
-                        Any specific we should know? Did we miss anything?
+                        Did we miss anything? Tell us more!
                     </FormControl.Label>
                     <TextArea
                         h={20}
@@ -245,7 +243,7 @@ export default function Personality({ navigation }) {
             <Center flex={1} >
 
 
-                <HStack space={2} mt='3'>
+                <HStack space={2} mt='1'>
                     <Button variant="outline" colorScheme="indigo" onPress={() => navigation.goBack()}>
                         Back
                     </Button>
