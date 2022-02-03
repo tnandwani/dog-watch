@@ -325,7 +325,7 @@ export default function DogCreator({ navigation }) {
                                 endIcon: <CheckIcon size="5" />,
                             }}
                             onValueChange={(value) => updateAge(value)}
-                        >
+                        > 
                             {ageSelects}
                         </Select>
                     </FormControl>
@@ -333,7 +333,7 @@ export default function DogCreator({ navigation }) {
                     <FormControl w='49%'>
                         <FormControl.Label
                             _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
-                            Visibility
+                            Dog Visibility
                         </FormControl.Label>
                         <Select
                             selectedValue={visibility}

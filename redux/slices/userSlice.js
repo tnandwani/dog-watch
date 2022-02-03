@@ -32,7 +32,7 @@ export const userSlice = createSlice({
 
       state.email = action.payload.email
       state.uid = action.payload.uid
-      state.created = time
+      state.created = action.payload.created
       state.zone = action.payload.zone
       state.latitude = action.payload.latitude
       state.longitude = action.payload.longitude

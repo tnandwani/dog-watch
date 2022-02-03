@@ -145,9 +145,11 @@ export default function ExploreTab({ navigation }) {
           // save state and update UI
           // save state and update UI
           setLocationStatus("Location Received");
-          updateFireLocation(userLocation);
+          if (user.status  == 'returning'){
+            updateFireLocation(userLocation);
+          }
           dispatch(updateLocation(userLocation));
-          getHomies(userLocation.latitude, userLocation.longitude);
+          getHomies();
 
         }).catch((error) => {
           sendFireError(error, "EXPLORETAB.fetch.data");
