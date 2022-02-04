@@ -34,7 +34,7 @@ export default function ExploreTab({ navigation }) {
   let [safeAreaNeededX, setSafeAreaNeededX] = useState(2);
   let screenName = useSelector((state) => state.interface.screen);
 
-  let [safeH, setSafeH] = useState('60%');
+  let [safeH, setSafeH] = useState('65%');
   // default for mobile
 
 
