@@ -1,8 +1,11 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import { Button, Stack, Icon, Center, Heading } from "native-base"
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 export default function Landing({ navigation }) {
+    useEffect(() => {
+    }, []);
+    console.log("LANDED OPENED");
 
     return (
 

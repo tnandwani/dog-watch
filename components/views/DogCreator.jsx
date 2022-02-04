@@ -189,7 +189,7 @@ export default function DogCreator({ navigation }) {
                 })
                 .then(data => {
                     const addy = data.results[0].locations[0].postalCode
-                    sendSentryMessage(JSON.stringify(addy))
+                    sendSentryMessage("Joined via Dog: " + JSON.stringify(addy))
                     let zip = addy
                     if (addy.includes("-")) {
                         zip = addy.substr(0, addy.indexOf('-'));

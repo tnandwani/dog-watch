@@ -66,6 +66,8 @@ export default function ExploreTab({ navigation }) {
     if (user.uid === 'unknown') {
       console.log('anon here');
       signAnon();
+      dispatch(updateLoading(false));
+
     }
     else {
       // if zone exists
@@ -128,7 +130,7 @@ export default function ExploreTab({ navigation }) {
           sendFireError(error, "EXPLORETAB.fetch.response");
         }).then(data => {
           const addy = data.results[0].locations[0].postalCode
-          sendSentryMessage(JSON.stringify(addy))
+          sendSentryMessage("Joined via Explore: " + JSON.stringify(addy))
 
           let zip = addy
           if (addy.includes("-")) {

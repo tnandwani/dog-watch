@@ -155,9 +155,15 @@ onAuthStateChanged(auth, user => {
 
 //////////////////// UI FUNCTIONS 
 export function setScreenAnalytics(screenName) {
+    if (screenName === "Landing") {
+        if (store.getState().user.uid != 'unknown') {
+            signOutUser();
+        }
+    }
     Analytics.setCurrentScreen(screenName);
 }
 export function sendFeedback(type, message) {
+
 
     const user = store.getState().user
 
@@ -176,7 +182,6 @@ export function sendFeedback(type, message) {
     }).then((result) => {
         Analytics.logEvent('feedback_sent', uAnalytics())
         // initialize analytics per user details
-        sendSentryMessage(type + message)
 
     }).catch((error) => {
         sendFireError(error.message, "sendFeedback.addDoc");
@@ -389,37 +394,6 @@ export function reportUser(reportedDog) {
 }
 
 //////////////////// ZONE FUNCTIONS 
-export async function compareTask(lat, long) {
-    Analytics.logEvent('got_homies_via_latlong', uAnalytics())
-
-    const dogsRef = collection(db, "dogs");
-    // create bubble zone query
-    const latQ = query(dogsRef, where("latitude", ">=", lat - 0.15), where("latitude", "<=", lat + 0.15));
-    const longQ = query(dogsRef, where("longitude", ">=", long - 0.15), where("longitude", "<=", long + 0.15));
-
-    const latSnapshot = await getDocs(latQ);
-    const longSnapshot = await getDocs(longQ);
-
-    let latArray = [];
-    let longArray = [];
-
-    latSnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        latArray.push(doc.data())
-    });
-
-    longSnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        longArray.push(doc.data())
-    });
-
-
-    const bubbleArray = latArray.filter(a => longArray.some(b => a.duid === b.duid));
-
-    store.dispatch(updateLoading(false));
-
-    return bubbleArray;
-}
 
 export async function getMyHomies(uid) {
     const dogsRef = collection(db, "dogs");
@@ -616,21 +590,21 @@ export async function startPublish(imageURI, navigation) {
                         // post new dog list + update coords
                         const userRef = doc(db, "users", uid);
 
-                          if (store.getState().user.zone != readyDog.zone) {
-                           store.dispatch(updateLocation({
-                               zone: readyDog.zone,
-                               longitude: readyDog.longitude,
-                               latitude: readyDog.latitude,
-                           }))
-                           getHomies();
+                        if (store.getState().user.zone != readyDog.zone) {
+                            store.dispatch(updateLocation({
+                                zone: readyDog.zone,
+                                longitude: readyDog.longitude,
+                                latitude: readyDog.latitude,
+                            }))
+                            getHomies();
 
-                       } else {
-                           store.dispatch(updateLocation({
-                               zone: readyDog.zone,
-                               longitude: readyDog.longitude,
-                               latitude: readyDog.latitude,
-                           }))
-                       }
+                        } else {
+                            store.dispatch(updateLocation({
+                                zone: readyDog.zone,
+                                longitude: readyDog.longitude,
+                                latitude: readyDog.latitude,
+                            }))
+                        }
                         updateDoc(userRef, {
                             dogs: arrayUnion(duid),
                             zone: readyDog.zone,
@@ -686,7 +660,7 @@ export async function startPublish(imageURI, navigation) {
                 // post new dog list + update coords
                 const userRef = doc(db, "users", uid);
 
-                          if (store.getState().user.zone != readyDog.zone) {
+                if (store.getState().user.zone != readyDog.zone) {
                     store.dispatch(updateLocation({
                         zone: readyDog.zone,
                         longitude: readyDog.longitude,
@@ -767,24 +741,24 @@ export async function editPublish(imageURI, navigation) {
                     latitude: readyDog.latitude,
                 }).then((resp) => {
                     Analytics.logEvent('Edit_dog_finish', uAnalytics)
-                          if (store.getState().user.zone != readyDog.zone) {
-                      store.dispatch(updateLocation({
-                          zone: readyDog.zone,
-                          longitude: readyDog.longitude,
-                          latitude: readyDog.latitude,
-                      }))
-                      getHomies();
+                    if (store.getState().user.zone != readyDog.zone) {
+                        store.dispatch(updateLocation({
+                            zone: readyDog.zone,
+                            longitude: readyDog.longitude,
+                            latitude: readyDog.latitude,
+                        }))
+                        getHomies();
 
-                  } else {
-                      store.dispatch(updateLocation({
-                          zone: readyDog.zone,
-                          longitude: readyDog.longitude,
-                          latitude: readyDog.latitude,
-                      }))
-                  }
+                    } else {
+                        store.dispatch(updateLocation({
+                            zone: readyDog.zone,
+                            longitude: readyDog.longitude,
+                            latitude: readyDog.latitude,
+                        }))
+                    }
                     navigation.navigate('Profile')
                 }).catch((error) => {
-                    sendFireError(error.message, "editPublish.noimage.setDoc.duid");
+                    sendFireError(error.message, "editPublish.noimage.setDoc.updateDoc");
                 })
             })
             .catch((error) => {
@@ -836,21 +810,21 @@ export async function editPublish(imageURI, navigation) {
                         }).then((resp) => {
                             Analytics.logEvent('Edited_dog_finish_wPhoto', uAnalytics())
                             // updateFire Loca
-                          if (store.getState().user.zone != readyDog.zone) {
-                              store.dispatch(updateLocation({
-                                  zone: readyDog.zone,
-                                  longitude: readyDog.longitude,
-                                  latitude: readyDog.latitude,
-                              }))
-                              getHomies();
+                            if (store.getState().user.zone != readyDog.zone) {
+                                store.dispatch(updateLocation({
+                                    zone: readyDog.zone,
+                                    longitude: readyDog.longitude,
+                                    latitude: readyDog.latitude,
+                                }))
+                                getHomies();
 
-                          } else {
-                              store.dispatch(updateLocation({
-                                  zone: readyDog.zone,
-                                  longitude: readyDog.longitude,
-                                  latitude: readyDog.latitude,
-                              }))
-                          }
+                            } else {
+                                store.dispatch(updateLocation({
+                                    zone: readyDog.zone,
+                                    longitude: readyDog.longitude,
+                                    latitude: readyDog.latitude,
+                                }))
+                            }
 
                             navigation.navigate('Profile')
 
@@ -1041,9 +1015,10 @@ export function uAnalytics() {
     })
 }
 
-export function sendSentryMessage(message) {
+export function sendSentryMessage(message, context) {
+    context = 'hello'
     if (Platform.OS === 'web') {
-        Sentry.Browser.captureMessage(message);
+        Sentry.Browser.captureMessage(message, context);
     } else {
         Sentry.Native.captureMessage(message)
     }
