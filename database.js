@@ -168,9 +168,9 @@ export function sendFeedback(type, message) {
     const user = store.getState().user
 
     if (type) {
-        type = "Suggestion: "
+        type = "Suggestion"
     } else {
-        type = "Issue: "
+        type = "Issue"
     }
 
     addDoc(collection(db, "feedback"), {
@@ -970,22 +970,6 @@ export function deleteDog(duid, uid, navigation) {
     });
 
 }
-
-
-export async function inviteFriends() {
-    const isAvailable = await SMS.isAvailableAsync();
-    if (isAvailable) {
-        // do your SMS stuff here
-        SMS.sendSMSAsync(
-            [],
-            'https://dogwatch.page.link/join'
-        );
-
-    } else {
-        alert("Invite copied to Clipboard")
-    }
-}
-
 
 export function sendFireError(error, func) {
 

@@ -75,7 +75,7 @@ export default function LostList() {
 					return Linking.openURL(phoneNumber);
 				}
 			})
-			.catch(err => sendFireError(err));
+			.catch(err => sendFireError(err, "Linking.error"));
 
 	};
 

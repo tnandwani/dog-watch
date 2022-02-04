@@ -9,8 +9,8 @@ import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 
 
-import { StyleSheet, Dimensions, Platform } from "react-native";
-import { getHomies, updateFireLocation, inviteFriends, sendFireError, sendSentryMessage, signAnon} from "../../database";
+import { StyleSheet, Dimensions, Platform, Share} from "react-native";
+import { getHomies, updateFireLocation, sendFireError, sendSentryMessage, signAnon} from "../../database";
 import DogCard from '../widgets/DogCard'
 
 import { Box, Button, Center, FlatList, Spinner, Text, Fab, Icon, HStack, Badge, Flex, VStack, useToast, Heading, Divider } from "native-base";
@@ -39,19 +39,25 @@ export default function ExploreTab({ navigation }) {
 
 
   const toast = useToast()
-  const sendInvite = () => {
-    if (Platform.OS === 'web') {
-
-      toast.show({
-        description: "Invite copied to Clipboard",
-        mb: '3'
-      })
+  const sendInvite = async () => {
+    try {
+      const result = await Share.share({
+        message: 'Dog Watch | A Community for dog owners',
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
     }
-    else {
-      inviteFriends()
-    }
+  };
 
-  }
   const dispatch = useDispatch();
 
   useEffect(() => {
