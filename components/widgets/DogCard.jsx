@@ -22,7 +22,7 @@ import {
 } from "native-base";
 
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { markLost, markFound, viewDog, reportUser } from "../../database";
+import { markLost, markFound, viewDog, reportUser, sendFireError } from "../../database";
 import { updateDogView, updateShowDogModal } from "../../redux/slices/exploreSlice";
 import { importDog } from "../../redux/slices/rawDogSlice";
 
@@ -36,6 +36,8 @@ export default function DogCard(props) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [EContact, setEContact] = useState();
   const [message, setMessage] = useState();
+  const [profileImage, setProfileImage] = useState(props.dog.item.profileImage);
+
   let uid = useSelector((state) => state.user.uid);
   let email = useSelector((state) => state.user.email);
 
@@ -185,10 +187,11 @@ export default function DogCard(props) {
 
                 <AspectRatio w="115%" ratio={9 / 9}>
                   <Image
-                    onLoad={() => setIsLoaded(true)}
+                    fai
+                    onLoadEnd={() => setIsLoaded(true)}
                     w='100%'
                     source={{
-                      uri: props.dog.item.profileImage,
+                      uri: profileImage,
                       // uri: "https://i.ytimg.com/vi/MPV2METPeJU/maxresdefault.jpg",
                     }}
                     alt="image"

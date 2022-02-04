@@ -36,7 +36,7 @@ export default function Landing({ navigation }) {
                     leftIcon={<Icon as={MaterialIcons} name="account-plus" size="md" />}
                     onPress={() => navigation.navigate("Create")}
                 >
-                    Register
+                    Create Account
                 </Button>
                 <Button
                     colorScheme="teal"
