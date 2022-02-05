@@ -69,7 +69,7 @@ export const rawDogSlice = createSlice({
     },
     // personality 
     savePersonality: (state, action) => {
-      state.updated = new Date().toUTCString()
+      state.updated = new Date().toISOString()
       state.personality = action.payload
     },
     createDUID: (state, action) => {

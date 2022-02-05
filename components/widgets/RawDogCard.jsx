@@ -65,7 +65,7 @@ export default function RawDogCard(props) {
 
                     </Center>
                     <Box w='60%'>
-                        <Stack p="4" space={2}>
+                        <Stack p="4" space={2} ml='4'>
                             <Heading size="md" ml="-1">
                                 {dogName}
                             </Heading>

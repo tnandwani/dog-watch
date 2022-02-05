@@ -55,7 +55,7 @@ export const userSlice = createSlice({
     },
     updateLocation: (state, action) => {
 
-      if (state.zone == 'Unverified' && action.payload.zone != 'Unverified' && typeof action.payload.zone == 'string') {
+      if (state.zone == 'Unverified' && action.payload.zone != 'Unverified') {
         // first time getting zone
         state.zone = action.payload.zone
         state.latitude = action.payload.latitude

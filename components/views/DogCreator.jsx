@@ -127,7 +127,7 @@ export default function DogCreator({ navigation }) {
         }
 
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
             aspect: [6, 6],
             quality: 1,
@@ -137,7 +137,6 @@ export default function DogCreator({ navigation }) {
         if (!result.cancelled) {
             // get URI
             const URI = result.uri
-
             setProfileImage(URI);
             dispatch(saveDogPic(URI));
 
