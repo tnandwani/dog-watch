@@ -1,4 +1,4 @@
-export async function startPublish(imageURI, navigation) {
+export async function publish(imageURI, navigation) {
 
     Analytics.logEvent('Create_dog_start', uAnalytics())
 
