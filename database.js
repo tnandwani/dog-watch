@@ -536,14 +536,13 @@ export async function startPublish(imageURI, navigation) {
     // get owner
     const uid = store.getState().user.uid
     store.dispatch(saveOwner(uid))
-
     // create dog duid 
     const duid = uuidv4();
     // add duid to redux
     store.dispatch(createDUID(duid));
 
 
-    // no pic selected 
+    // pic selected 
     if (imageURI != 'https://cdn.pixabay.com/photo/2013/11/28/11/31/dog-220273_960_720.jpg') {
         // convert image to blob
         const blob = await new Promise((resolve, reject) => {
@@ -561,7 +560,7 @@ export async function startPublish(imageURI, navigation) {
 
         store.dispatch(updateDogProgress(10))
         // upload dog photo with duid 
-        const storageRef = ref(storage, 'profileImages/' + duid + '.jpg');
+        const storageRef = ref(storage, 'profileImages/' + duid);
         uploadBytes(storageRef, blob).then((snapshot) => {
 
             Analytics.logEvent('Created_dog_photo', uAnalytics())
@@ -638,7 +637,9 @@ export async function startPublish(imageURI, navigation) {
             sendFireError(error.message, "startPublish.uploadBytes");
         })
 
-    } else {
+    } 
+    // use default pic
+    else {
         let PURI = imageURI;
         Analytics.logEvent('Created_dog_photoURL', uAnalytics())
         store.dispatch(updateDogProgress(50))
