@@ -566,7 +566,6 @@ export async function startPublish(imageURI, navigation) {
             Analytics.logEvent('Created_dog_photo', uAnalytics())
             store.dispatch(updateDogProgress(25))
 
-
             // get download URL
             getDownloadURL(snapshot.ref).then((PURI) => {
                 Analytics.logEvent('Created_dog_photoURL', uAnalytics())
