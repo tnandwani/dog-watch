@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
+import { Image } from "react-native";
 
-import { Image } from 'react-native';
 import {
     Box,
     Heading,
     AspectRatio,
+    Skeleton,
     Text,
     Center,
     Stack,
@@ -18,9 +19,10 @@ export default function RawDogCard(props) {
     let breed = useSelector((state) => state.rawDog.breed)
     let age = useSelector((state) => state.rawDog.age)
     let zone = useSelector((state) => state.rawDog.zone)
+    const [isLoaded, setIsLoaded] = useState(false);
 
-    
 
+   
 
     return (
         <Center w='100%'>
@@ -44,17 +46,26 @@ export default function RawDogCard(props) {
             >
                 <HStack w='100%'>
                     <Center w='30%'>
-                        <AspectRatio w="100%" ratio={9 / 9}>
-                            <Image
-                                source={{
-                                    uri: props.image,
-                                }}
-                                alt="image"
-                            />
-                        </AspectRatio>
+                        <Skeleton isLoaded={isLoaded} flex="1" h="100" w="115%" rounded="md" startColor="indigo.400">
+
+                            <AspectRatio w="115%" ratio={9 / 9}>
+                                <Image
+
+                                    source={{
+                                        uri: props.image,
+                                    }}
+                                    onLoad={() => setIsLoaded(true)}
+
+                                    alt="image"
+                                />
+
+
+                            </AspectRatio>
+                        </Skeleton>
+
                     </Center>
                     <Box w='60%'>
-                        <Stack p="4" space={2}>
+                        <Stack p="4" space={2} ml='4'>
                             <Heading size="md" ml="-1">
                                 {dogName}
                             </Heading>
@@ -73,16 +84,16 @@ export default function RawDogCard(props) {
                                 {breed}
                             </Text>
 
-                            {age && 
-                            <Text
-                            color="coolGray.600"
-                            _dark={{
-                                color: "warmGray.200",
-                            }}
-                            fontWeight="300"
-                            >
-                                {age + ' Years Old'}
-                            </Text>
+                            {age &&
+                                <Text
+                                    color="coolGray.600"
+                                    _dark={{
+                                        color: "warmGray.200",
+                                    }}
+                                    fontWeight="300"
+                                >
+                                    {age + ' Years Old'}
+                                </Text>
                             }
 
                         </Stack>

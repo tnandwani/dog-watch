@@ -43,16 +43,14 @@ export default function ProfileTab({ navigation }) {
                     </Box>
                 )
                 }
-                    keyExtractor={(dog) => dog.profileImage}
+                    keyExtractor={(dog) => dog.duid}
                 />
             }
-
 
             <VStack space = {4}>
                 <Button mt="5" colorScheme="indigo" variant="outline" onPress={() => createDogStart()}> + Add Dog </Button>
                 <Button colorScheme="orange" _text={{ color: 'white' }} onPress={() => signOutUser()} > Sign Out</Button>
-
-                <Feedback />             
+                <Feedback />                             
             </VStack>
 
         </Box>

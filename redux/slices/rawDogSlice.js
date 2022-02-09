@@ -6,13 +6,14 @@ import {
 const detaultState = {
   dogName: 'Dog Name',
   editing: false,
+  updated: null,
   duid: null,
   breed: null,
   lost: false,
   gender: null,
   age: null,
   visibility: null,
-  profileImage: "https://freesvg.org/img/Dog-Leash.png",
+  profileImage: "https://cdn.pixabay.com/photo/2013/11/28/11/31/dog-220273_960_720.jpg",
   latitude: null,
   longitude: null,
   zone: "Unverified",
@@ -68,6 +69,7 @@ export const rawDogSlice = createSlice({
     },
     // personality 
     savePersonality: (state, action) => {
+      state.updated = new Date().toISOString()
       state.personality = action.payload
     },
     createDUID: (state, action) => {

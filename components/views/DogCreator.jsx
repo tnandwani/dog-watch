@@ -29,6 +29,7 @@ import {
     HStack,
     FormControl,
     Input,
+    Popover,
     Button,
     Select,
     CheckIcon,
@@ -40,7 +41,8 @@ import {
 } from 'native-base';
 import { saveDogPic } from '../../redux/slices/rawDogSlice';
 import { breedList, mapQuestKey } from '../../constants';
-import { deleteDog, sendFireError, uAnalytics } from '../../database';
+import { deleteDog, sendFireError, sendSentryMessage, uAnalytics } from '../../database';
+import { AndroidAudioContentType } from 'expo-notifications';
 
 
 const breedSelects = breedList.map((breed) =>
@@ -49,7 +51,7 @@ const breedSelects = breedList.map((breed) =>
 
 const ageList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
 const ageSelects = ageList.map((age) =>
-    <Select.Item key={age} label={age} value={age} />
+    <Select.Item key={age.toString()} label={age.toString()} value={age.toString()} />
 );
 
 export default function DogCreator({ navigation }) {
@@ -65,7 +67,7 @@ export default function DogCreator({ navigation }) {
     const [breed, setBreed] = useState(null);
     const [age, setAge] = useState(null);
     const [gender, setGender] = useState(null);
-    const [profileImage, setProfileImage] = useState(useSelector((state) => state.rawDog.profileImage));
+    const [profileImage, setProfileImage] = useState('https://cdn.pixabay.com/photo/2013/11/28/11/31/dog-220273_960_720.jpg');
 
     // owner
     // const [contact, setContact] = useState();
@@ -79,10 +81,10 @@ export default function DogCreator({ navigation }) {
     const [locationStatus, setLocationStatus] = useState("No Location Recieved");
     const [locationHelper, setLocationHelper] = useState("Visibility based on privacy");
 
-
     const dispatch = useDispatch()
+    const initialFocusRef = React.useRef(null)
 
-
+    // redux updaters
     const updateName = (n) => {
         setDogName(n);
         dispatch(saveDogName(n));
@@ -99,7 +101,6 @@ export default function DogCreator({ navigation }) {
         setGender(g);
         dispatch(saveDogGender(g));
     }
-
     const updateVisibility = (g) => {
         setVisibility(g);
         if (g == 'n') {
@@ -112,13 +113,11 @@ export default function DogCreator({ navigation }) {
         dispatch(saveVisibility(g));
     }
 
-
-
+    // UI functions
     const cancelCreate = () => {
         Analytics.logEvent('create_dog_canceled', uAnalytics())
         navigation.goBack()
     }
-
     const pickImage = async () => {
         if (Platform.OS !== 'web') {
             const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -133,18 +132,15 @@ export default function DogCreator({ navigation }) {
             aspect: [6, 6],
             quality: 1,
         });
-
-
         if (!result.cancelled) {
             // get URI
             const URI = result.uri
-
+            console.log("URI IS" , result);
             setProfileImage(URI);
             dispatch(saveDogPic(URI));
 
         }
     };
-
     const getLocation = () => {
 
         (async () => {
@@ -154,12 +150,12 @@ export default function DogCreator({ navigation }) {
 
             setLocationStatus(<Spinner color="indigo.500" />);
             if (Platform.OS === 'android' && !Constants.isDevice) {
-                setErrorMessage('Oops, this will not work on Snack in an Android emulator. Try it on your device!');
+                sendFireError('Permission to access location was denied', 'Location_Permission_Eror');
                 return;
             }
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
-                setErrorMessage('Permission to access location was denied');
+                sendFireError('Permission to access location was denied', 'Location_Permission_Eror');
                 return;
             }
 
@@ -184,14 +180,20 @@ export default function DogCreator({ navigation }) {
                 })
 
             };
-            fetch('http://www.mapquestapi.com/geocoding/v1/reverse?key=' + mapQuestKey, requestOptions)
+            fetch('https://www.mapquestapi.com/geocoding/v1/reverse?key=' + mapQuestKey, requestOptions)
                 .then(response => response.json()).catch((error) => {
                     sendFireError(error, "EXPLORETAB.fetch.response");
 
                 })
                 .then(data => {
                     const addy = data.results[0].locations[0].postalCode
-                    const zip = addy.substr(0, addy.indexOf('-'));
+                    sendSentryMessage("Joined via Dog: " + JSON.stringify(addy))
+                    let zip = addy
+                    if (addy.includes("-")) {
+                        zip = addy.substr(0, addy.indexOf('-'));
+                    }
+
+
 
                     // create new location object 
                     let userLocation = {
@@ -234,7 +236,7 @@ export default function DogCreator({ navigation }) {
 
 
     return (
-        <Box safeArea flex={1} p="2" w="90%" mx="auto" py="8" maxW='768'>
+        <Box safeAreaTop flex={1} p="2" w="90%" mx="auto" pt="8" maxW='768'>
             <Heading size="lg" color="coolGray.800" fontWeight="600">
                 Lets get started!
             </Heading>
@@ -321,7 +323,7 @@ export default function DogCreator({ navigation }) {
                                 endIcon: <CheckIcon size="5" />,
                             }}
                             onValueChange={(value) => updateAge(value)}
-                        >
+                        > 
                             {ageSelects}
                         </Select>
                     </FormControl>
@@ -329,7 +331,7 @@ export default function DogCreator({ navigation }) {
                     <FormControl w='49%'>
                         <FormControl.Label
                             _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
-                            Privacy
+                            Dog Visibility
                         </FormControl.Label>
                         <Select
                             selectedValue={visibility}
@@ -340,8 +342,8 @@ export default function DogCreator({ navigation }) {
                             }}
                             onValueChange={(value) => updateVisibility(value)}
                         >
-                            <Select.Item label="Neighborhood" value="n" />
-                            <Select.Item label="Emergencies" value="e" />
+                            <Select.Item label="My Neighborhood" value="n" />
+                            <Select.Item label="Only Me" value="e" />
 
                         </Select>
                     </FormControl>
@@ -350,7 +352,7 @@ export default function DogCreator({ navigation }) {
 
                 <FormControl>
                     <FormControl.HelperText>
-                        {locationHelper}
+                        {/* {locationHelper} */}
                     </FormControl.HelperText>
                     <Button mt="4" colorScheme="indigo" _text={{ color: 'white' }} shadow="7" onPress={getLocation}  > Set as Home </Button>
 
@@ -379,13 +381,37 @@ export default function DogCreator({ navigation }) {
                         Cancel
                     </Button>
                     {editing &&
-                        <Button variant="outline" colorScheme="red" onPress={() => deleteDog(duid, uid, navigation)}>
-                            Delete Dog
-                        </Button>
+                        <Popover
+                            placement="top"
+                            initialFocusRef={initialFocusRef}
+                            trigger={(triggerProps) => {
+                                return (<Button  {...triggerProps} variant="outline" colorScheme="red" >
+                                    Delete Dog
+                                </Button>
+                                )
+                            }}
+                        >
+                            <Popover.Content width="56">
+                                <Popover.Arrow />
+                                <Popover.CloseButton />
+                                {/* @ts-ignore */}
+                                <Popover.Header>Are you sure?</Popover.Header>
+                                <Popover.Body>Dog will be deleted permanently. You will need to recreate them if needed.</Popover.Body>
+
+                                <Popover.Footer>
+                                    <Button.Group>
+                                        <Button
+                                            onPress={() => deleteDog(duid, uid, navigation)}
+                                            variant='outline' colorScheme="red">Confirm</Button>
+                                    </Button.Group>
+                                </Popover.Footer>
+                            </Popover.Content>
+                        </Popover>
+
                     }
                     {editing &&
                         <Button colorScheme="indigo" onPress={() => navigation.navigate("Personality")}>
-                            Edit Personality
+                            Next
                         </Button>
                     }
                     {!editing &&

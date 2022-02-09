@@ -6,7 +6,7 @@ import {
 // optionally providing an access token if you have enabled push security
 let expo = new Expo();
 
-export function sendNotificationtoZone(dog, message, members, senderToken, notiType) {
+export function sendNotificationtoZone(dog, alert, members) {
 
     let createdDate = new Date().toLocaleDateString('en-us', {
         year: "numeric",
@@ -30,10 +30,7 @@ export function sendNotificationtoZone(dog, message, members, senderToken, notiT
             sound: 'default',
             body: dog.dogName + " is lost!",
             data: {
-                dog: dog,
-                message: message,
-                date: createdDate,
-                senderToken: senderToken,
+                alert: alert
             },
         })
     }

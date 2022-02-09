@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Image, Keyboard } from "react-native";
+import { Image,  Keyboard } from "react-native";
 import Report from "./Report";
 import {
   Box,
@@ -9,6 +9,7 @@ import {
   Text,
   Pressable,
   Center,
+  Skeleton,
   Stack,
   HStack,
   VStack,
@@ -21,7 +22,7 @@ import {
 } from "native-base";
 
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { markLost, markFound, viewDog, reportUser } from "../../database";
+import { markLost, markFound, viewDog, reportUser, sendFireError } from "../../database";
 import { updateDogView, updateShowDogModal } from "../../redux/slices/exploreSlice";
 import { importDog } from "../../redux/slices/rawDogSlice";
 
@@ -32,11 +33,14 @@ export default function DogCard(props) {
   const [showAlertModal, setShowAlertModal] = useState(false)
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [showDogModal, setShowDogModal] = useState(false)
-
+  const [isLoaded, setIsLoaded] = useState(false);
   const [EContact, setEContact] = useState();
   const [message, setMessage] = useState();
+  const [profileImage, setProfileImage] = useState(props.dog.item.profileImage);
 
   let uid = useSelector((state) => state.user.uid);
+  let email = useSelector((state) => state.user.email);
+
   let dogView = useSelector((state) => state.explore.dogView);
 
   useEffect(() => {
@@ -44,13 +48,14 @@ export default function DogCard(props) {
 
   }, []);
 
-  const editDog = () => {
 
+  const editDog = () => {
     // pass dog to rawDog
     dispatch(importDog(props.dog.item))
-    props.navigation.navigate('DogCreator')
-
+    
     // open Dog Creator 
+    props.navigation.navigate('DogCreator')
+    
 
 
   }
@@ -178,17 +183,27 @@ export default function DogCard(props) {
 
           <HStack w="100%">
             <Center w="25%">
-              <AspectRatio w="115%" ratio={9 / 9}>
-                <Image
-                  source={{
-                    uri: props.dog.item.profileImage,
-                  }}
-                  alt="image"
-                />
-              </AspectRatio>
+              <Skeleton isLoaded={isLoaded} flex="1" h="100" w="100%"  rounded="md" startColor="indigo.400">
+
+                <AspectRatio w="115%" ratio={9 / 9}>
+                  <Image
+                    fai
+                    onLoadEnd={() => setIsLoaded(true)}
+                    w='100%'
+                    source={{
+                      uri: profileImage,
+                      // uri: "https://i.ytimg.com/vi/MPV2METPeJU/maxresdefault.jpg",
+                    }}
+                    alt="image"
+                  />
+
+
+                </AspectRatio>
+              </Skeleton>
+
             </Center>
             <Box w="55%" ml='3'>
-              <Stack p="4" space={2}>
+              <Stack p="4" space={1}>
                 <Heading size="md" ml="-1">
 
                   {props.dog.item.dogName}
@@ -203,7 +218,6 @@ export default function DogCard(props) {
                   }}
                   fontWeight="500"
                   ml="-0.5"
-                  mt="-1"
                 >
 
                   {props.dog.item.breed}
@@ -269,12 +283,12 @@ export default function DogCard(props) {
                       </Box>
                     </Box>
                   }
-                  {(props.dog.item.owner !== uid) &&
-                      <Box>
-                      <Report dog={props.dog.item}/>
-                      </Box>
+                  {(props.dog.item.owner !== uid && email) &&
+                    <Box>
+                      <Report dog={props.dog.item} />
+                    </Box>
                   }
-    
+
 
 
                 </VStack>

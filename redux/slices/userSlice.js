@@ -2,11 +2,16 @@ import {
   createSlice
 } from '@reduxjs/toolkit'
 
+import {
+  getHomies
+} from '../../database';
+
 export const userSlice = createSlice({
   name: 'user',
   initialState: {
     email: null,
     uid: 'unknown',
+    created: null,
     device: 'unknown',
     latitude: null,
     longitude: null,
@@ -24,8 +29,10 @@ export const userSlice = createSlice({
       state.uid = action.payload.uid
     },
     saveUserDetails: (state, action) => {
+
       state.email = action.payload.email
       state.uid = action.payload.uid
+      state.created = action.payload.created
       state.zone = action.payload.zone
       state.latitude = action.payload.latitude
       state.longitude = action.payload.longitude
@@ -47,9 +54,18 @@ export const userSlice = createSlice({
       state.dogs[action.payload.index].contact = action.payload.EContact
     },
     updateLocation: (state, action) => {
-      state.zone = action.payload.zone
-      state.latitude = action.payload.latitude
-      state.longitude = action.payload.longitude
+
+      if (state.zone == 'Unverified' && action.payload.zone != 'Unverified') {
+        // first time getting zone
+        state.zone = action.payload.zone
+        state.latitude = action.payload.latitude
+        state.longitude = action.payload.longitude
+      } else {
+        state.zone = action.payload.zone
+        state.latitude = action.payload.latitude
+        state.longitude = action.payload.longitude
+      }
+
 
     },
     addNotification: (state, action) => {
