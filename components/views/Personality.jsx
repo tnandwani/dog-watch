@@ -66,7 +66,7 @@ export default function Personality({ navigation }) {
         // update personality redux
         dispatch(savePersonality({ people, otherDogs, sharing, energy, sn, training, bio }));
 
-        startPublish(profileImage, navigation)
+        startPublish( profileImage, navigation)
 
 
     }

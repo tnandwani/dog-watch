@@ -67,7 +67,7 @@ export default function DogCreator({ navigation }) {
     const [breed, setBreed] = useState(null);
     const [age, setAge] = useState(null);
     const [gender, setGender] = useState(null);
-    const [profileImage, setProfileImage] = useState(useSelector((state) => state.rawDog.profileImage));
+    const [profileImage, setProfileImage] = useState('https://cdn.pixabay.com/photo/2013/11/28/11/31/dog-220273_960_720.jpg');
 
     // owner
     // const [contact, setContact] = useState();
@@ -127,16 +127,15 @@ export default function DogCreator({ navigation }) {
         }
 
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
             allowsEditing: true,
             aspect: [6, 6],
             quality: 1,
         });
-
-
         if (!result.cancelled) {
             // get URI
             const URI = result.uri
+            console.log("URI IS" , result);
             setProfileImage(URI);
             dispatch(saveDogPic(URI));
 

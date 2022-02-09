@@ -709,7 +709,7 @@ export async function startPublish(imageURI, navigation) {
 
 }
 
-export async function editPublish(imageURI, navigation) {
+export async function editPublish( navigation) {
 
     Analytics.logEvent('Edit_dog_start', uAnalytics())
 
@@ -721,6 +721,8 @@ export async function editPublish(imageURI, navigation) {
 
     const readyDog = store.getState().rawDog
     store.dispatch(changeDogInUser(readyDog))
+
+    const imageURI = readyDog.profileImage;
 
     // check if image uploaded 
 
@@ -849,6 +851,7 @@ export async function editPublish(imageURI, navigation) {
 export async function markLost(dog, EContact, index, message) {
     Analytics.logEvent('LOST_DOG_start', uAnalytics)
 
+    const timestamp = new Date().toLocaleDateString('en-us')
 
     let lost = true
     // send changes to redux (local UI changes)
@@ -859,7 +862,7 @@ export async function markLost(dog, EContact, index, message) {
     }));
     const alert = {
         duid: dog.duid,
-        date: new Date().toLocaleDateString('en-us'),
+        date: timestamp,
         message: message,
         contact: EContact,
     }
@@ -890,10 +893,7 @@ export async function markLost(dog, EContact, index, message) {
                 let members = docSnap.data().members
                 store.dispatch(saveZoneData(members));
 
-
-
-                const senderToken = store.getState().user.pushToken
-                sendNotificationtoZone(dog, message, members, senderToken, 'LOST DOG').then((result) => {
+                sendNotificationtoZone(dog, alert, members).then((result) => {
                     Analytics.logEvent('LOST_DOG_notifications_sent', uAnalytics())
 
                 }).catch((error) => {
