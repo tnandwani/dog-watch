@@ -76,7 +76,7 @@ export const userSlice = createSlice({
       state.dogs[index] = action.payload
     },
     removeDogfromUser: (state, action) => {
-      const index = state.dogs.findIndex(dog => dog.duid === action.payload.duid);
+      const index = state.dogs.findIndex(dog => dog.duid === action.payload);
       state.dogs.splice(index, 1)
     },
     reportUser: (state, action) => {

@@ -10,7 +10,7 @@ import * as Location from 'expo-location';
 
 
 import { StyleSheet, Dimensions, Platform, Share} from "react-native";
-import { getHomies, updateFireLocation, sendFireError, sendSentryMessage, signAnon} from "../../database";
+import { getHomies, updateFireLocation, sendFireError, sendSentryMessage, signAnon, logAnalEvent} from "../../database";
 import DogCard from '../widgets/DogCard'
 
 import { Box, Button, Center, FlatList, Spinner, Text, Fab, Icon, HStack, Badge, Flex, VStack, useToast, Heading, Divider } from "native-base";
@@ -136,7 +136,8 @@ export default function ExploreTab({ navigation }) {
           sendFireError(error, "EXPLORETAB.fetch.response");
         }).then(data => {
           const addy = data.results[0].locations[0].postalCode
-          sendSentryMessage("Joined via Explore: " + JSON.stringify(addy))
+          
+          logAnalEvent("via_exlplore_" + JSON.stringify(addy))
 
           let zip = addy
           if (addy.includes("-")) {

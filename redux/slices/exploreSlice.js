@@ -57,6 +57,7 @@ export const exploreSlice = createSlice({
       // remove from explore
       const indexExplore = state.dogTags.findIndex(tags => tags.duid === action.payload);
       state.dogTags.splice(indexExplore, 1);
+      
       // remove from lost
       const indexLost = state.myZone.lost.findIndex(dog => dog.duid === action.payload);
       state.myZone.lost.splice(indexLost, 1);
