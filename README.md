@@ -8,9 +8,9 @@ A COMMUNITY FOR DOG OWNERS
   - Find my dog (amber alert for dogs)
   
 **FUTURE FEATURES**
-    - Owner Resources
-    - Dog Adoption
-    - Feed 
+- Owner Resources
+- Dog Adoption
+- Feed 
 
 **STACK**
 - Expo (Platform Enviroment)
