@@ -11,7 +11,6 @@ export async function publish(imageURI, navigation) {
     store.dispatch(createDUID(duid));
 
     // 3. upload pic
-
     // 4. get picURL
 
     // 5. create dog doc 
@@ -23,6 +22,11 @@ export async function publish(imageURI, navigation) {
 export function uploadPhoto(imageURI){
 
 }
+
+export function convertImage(inputImage){
+
+}
+
 
 export function uploadDogDoc(readyDog){
 

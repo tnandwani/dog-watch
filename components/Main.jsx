@@ -83,7 +83,6 @@ export default function Main() {
         if (Platform.OS !== 'web') {
             registerForPushNotificationsAsync().then(token => {
                 addUsertoZone(token)
-                dispatch(updatePushToken(token))
             }).catch((error) => {
                 sendFireError(error.message, "MAIN.registerForPushNotificationsAsync")
             });

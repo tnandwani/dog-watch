@@ -462,41 +462,44 @@ export async function addUsertoZone(pushToken) {
 
     const userRef = doc(db, "users", uid);
 
-
+    // check if new token
     if (userToken !== pushToken) {
         updateDoc(userRef, {
             pushToken: pushToken
         }).catch((error) => {
             sendFireError(error.message, "addUsertoZone.updateDoc.userRef");
         });
-    }
 
+        // add token to zone
+        const zone = store.getState().user.zone
+        const zoneRef = doc(db, "zones", zone);
+        // const zoneDoc = await getDoc(zoneRef);
 
-    // add to zones
-    const zone = store.getState().user.zone
-    const ref = doc(db, "zones", zone);
-    const zoneRef = await getDoc(ref);
-
-    if (zone != "Unverified") {
-        if (zoneRef.exists()) {
+        if (zone !== "Unverified") {
             updateDoc(zoneRef, {
                 members: arrayUnion(pushToken)
-
             }).then((resp) => {
                 Analytics.logEvent('joined_neighborhood_notigang', uAnalytics())
-
-
             }).catch((error) => {
-                sendFireError(error.message, "addUsertoZone.updateDoc.zoneRef");
+
+                if (error.message.includes("No document to update")) {
+                    Analytics.logEvent('FIRST_TIME_ZONER', uAnalytics())
+                    setDoc(doc(db, "zones", zone), {
+                        members: [pushToken]
+                    });
+                } else {
+                    sendFireError(error.message, "addUsertoZone.updateDoc.zoneRef");
+
+                }
             })
-        } else {
-            // doc.data() will be undefined in this case
-            Analytics.logEvent('FIRST_TIME_ZONER', uAnalytics())
-            setDoc(doc(db, "zones", zone), {
-                members: [pushToken]
-            });
+
         }
+
     }
+
+    store.dispatch(updatePushToken(pushToken))
+
+
 
 }
 
@@ -519,7 +522,7 @@ export async function updateFireLocation(location) {
     })
 
     if (pushToken) {
-        addUsertoZone(pushToken, location);
+        addUsertoZone(pushToken);
         Analytics.logEvent('Added_Token_to_Zone', uAnalytics())
     }
 
@@ -636,16 +639,15 @@ export async function startPublish(imageURI, navigation) {
             sendFireError(error.message, "startPublish.uploadBytes");
         })
 
-    } 
+    }
     // use default pic
     else {
-        let PURI = imageURI;
         Analytics.logEvent('Created_dog_photoURL', uAnalytics())
         store.dispatch(updateDogProgress(50))
 
 
         // add url to redux
-        store.dispatch(saveDogPic(PURI))
+        store.dispatch(saveDogPic(imageURI))
 
         const readyDog = store.getState().rawDog
         // upload readyDog to dogs/
@@ -709,7 +711,8 @@ export async function startPublish(imageURI, navigation) {
 
 }
 
-export async function editPublish(imageURI,  navigation) {
+
+export async function editPublish(imageURI, navigation) {
 
     Analytics.logEvent('Edit_dog_start', uAnalytics())
 
@@ -845,6 +848,8 @@ export async function editPublish(imageURI,  navigation) {
     }
 
 }
+
+
 
 export async function markLost(dog, EContact, index, message) {
     Analytics.logEvent('LOST_DOG_start', uAnalytics)
