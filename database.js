@@ -696,7 +696,7 @@ export async function startPublish(imageURI, navigation) {
                     Analytics.logEvent('Created_dog_finish', uAnalytics())
 
                 }).catch((error) => {
-                    sendFireError(error.message, "startPublish.image.updateDoc.userRef");
+                    sendFireError(error.message, "startPublish.defaultImage.updateDoc.userRef");
                 })
             })
             .catch((error) => {
