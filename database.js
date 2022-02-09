@@ -36,6 +36,7 @@ import {
     updateDogView,
     updateLoading,
     addLostDog,
+    updatePushToken,
 } from "./redux/slices/exploreSlice";
 
 // FIREBASE
@@ -459,7 +460,6 @@ export async function addUsertoZone(pushToken) {
     // add token to user
     const uid = store.getState().user.uid
     const userToken = store.getState().user.uid
-
     const userRef = doc(db, "users", uid);
 
     // check if new token
@@ -489,18 +489,11 @@ export async function addUsertoZone(pushToken) {
                     });
                 } else {
                     sendFireError(error.message, "addUsertoZone.updateDoc.zoneRef");
-
                 }
             })
-
         }
-
     }
-
     store.dispatch(updatePushToken(pushToken))
-
-
-
 }
 
 
@@ -942,8 +935,6 @@ export async function markFound(dog, index) {
 export function deleteDog(duid, uid, navigation) {
 
     Analytics.logEvent('delete_dog_started', uAnalytics())
-    // remove dog locally from explore tags
-    store.dispatch(removeTag(duid));
 
     const rawDog = store.getState().rawDog
 
@@ -953,8 +944,6 @@ export function deleteDog(duid, uid, navigation) {
         const userRef = doc(db, "users", uid);
         Analytics.logEvent('deleted_dog_doc', uAnalytics())
 
-        // remove dog from user redux list
-        store.dispatch(removeDogfromUser(duid))
 
         // update doc with new user list
         updateDoc(userRef, {
@@ -962,6 +951,11 @@ export function deleteDog(duid, uid, navigation) {
         }).then((resp) => {
             // update redux state
             Analytics.logEvent('deleted_dog_completed', uAnalytics())
+            // remove dog from user redux list
+            store.dispatch(removeDogfromUser(duid))
+            // remove dog locally from explore tags
+            store.dispatch(removeTag(duid));
+
             navigation.navigate('Profile')
         }).catch((error) => {
             sendFireError(error.message, "deleteDog.deleteDoc.userRef");
@@ -1010,4 +1004,9 @@ export function sendSentryMessage(message, context) {
         Sentry.Native.captureMessage(message)
     }
 
+}
+
+
+export function logAnalEvent(name){
+    Analytics.logEvent(name)
 }
