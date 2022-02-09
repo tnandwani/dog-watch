@@ -20,7 +20,7 @@ const Stack = createStackNavigator();
 import LandingScreen from "./components/auth/Landing";
 import LoginScreen from "./components/auth/Login";
 import CreateScreen from "./components/auth/Create";
-import ExploreScreen from "./components/auth/GuestExplore";
+import ExploreScreen from "./components/tabs/ExploreTab";
 
 // TAB HOLDER
 import MainScreen from "./components/Main";
@@ -31,26 +31,25 @@ import { useDispatch } from 'react-redux';
 import { getDevice } from './redux/slices/userSlice';
 
 
-if (Platform.OS != 'web') {
-  Sentry.Native.wrap(App);
-}
-else {
-  Sentry.Browser.wrap(App)
-}
-
 import { setTabScreen } from './redux/slices/interfaceSlice';
 
 
 import { setScreenAnalytics } from './database';
 
 
+// SENTRY INIT
+if (Platform.OS == 'web'){
+  Sentry.Browser.wrap(App)
+}
+else{
+  Sentry.Native.wrap(App);
+}
 Sentry.init({
   dsn: sentryKey,
   enableInExpoDevelopment: true,
   release: 'dog-watch@v0.01',
   debug: true, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
 });
-
 
 
 export function AppContent() {
@@ -68,7 +67,7 @@ export function AppContent() {
       )}
 
       {status == "new" && (
-        <NavigationContainer theme={MyTheme} >
+        <NavigationContainer theme={MyTheme}  >
           <Stack.Navigator initialRouteName="Landing" screenListeners={{
             state: (e) => {
               // Do something with the state
@@ -100,7 +99,7 @@ export function AppContent() {
               }}
             />
             <Stack.Screen
-              name="GuestExplore"
+              name="Guest Explore"
               component={ExploreScreen}
               options={{
                 headerShown: true,

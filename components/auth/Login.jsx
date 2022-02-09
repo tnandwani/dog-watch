@@ -53,7 +53,7 @@ export default function Login({ navigation }) {
             Password
           </FormControl.Label>
           <Input type="password" onChangeText={(value) => setPassword(value)} />
-          <FormControl.HelperText>
+          <FormControl.HelperText color={'red.400'}>
             {loginAlert}
           </FormControl.HelperText>
           {/* <Link

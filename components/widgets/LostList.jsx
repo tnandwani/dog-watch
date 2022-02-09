@@ -50,7 +50,7 @@ export default function LostList() {
 				mb: '3'
 			})
 		}
-		
+
 	};
 
 	const callDog = (rowMap, rowKey, phone) => {
@@ -75,7 +75,7 @@ export default function LostList() {
 					return Linking.openURL(phoneNumber);
 				}
 			})
-			.catch(err => sendFireError(err));
+			.catch(err => sendFireError(err, "Linking.error"));
 
 	};
 
@@ -90,35 +90,27 @@ export default function LostList() {
 					py={3}
 				>
 					<HStack space={3}>
-						<Box >
-							<Avatar source={{ uri: item.profileImage }} />
-
-						</Box>
-						<Box alignSelf="flex-start" w='60%' >
-
-							<VStack>
+						<Avatar size='xl' source={{ uri: item.profileImage }} />
+						<Box alignSelf="flex-start">
+							<VStack space={1}>
 								<Text _light={{
 									color: "violet.500",
 								}}
 									_dark={{
 										color: "violet.400",
 									}}
+									fontSize='md'
 									bold>
 									{item.dogName}
+								</Text>
+								<Text fontSize="xs" color="red.400" _dark={{ color: 'red.400' }} alignSelf="flex-start">
+									{"Lost On: " + item.alert.date}
 								</Text>
 
 								<Text fontSize='xs' color="coolGray.600" _dark={{ color: 'warmGray.200' }}>{item.alert.message}</Text>
 
 							</VStack>
 						</Box>
-						<Box>
-							<Text fontSize="xs" color="red.400" _dark={{ color: 'red.400' }} alignSelf="flex-start">
-								{item.alert.date}
-							</Text>
-						</Box>
-
-
-
 					</HStack>
 
 				</Box>

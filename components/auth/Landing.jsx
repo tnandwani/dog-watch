@@ -1,8 +1,11 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import { Button, Stack, Icon, Center, Heading } from "native-base"
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 export default function Landing({ navigation }) {
+    useEffect(() => {
+    }, []);
+    console.log("LANDED OPENED");
 
     return (
 
@@ -33,12 +36,12 @@ export default function Landing({ navigation }) {
                     leftIcon={<Icon as={MaterialIcons} name="account-plus" size="md" />}
                     onPress={() => navigation.navigate("Create")}
                 >
-                    Register
+                    Create Account
                 </Button>
                 <Button
                     colorScheme="teal"
                     leftIcon={<Icon as={MaterialIcons} name="compass" size="md" />}
-                    onPress={() => navigation.navigate("GuestExplore")}
+                    onPress={() => navigation.navigate("Guest Explore")}
                 >
                     Explore
                 </Button>

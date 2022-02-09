@@ -24,10 +24,13 @@ export default function Feedback(props) {
   const initialFocusRef = React.useRef(null)
   let [message, setMessage] = useState(null)
   let [suggestion, setSuggestion] = useState(true)
+  let [popOpen, setPopOpen] = useState(false)
+
   const toast = useToast()
 
   return (
     <Popover
+      isOpen={popOpen}
       initialFocusRef={initialFocusRef}
       trigger={(triggerProps) => {
         return <Button
@@ -35,15 +38,15 @@ export default function Feedback(props) {
           endIcon={<Icon as={Ionicons} name="paw" size="sm" />}
           colorScheme="indigo"
           {...triggerProps}
+          onPress={() => { setPopOpen(true) }}
         >
           Send Feedback
         </Button>
       }}
     >
-      <Popover.Content width="56">
+      <Popover.Content width="56" >
         <Popover.Arrow />
-        <Popover.CloseButton />
-
+  
         <Popover.Header>Send Feedback</Popover.Header>
         <Popover.Body>
           <FormControl>
@@ -78,13 +81,21 @@ export default function Feedback(props) {
           </FormControl>
         </Popover.Body>
         <Popover.Footer>
+          
           <Button.Group>
+            <Button colorScheme="indigo" variant = 'outline' onPress={() => {
+
+              setPopOpen(false)
+
+            }}>Cancel</Button>
             <Button colorScheme="indigo" onPress={() => {
               sendFeedback(suggestion, message); 
               toast.show({
                 description: "Thanks for the Feedback!",
                 mb: '3'
               })
+              setPopOpen(false)
+              
             }}>Send</Button>
           </Button.Group>
         </Popover.Footer>
