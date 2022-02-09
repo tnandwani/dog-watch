@@ -70,7 +70,6 @@ export default function ExploreTab({ navigation }) {
 
     // 
     if (user.uid === 'unknown') {
-      console.log('anon here');
       signAnon();
       dispatch(updateLoading(false));
 

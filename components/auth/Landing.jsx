@@ -5,7 +5,6 @@ import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 export default function Landing({ navigation }) {
     useEffect(() => {
     }, []);
-    console.log("LANDED OPENED");
 
     return (
 

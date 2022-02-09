@@ -208,13 +208,11 @@ export async function signAnon() {
 
     signInAnonymously(auth)
         .then(() => {
-            console.log("success");
             store.dispatch(changeStatus('new'))
 
             // Signed in..
         })
         .catch((error) => {
-            console.log("failed");
             const errorCode = error.code;
             const errorMessage = error.message;
             // ...
@@ -459,10 +457,14 @@ export async function addUsertoZone(pushToken) {
 
     // add token to user
     const uid = store.getState().user.uid
-    const userToken = store.getState().user.uid
+    const userToken = store.getState().user.pushToken
     const userRef = doc(db, "users", uid);
 
     // check if new token
+    console.log("old token is, " , userToken)
+    console.log("new token is, ", pushToken)
+
+
     if (userToken !== pushToken) {
         updateDoc(userRef, {
             pushToken: pushToken

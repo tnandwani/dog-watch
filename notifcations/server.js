@@ -50,7 +50,6 @@ export function sendNotificationtoZone(dog, alert, members) {
         for (let chunk of chunks) {
             try {
                 let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-                console.log(ticketChunk);
                 tickets.push(...ticketChunk);
                 // NOTE: If a ticket contains an error code in ticket.details.error, you
                 // must handle it appropriately. The error codes are listed in the Expo
@@ -93,7 +92,6 @@ export function sendNotificationtoZone(dog, alert, members) {
         for (let chunk of receiptIdChunks) {
             try {
                 let receipts = await expo.getPushNotificationReceiptsAsync(chunk);
-                console.log(receipts);
 
                 // The receipts specify whether Apple or Google successfully received the
                 // notification and information about an error, if one occurred.
