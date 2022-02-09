@@ -709,7 +709,7 @@ export async function startPublish(imageURI, navigation) {
 
 }
 
-export async function editPublish( navigation) {
+export async function editPublish(imageURI,  navigation) {
 
     Analytics.logEvent('Edit_dog_start', uAnalytics())
 
@@ -721,8 +721,6 @@ export async function editPublish( navigation) {
 
     const readyDog = store.getState().rawDog
     store.dispatch(changeDogInUser(readyDog))
-
-    const imageURI = readyDog.profileImage;
 
     // check if image uploaded 
 
