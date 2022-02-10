@@ -41,7 +41,7 @@ import {
 } from 'native-base';
 import { saveDogPic } from '../../redux/slices/rawDogSlice';
 import { breedList, mapQuestKey } from '../../constants';
-import { deleteDog, sendFireError, sendSentryMessage, uAnalytics } from '../../database';
+import { deleteDog, logAnalEvent, sendFireError, sendSentryMessage, uAnalytics } from '../../database';
 import { AndroidAudioContentType } from 'expo-notifications';
 
 
@@ -137,7 +137,7 @@ export default function DogCreator({ navigation }) {
             const URI = result.uri
             console.log("URI IS" , result);
             setProfileImage(URI);
-            dispatch(saveDogPic(URI));
+            dispatch(saveDogPic(result));
 
         }
     };
@@ -187,7 +187,7 @@ export default function DogCreator({ navigation }) {
                 })
                 .then(data => {
                     const addy = data.results[0].locations[0].postalCode
-                    logAnalEvent("via_dog_" + JSON.stringify(addy))
+                    logAnalEvent("via_dog")
                     let zip = addy
                     if (addy.includes("-")) {
                         zip = addy.substr(0, addy.indexOf('-'));
@@ -225,7 +225,7 @@ export default function DogCreator({ navigation }) {
 
     let verify = () => {
 
-        if (dogName && breed && age && gender && visibility && location && isFinished) {
+        if (dogName !== '' && breed && age && gender && visibility && location && isFinished) {
             setIsFinished(false)
         }
 

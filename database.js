@@ -37,6 +37,7 @@ import {
     updateLoading,
     addLostDog,
     updatePushToken,
+    resetZone,
 } from "./redux/slices/exploreSlice";
 
 // FIREBASE
@@ -79,6 +80,7 @@ import {
     getStorage,
     uploadBytes,
     ref,
+    uploadString,
 } from "firebase/storage";
 import {
     saveDogPic
@@ -409,6 +411,7 @@ export async function getHomies() {
 
     Analytics.logEvent('getting_homies_start', uAnalytics())
 
+    store.dispatch(resetZone())
     // GET DOGS WITH ZIPCODE
     const zone = store.getState().user.zone
     const uid = store.getState().user.uid
@@ -461,7 +464,7 @@ export async function addUsertoZone(pushToken) {
     const userRef = doc(db, "users", uid);
 
     // check if new token
-    console.log("old token is, " , userToken)
+    console.log("old token is, ", userToken)
     console.log("new token is, ", pushToken)
 
 
@@ -525,6 +528,7 @@ export async function updateFireLocation(location) {
 
 
 //////////////////// DOG FUNCTIONS 
+
 
 
 export async function startPublish(imageURI, navigation) {
@@ -845,7 +849,6 @@ export async function editPublish(imageURI, navigation) {
 }
 
 
-
 export async function markLost(dog, EContact, index, message) {
     Analytics.logEvent('LOST_DOG_start', uAnalytics)
 
@@ -1009,6 +1012,184 @@ export function sendSentryMessage(message, context) {
 }
 
 
-export function logAnalEvent(name){
+export function logAnalEvent(name) {
     Analytics.logEvent(name)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//  NEW PUBLISHER TEST
+
+
+let navigator;
+
+export async function testPublish(navigation) {
+
+    console.log("in the test 00")
+    console.log("in the test 01")
+    console.log("in the test 02")
+
+    navigator = navigation;
+    console.log("in the test 03")
+
+    // 1. get uid  
+    console.log('-1')
+
+    const uid = store.getState().user.uid
+    store.dispatch(saveOwner(uid))
+    console.log('1')
+
+    // 2. create dog duid 
+    const duid = uuidv4();
+    store.dispatch(createDUID(duid));
+    console.log('2')
+
+    let imageURI = store.getState().rawDog.profileImage.uri
+    // if pic selected 
+    if (imageURI !== 'https://cdn.pixabay.com/photo/2013/11/28/11/31/dog-220273_960_720.jpg') {
+        console.log(3)
+        // 3a. Convert pic (optional) 
+        convertImage(imageURI);
+
+        // 3b. upload pic + get URL (optional)
+    } else {
+        console.log("skip 3 - ", 4)
+        createDogDoc()
+    }
+
+    // 4. create dog doc 
+
+    // 5. add duid to user 
+
+}
+export async function convertImage(imageURI) {
+    console.log('3a')
+
+    // convert to JPG
+
+    // convert to blob
+
+    const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+            resolve(xhr.response);
+        };
+        xhr.onerror = function (e) {
+            reject(new TypeError("Network request failed"));
+        };
+        xhr.responseType = "blob";
+        xhr.open("GET", imageURI, true);
+        xhr.send(null);
+    });
+
+    // start upload photo
+    uploadPhoto(blob);
+
+
+}
+
+export function uploadPhoto(blob) {
+    console.log('3b')
+
+    const duid = store.getState().rawDog.duid
+    const storageRef = ref(storage, 'profileImages/' + duid);
+
+    // upload as blob
+    uploadBytes(storageRef, blob).then((snapshot) => {
+        console.log('3c')
+        console.log('Uploaded a blob file!');
+        getDownloadURL(snapshot.ref).then((PURI) => {
+            // add url to redux
+            console.log('3d')
+
+            store.dispatch(saveDogPic(PURI))
+            createDogDoc()
+        }).catch((error) => {
+            sendFireError(error.message, "startPublish.64.getDownloadURL");
+        });
+    }).catch((error) => {
+        sendFireError(error.message, "startPublish.blob.uploadBytes");
+    })
+
+}
+
+export function createDogDoc() {
+    console.log('4')
+
+    console.log("starting to upload Dog");
+    const readyDog = store.getState().rawDog
+    // upload readyDog to dogs/
+
+    setDoc(doc(db, "dogs", readyDog.owner), readyDog)
+        .then(() => {
+
+            addDogToUser(readyDog);
+
+        })
+        .catch((error) => {
+            sendFireError(error.message, "startPublish.setDoc.duid");
+        })
+
+}
+
+export function addDogToUser(readyDog) {
+    console.log('5')
+    const uid = readyDog.owner;
+    const duid = readyDog.duid;
+
+    const oldZone = store.getState().user.zone
+    const userRef = doc(db, "users", uid);
+
+    updateDoc(userRef, {
+        dogs: arrayUnion(duid),
+        zone: readyDog.zone,
+        longitude: readyDog.longitude,
+        latitude: readyDog.latitude,
+    }).then(() => {
+        console.log('6')
+
+        // add dogcard to explore locally 
+        store.dispatch(addTag(readyDog));
+        // add dogcard to user locally 
+        store.dispatch(saveDogCards(readyDog))
+        if (oldZone !== readyDog.zone) {
+            getHomies(readyDog.zone);
+        }
+        navigator.navigate('Profile');
+
+    }).catch((error) => {
+        sendFireError(error.message, "startPublish.image.updateDoc.userRef");
+    })
 }

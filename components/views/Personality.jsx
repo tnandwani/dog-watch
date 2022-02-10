@@ -24,6 +24,7 @@ import {
 // ICONS
 import { FontAwesome5 } from '@expo/vector-icons';
 import { savePersonality } from '../../redux/slices/rawDogSlice';
+import { testPublish } from '../../database';
 
 
 export default function Personality({ navigation }) {
@@ -39,7 +40,6 @@ export default function Personality({ navigation }) {
     const progress = useSelector((state) => state.interface.progress.dog)
 
     // image as prop
-    const profileImage = useSelector((state) => state.rawDog.profileImage)
     const editing = useSelector((state) => state.rawDog.editing)
 
     // personality local state
@@ -66,15 +66,14 @@ export default function Personality({ navigation }) {
         // update personality redux
         dispatch(savePersonality({ people, otherDogs, sharing, energy, sn, training, bio }));
 
-        startPublish( profileImage, navigation)
-
+        testPublish(navigation)
 
     }
     const onUpdateDog = () => {
 
         // update personality redux
         dispatch(savePersonality({ people, otherDogs, sharing, energy, sn, training, bio }));
-        editPublish(profileImage, navigation)
+        editPublish(navigation)
 
     }
 

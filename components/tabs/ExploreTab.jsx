@@ -79,7 +79,7 @@ export default function ExploreTab({ navigation }) {
       if (user.zone != "Unverified") {
         // if no cards loaded 
         if (dogTags.length < 1) {
-          getHomies();
+          getHomies(user.zone);
 
         }
       }
@@ -136,7 +136,7 @@ export default function ExploreTab({ navigation }) {
         }).then(data => {
           const addy = data.results[0].locations[0].postalCode
           
-          logAnalEvent("via_exlplore_" + JSON.stringify(addy))
+          logAnalEvent("via_exlplore")
 
           let zip = addy
           if (addy.includes("-")) {
@@ -157,7 +157,7 @@ export default function ExploreTab({ navigation }) {
             updateFireLocation(userLocation);
           }
           dispatch(updateLocation(userLocation));
-          getHomies();
+          getHomies(user.zone);
 
         }).catch((error) => {
           sendFireError(error, "EXPLORETAB.fetch.data");
