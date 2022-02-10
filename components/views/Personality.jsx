@@ -4,7 +4,7 @@ import { Keyboard} from 'react-native';
 import { useDispatch, useSelector } from 'react-redux'
 import * as Analytics from 'expo-firebase-analytics';
 
-import { startPublish, editPublish, uAnalytics } from '../../database';
+import { startPublish, editPublish, uAnalytics, testEditPublish } from '../../database';
 
 import {
     Heading,
@@ -73,7 +73,7 @@ export default function Personality({ navigation }) {
 
         // update personality redux
         dispatch(savePersonality({ people, otherDogs, sharing, energy, sn, training, bio }));
-        editPublish(navigation)
+        testEditPublish(navigation)
 
     }
 

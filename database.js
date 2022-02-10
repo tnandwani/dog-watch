@@ -704,8 +704,6 @@ export async function startPublish(imageURI, navigation) {
             })
             .catch((error) => {
                 sendFireError(error.message, "startPublish.setDoc.duid");
-
-
             })
     }
 
@@ -724,6 +722,7 @@ export async function editPublish(imageURI, navigation) {
     const duid = store.getState().rawDog.duid
 
     const readyDog = store.getState().rawDog
+
     store.dispatch(changeDogInUser(readyDog))
 
     // check if image uploaded 
@@ -1052,35 +1051,25 @@ let navigator;
 
 export async function testPublish(navigation) {
 
-    console.log("in the test 00")
-    console.log("in the test 01")
-    console.log("in the test 02")
 
     navigator = navigation;
-    console.log("in the test 03")
 
     // 1. get uid  
-    console.log('-1')
-
     const uid = store.getState().user.uid
     store.dispatch(saveOwner(uid))
-    console.log('1')
 
     // 2. create dog duid 
     const duid = uuidv4();
     store.dispatch(createDUID(duid));
-    console.log('2')
 
     let imageURI = store.getState().rawDog.profileImage.uri
     // if pic selected 
     if (imageURI !== 'https://cdn.pixabay.com/photo/2013/11/28/11/31/dog-220273_960_720.jpg') {
-        console.log(3)
         // 3a. Convert pic (optional) 
         convertImage(imageURI);
 
         // 3b. upload pic + get URL (optional)
     } else {
-        console.log("skip 3 - ", 4)
         createDogDoc()
     }
 
@@ -1089,14 +1078,35 @@ export async function testPublish(navigation) {
     // 5. add duid to user 
 
 }
+
+export async function testEditPublish(navigation) {
+    // get owner
+    const uid = store.getState().rawDog.owner
+    // create dog duid 
+    const duid = store.getState().rawDog.duid
+
+    let imageURI = store.getState().rawDog.profileImage.uri
+
+    // if pic selected 
+    if (imageURI !== 'https://cdn.pixabay.com/photo/2013/11/28/11/31/dog-220273_960_720.jpg' || imageURI.includes("firebasestorage")) {
+
+        // 3a. Convert pic (optional) 
+        convertImage(imageURI);
+
+        // 3b. upload pic + get URL (optional)
+    } else {
+        createDogDoc()
+    }
+}
+
+
 export async function convertImage(imageURI) {
     console.log('3a')
 
     // convert to JPG
     const manipResult = await manipulateAsync(
         imageURI,
-        [], 
-        {
+        [], {
             compress: 1,
             format: SaveFormat.JPEG
         }
@@ -1168,6 +1178,8 @@ export function createDogDoc() {
             sendFireError(error.message, "startPublish.setDoc.duid");
         })
 
+
+
 }
 
 export function addDogToUser(readyDog) {
@@ -1193,6 +1205,11 @@ export function addDogToUser(readyDog) {
         if (oldZone !== readyDog.zone) {
             getHomies(readyDog.zone);
         }
+
+        if (readyDog.editing) {
+            store.dispatch(changeDogInUser(readyDog))
+        }
+
         navigator.navigate('Profile');
 
     }).catch((error) => {
