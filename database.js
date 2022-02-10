@@ -1080,6 +1080,9 @@ export async function testPublish(navigation) {
 }
 
 export async function testEditPublish(navigation) {
+
+    navigator = navigation;
+
     // get owner
     const uid = store.getState().rawDog.owner
     // create dog duid 
@@ -1087,8 +1090,10 @@ export async function testEditPublish(navigation) {
 
     let imageURI = store.getState().rawDog.profileImage
 
-    // if pic selected 
-    if (imageURI !== 'https://cdn.pixabay.com/photo/2013/11/28/11/31/dog-220273_960_720.jpg' || imageURI.includes("firebasestorage")) {
+
+    console.log("edited pic is: ", imageURI)
+    // if new pic selected 
+    if (imageURI !== 'https://cdn.pixabay.com/photo/2013/11/28/11/31/dog-220273_960_720.jpg' && !imageURI.includes("firebasestorage")) {
 
         // 3a. Convert pic (optional) 
         convertImage(imageURI);
@@ -1117,6 +1122,8 @@ export async function convertImage(imageURI) {
 
     const blob = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
+        console.log('3a.1')
+
         xhr.onload = function () {
             resolve(xhr.response);
         };
@@ -1198,16 +1205,19 @@ export function addDogToUser(readyDog) {
     }).then(() => {
         console.log('6')
 
-        // add dogcard to explore locally 
-        store.dispatch(addTag(readyDog));
-        // add dogcard to user locally 
-        store.dispatch(saveDogCards(readyDog))
+        // get new homies if in new zone
         if (oldZone !== readyDog.zone) {
             getHomies(readyDog.zone);
         }
 
+        // update locally 
         if (readyDog.editing) {
             store.dispatch(changeDogInUser(readyDog))
+        } else {
+            // add dogcard to explore locally 
+            store.dispatch(addTag(readyDog));
+            // add dogcard to user locally 
+            store.dispatch(saveDogCards(readyDog))
         }
 
         navigator.navigate('Profile');
