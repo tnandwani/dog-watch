@@ -20,6 +20,7 @@ export default function RawDogCard(props) {
     let age = useSelector((state) => state.rawDog.age)
     let zone = useSelector((state) => state.rawDog.zone)
     const [isLoaded, setIsLoaded] = useState(false);
+    let profileImage = useSelector((state) => state.rawDog.profileImage)
 
 
    
@@ -52,7 +53,7 @@ export default function RawDogCard(props) {
                                 <Image
 
                                     source={{
-                                        uri: props.image,
+                                        uri: profileImage,
                                     }}
                                     onLoad={() => setIsLoaded(true)}
 

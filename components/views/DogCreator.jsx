@@ -138,7 +138,7 @@ export default function DogCreator({ navigation }) {
             const URI = result.uri
             console.log("URI IS" , result);
             setProfileImage(URI);
-            dispatch(saveDogPic(result));
+            dispatch(saveDogPic(URI));
 
         }
     };

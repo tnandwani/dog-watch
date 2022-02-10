@@ -1062,7 +1062,7 @@ export async function testPublish(navigation) {
     const duid = uuidv4();
     store.dispatch(createDUID(duid));
 
-    let imageURI = store.getState().rawDog.profileImage.uri
+    let imageURI = store.getState().rawDog.profileImage
     // if pic selected 
     if (imageURI !== 'https://cdn.pixabay.com/photo/2013/11/28/11/31/dog-220273_960_720.jpg') {
         // 3a. Convert pic (optional) 
@@ -1085,7 +1085,7 @@ export async function testEditPublish(navigation) {
     // create dog duid 
     const duid = store.getState().rawDog.duid
 
-    let imageURI = store.getState().rawDog.profileImage.uri
+    let imageURI = store.getState().rawDog.profileImage
 
     // if pic selected 
     if (imageURI !== 'https://cdn.pixabay.com/photo/2013/11/28/11/31/dog-220273_960_720.jpg' || imageURI.includes("firebasestorage")) {
