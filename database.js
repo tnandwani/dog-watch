@@ -8,8 +8,10 @@ import {
     v4 as uuidv4
 } from 'uuid';
 
-import * as SMS from 'expo-sms';
-
+import {
+    manipulateAsync,
+    SaveFormat
+} from 'expo-image-manipulator';
 
 // REDUX
 import store from "./redux/store";
@@ -1091,13 +1093,21 @@ export async function convertImage(imageURI) {
     console.log('3a')
 
     // convert to JPG
+    const manipResult = await manipulateAsync(
+        imageURI,
+        [], 
+        {
+            compress: 1,
+            format: SaveFormat.JPEG
+        }
+    );
 
+    console.log("mani result ", manipResult)
     // convert to blob
 
     const blob = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.onload = function () {
-                console.log('3a.1')
             resolve(xhr.response);
         };
         xhr.onerror = function (e) {
@@ -1105,7 +1115,7 @@ export async function convertImage(imageURI) {
         };
         console.log('3a.2')
         xhr.responseType = "blob";
-        xhr.open("GET", imageURI, true);
+        xhr.open("GET", manipResult.uri, true);
         xhr.send(null);
     });
 

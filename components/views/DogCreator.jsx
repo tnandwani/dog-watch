@@ -134,6 +134,7 @@ export default function DogCreator({ navigation }) {
         });
         if (!result.cancelled) {
             // get URI
+            
             const URI = result.uri
             console.log("URI IS" , result);
             setProfileImage(URI);
