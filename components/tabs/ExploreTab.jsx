@@ -136,7 +136,6 @@ export default function ExploreTab({ navigation }) {
         }).then(data => {
           const addy = data.results[0].locations[0].postalCode
           
-          logAnalEvent("via_exlplore")
 
           let zip = addy
           if (addy.includes("-")) {
@@ -161,6 +160,7 @@ export default function ExploreTab({ navigation }) {
 
         }).catch((error) => {
           sendFireError(error, "EXPLORETAB.fetch.data");
+          alert("Problem getting location - Try again later.")
 
         });
     })();

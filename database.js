@@ -1012,13 +1012,6 @@ export function sendSentryMessage(message, context) {
 }
 
 
-export function logAnalEvent(name) {
-    Analytics.logEvent(name)
-}
-
-
-
-
 
 
 
@@ -1104,16 +1097,19 @@ export async function convertImage(imageURI) {
     const blob = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.onload = function () {
+                console.log('3a.1')
             resolve(xhr.response);
         };
         xhr.onerror = function (e) {
             reject(new TypeError("Network request failed"));
         };
+        console.log('3a.2')
         xhr.responseType = "blob";
         xhr.open("GET", imageURI, true);
         xhr.send(null);
     });
 
+    console.log('3a.3')
     // start upload photo
     uploadPhoto(blob);
 
@@ -1152,7 +1148,7 @@ export function createDogDoc() {
     const readyDog = store.getState().rawDog
     // upload readyDog to dogs/
 
-    setDoc(doc(db, "dogs", readyDog.owner), readyDog)
+    setDoc(doc(db, "dogs", readyDog.duid), readyDog)
         .then(() => {
 
             addDogToUser(readyDog);

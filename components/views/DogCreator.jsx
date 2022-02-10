@@ -187,7 +187,6 @@ export default function DogCreator({ navigation }) {
                 })
                 .then(data => {
                     const addy = data.results[0].locations[0].postalCode
-                    logAnalEvent("via_dog")
                     let zip = addy
                     if (addy.includes("-")) {
                         zip = addy.substr(0, addy.indexOf('-'));
@@ -210,6 +209,8 @@ export default function DogCreator({ navigation }) {
 
                 }).catch((error) => {
                     sendFireError(error, "EXPLORETAB.fetch.data");
+                    alert("Problem getting location - Try again later.")
+ƒ
                 });
 
 
