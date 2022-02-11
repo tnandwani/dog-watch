@@ -55,8 +55,12 @@ import {
     onAuthStateChanged,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
+    signInWithPopup,
+    signInWithRedirect,
+    GoogleAuthProvider,
     signOut
 } from 'firebase/auth';
+
 
 // firestore
 import {
@@ -208,6 +212,36 @@ export function fLogEvent(name) {
 
 //////////////////// USER AUTH FUNCTIONS 
 
+
+export function googleSignIn() {
+    console.log("g sign in ")
+    const provider = new GoogleAuthProvider();
+
+    signInWithPopup(auth, provider)
+        .then((result) => {
+            console.log("g sign in 2")
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            const credential = GoogleAuthProvider.credentialFromResult(result);
+            const token = credential.accessToken;
+            // The signed-in user info.
+            console.log("g sign in 3")
+            const user = result.user;
+            console.log(user)
+            createUserDoc(user.email, user.uid)
+            // ...
+        }).catch((error) => {
+            console.log("g sign in error")
+            // Handle Errors here.
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // The email of the user's account used.
+            const email = error.email;
+            // The AuthCredential type that was used.
+            const credential = GoogleAuthProvider.credentialFromError(error);
+            // ...
+        });
+
+}
 export async function signAnon() {
 
     signInAnonymously(auth)
@@ -1011,38 +1045,6 @@ export function sendSentryMessage(message, context) {
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //  NEW PUBLISHER TEST
 

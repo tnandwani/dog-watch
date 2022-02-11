@@ -1,6 +1,8 @@
-import React, {useEffect} from 'react'
-import { Button, Stack, Icon, Center, Heading } from "native-base"
-import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import React, { useEffect } from 'react'
+import { Box, Button, Stack, Icon, Center, Heading, Divider } from "native-base"
+import { MaterialIcons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
+import { googleSignIn } from '../../database';
+import { Platform } from 'react-native';
 
 export default function Landing({ navigation }) {
     useEffect(() => {
@@ -23,29 +25,51 @@ export default function Landing({ navigation }) {
                 }}
                 space={4}
             >
+
                 <Button
-                    colorScheme="indigo"
-                    leftIcon={<Icon as={MaterialIcons} name="key" size="md" />}
-                    onPress={() => navigation.navigate("Login")}
+                    colorScheme="emerald"
+                    leftIcon={<MaterialIcons name="explore" size={24} color="white" />}
+                    onPress={() => navigation.navigate("Guest Explore")}
                 >
-                    Login
+                    Guest Explore
                 </Button>
                 <Button
-                    colorScheme="orange"
-                    leftIcon={<Icon as={MaterialIcons} name="account-plus" size="md" />}
+                    colorScheme="muted"
+                    leftIcon={<MaterialCommunityIcons name="email-plus" size={24} color="white" />}
                     onPress={() => navigation.navigate("Create")}
                 >
                     Create Account
                 </Button>
-                <Button
-                    colorScheme="teal"
-                    leftIcon={<Icon as={MaterialIcons} name="compass" size="md" />}
-                    onPress={() => navigation.navigate("Guest Explore")}
+
+
+
+                {Platform.OS == 'web' &&
+                    <Button
+                        colorScheme="red"
+                        leftIcon={<AntDesign name="google" size={24} color="white" />}
+                        onPress={() => googleSignIn()}
+                    >
+                        Google Login
+                    </Button>
+                }
+                {/* <Button
+                    bgColor="black"
+                    leftIcon={<AntDesign name="apple1" size={24} color="white" />}
+                    onPress={() => navigation.navigate("Login")}
                 >
-                    Explore
+                    Apple Login
+                </Button> */}
+
+
+                <Button
+                    colorScheme="indigo"
+                    leftIcon={<MaterialIcons name="email" size={24} color="white" />}
+                    onPress={() => navigation.navigate("Login")}
+                >
+                    Email Login
                 </Button>
             </Stack>
-        </Center>
+        </Center >
 
     )
 }
