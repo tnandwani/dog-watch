@@ -5,17 +5,18 @@ import * as Google from 'expo-auth-session/providers/google';
 import { getAuth, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { Button } from "native-base"
 import { AntDesign } from '@expo/vector-icons';
-import webClient from '../clients/web.json'
+import webClient from '../clients/tokens.json'
 import { googleSignIn, socialSignIn } from '../../../database';
 
 
 WebBrowser.maybeCompleteAuthSession();
 
-export default function App() {
+export default function GoogleButton() {
 
     const [request, response, promptAsync] = Google.useIdTokenAuthRequest(
         {
             clientId: webClient.web.client_id,
+            iosClientId: webClient.ios.CLIENT_ID
         },
     );
 

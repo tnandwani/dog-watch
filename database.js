@@ -216,6 +216,7 @@ export function fLogEvent(name) {
 
 export function socialSignIn(credential) {
     
+    
     signInWithCredential(auth, credential).then((result) => {
         console.log(result)
         createUserDoc(result.user.email, result.user.uid)

@@ -4,6 +4,7 @@ import { MaterialIcons, AntDesign, MaterialCommunityIcons } from '@expo/vector-i
 import { googleSignIn } from '../../database';
 import { Platform } from 'react-native';
 import GoogleButton from './socials/GoogleButton'
+import AppleButton from './socials/AppleButton'
 
 
 export default function Landing({ navigation }) {
@@ -45,15 +46,8 @@ export default function Landing({ navigation }) {
 
 
                 <GoogleButton />
-                {/* <Button
-                    bgColor="black"
-                    leftIcon={<AntDesign name="apple1" size={24} color="white" />}
-                    onPress={() => navigation.navigate("Login")}
-                >
-                    Apple Login
-                </Button> */}
 
-
+                <AppleButton />
                 <Button
                     colorScheme="indigo"
                     leftIcon={<MaterialIcons name="email" size={24} color="white" />}
