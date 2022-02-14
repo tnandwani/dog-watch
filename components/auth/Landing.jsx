@@ -3,6 +3,8 @@ import { Box, Button, Stack, Icon, Center, Heading, Divider } from "native-base"
 import { MaterialIcons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import { googleSignIn } from '../../database';
 import { Platform } from 'react-native';
+import GoogleButton from './socials/GoogleButton'
+
 
 export default function Landing({ navigation }) {
     useEffect(() => {
@@ -42,16 +44,7 @@ export default function Landing({ navigation }) {
                 </Button>
 
 
-
-                {Platform.OS == 'web' &&
-                    <Button
-                        colorScheme="red"
-                        leftIcon={<AntDesign name="google" size={24} color="white" />}
-                        onPress={() => googleSignIn()}
-                    >
-                        Google Login
-                    </Button>
-                }
+                <GoogleButton />
                 {/* <Button
                     bgColor="black"
                     leftIcon={<AntDesign name="apple1" size={24} color="white" />}

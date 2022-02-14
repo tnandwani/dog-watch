@@ -3061,7 +3061,7 @@ balanced-match@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.2.tgz#e83e3a7e3f300b34cb9d87f615fa0cbf357690ee"
 
-base64-js@^1.1.2, base64-js@^1.2.3, base64-js@^1.5.1:
+base64-js@^1.1.2, base64-js@^1.2.3, base64-js@^1.3.0, base64-js@^1.5.1:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
 
@@ -3380,6 +3380,12 @@ commander@~2.13.0:
 commondir@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/commondir/-/commondir-1.0.1.tgz#ddd800da0c66127393cca5950ea968a3aaf1253b"
+
+compare-urls@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/compare-urls/-/compare-urls-2.0.0.tgz#9b378c4abd43980a8700fffec9afb85de4df9075"
+  dependencies:
+    normalize-url "^2.0.1"
 
 compare-versions@^3.4.0:
   version "3.6.0"
@@ -3812,6 +3818,17 @@ expo-asset@~8.4.3:
     path-browserify "^1.0.0"
     url-parse "^1.4.4"
 
+expo-auth-session@~3.4.2:
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/expo-auth-session/-/expo-auth-session-3.4.2.tgz#284adc187f78a704b8ed404a29fcf9aec318caf6"
+  dependencies:
+    expo-constants "~12.1.1"
+    expo-crypto "~10.0.2"
+    expo-linking "~2.4.2"
+    expo-web-browser "~10.0.2"
+    invariant "^2.2.4"
+    qs "6.9.1"
+
 expo-constants@~12.1.1, expo-constants@~12.1.2, expo-constants@~12.1.3:
   version "12.1.3"
   resolved "https://registry.yarnpkg.com/expo-constants/-/expo-constants-12.1.3.tgz#bec48a42a7760b010450961c209bb4b1158b9cd6"
@@ -3819,6 +3836,12 @@ expo-constants@~12.1.1, expo-constants@~12.1.2, expo-constants@~12.1.3:
     "@expo/config" "^5.0.9"
     expo-modules-core "~0.4.4"
     uuid "^3.3.2"
+
+expo-crypto@~10.0.2:
+  version "10.0.3"
+  resolved "https://registry.yarnpkg.com/expo-crypto/-/expo-crypto-10.0.3.tgz#b6516759617c9d22e230fad7f9673d480df802c8"
+  dependencies:
+    expo-modules-core "~0.4.4"
 
 expo-device@~4.0.3:
   version "4.0.3"
@@ -3885,6 +3908,15 @@ expo-keep-awake@~10.0.0:
   version "10.0.1"
   resolved "https://registry.yarnpkg.com/expo-keep-awake/-/expo-keep-awake-10.0.1.tgz#9f1176216c41eee20843c8232acfdca2bc32d334"
 
+expo-linking@~2.4.2:
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/expo-linking/-/expo-linking-2.4.2.tgz#b042f196c9a21ee0de25ca98763592d45524b6f2"
+  dependencies:
+    expo-constants "~12.1.1"
+    invariant "^2.2.4"
+    qs "^6.5.0"
+    url-parse "^1.4.4"
+
 expo-location@~13.0.4:
   version "13.0.4"
   resolved "https://registry.yarnpkg.com/expo-location/-/expo-location-13.0.4.tgz#b95a1888eccfd1c7f3efb4f1c76332d928d6a7d7"
@@ -3916,7 +3948,7 @@ expo-modules-core@~0.4.4, expo-modules-core@~0.4.9:
     compare-versions "^3.4.0"
     invariant "^2.2.4"
 
-expo-modules-core@~0.4.8:
+expo-modules-core@~0.4.6, expo-modules-core@~0.4.8:
   version "0.4.10"
   resolved "https://registry.yarnpkg.com/expo-modules-core/-/expo-modules-core-0.4.10.tgz#6c7e7e211b3056fc23a462e9faea88cc7653fe9b"
   dependencies:
@@ -3939,6 +3971,13 @@ expo-notifications@~0.13.3:
     fs-extra "^9.0.1"
     unimodules-task-manager-interface "~7.0.3"
     uuid "^3.4.0"
+
+expo-random@~12.0.1:
+  version "12.0.1"
+  resolved "https://registry.yarnpkg.com/expo-random/-/expo-random-12.0.1.tgz#d36706b744c27c1a145f0510f57093a6541aec5e"
+  dependencies:
+    base64-js "^1.3.0"
+    expo-modules-core "~0.4.6"
 
 expo-server-sdk@^3.6.0:
   version "3.6.0"
@@ -3979,6 +4018,13 @@ expo-updates@~0.10.15:
     fbemitter "^2.1.1"
     resolve-from "^5.0.0"
     uuid "^3.4.0"
+
+expo-web-browser@~10.0.2, expo-web-browser@~10.0.3:
+  version "10.0.3"
+  resolved "https://registry.yarnpkg.com/expo-web-browser/-/expo-web-browser-10.0.3.tgz#9fc1ee306c5963f797d6bec2e4bf9c84d1532f81"
+  dependencies:
+    compare-urls "^2.0.0"
+    expo-modules-core "~0.4.4"
 
 expo@^43.0.0:
   version "43.0.4"
@@ -4701,6 +4747,10 @@ is-number@^3.0.0:
 is-number@^7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/is-number/-/is-number-7.0.0.tgz#7535345b896734d5f80c4d06c50955527a14f12b"
+
+is-plain-obj@^1.0.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/is-plain-obj/-/is-plain-obj-1.1.0.tgz#71a50c8429dfca773c92a390a4a03b39fcd51d3e"
 
 is-plain-object@^2.0.3, is-plain-object@^2.0.4:
   version "2.0.4"
@@ -5748,6 +5798,14 @@ normalize-path@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/normalize-path/-/normalize-path-3.0.0.tgz#0dcd69ff23a1c9b11fd0978316644a0388216a65"
 
+normalize-url@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/normalize-url/-/normalize-url-2.0.1.tgz#835a9da1551fa26f70e92329069a23aa6574d7e6"
+  dependencies:
+    prepend-http "^2.0.0"
+    query-string "^5.0.1"
+    sort-keys "^2.0.0"
+
 npm-run-path@^2.0.0:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/npm-run-path/-/npm-run-path-2.0.2.tgz#35a9232dfa35d7067b4cb2ddf2357b1871536c5f"
@@ -6014,6 +6072,10 @@ postcss-value-parser@^4.0.2:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/postcss-value-parser/-/postcss-value-parser-4.2.0.tgz#723c09920836ba6d3e5af019f92bc0971c02e514"
 
+prepend-http@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/prepend-http/-/prepend-http-2.0.0.tgz#e92434bfa5ea8c19f41cdfd401d741a3c819d897"
+
 pretty-format@^26.4.0, pretty-format@^26.5.2, pretty-format@^26.6.2:
   version "26.6.2"
   resolved "https://registry.yarnpkg.com/pretty-format/-/pretty-format-26.6.2.tgz#e35c2705f14cb7fe2fe94fa078345b444120fc93"
@@ -6094,6 +6156,24 @@ pump@^3.0.0:
   dependencies:
     end-of-stream "^1.1.0"
     once "^1.3.1"
+
+qs@6.9.1:
+  version "6.9.1"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.9.1.tgz#20082c65cb78223635ab1a9eaca8875a29bf8ec9"
+
+qs@^6.5.0:
+  version "6.10.3"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.10.3.tgz#d6cde1b2ffca87b5aa57889816c5f81535e22e8e"
+  dependencies:
+    side-channel "^1.0.4"
+
+query-string@^5.0.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/query-string/-/query-string-5.1.1.tgz#a78c012b71c17e05f2e3fa2319dd330682efb3cb"
+  dependencies:
+    decode-uri-component "^0.2.0"
+    object-assign "^4.1.0"
+    strict-uri-encode "^1.0.0"
 
 query-string@^7.0.0:
   version "7.0.1"
@@ -6724,6 +6804,12 @@ snapdragon@^0.8.1:
     source-map-resolve "^0.5.0"
     use "^3.1.0"
 
+sort-keys@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/sort-keys/-/sort-keys-2.0.0.tgz#658535584861ec97d730d6cf41822e1f56684128"
+  dependencies:
+    is-plain-obj "^1.0.0"
+
 source-map-resolve@^0.5.0:
   version "0.5.3"
   resolved "https://registry.yarnpkg.com/source-map-resolve/-/source-map-resolve-0.5.3.tgz#190866bece7553e1f8f267a2ee82c606b5509a1a"
@@ -6795,6 +6881,10 @@ static-extend@^0.1.1:
 stream-buffers@2.2.x:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/stream-buffers/-/stream-buffers-2.2.0.tgz#91d5f5130d1cef96dcfa7f726945188741d09ee4"
+
+strict-uri-encode@^1.0.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/strict-uri-encode/-/strict-uri-encode-1.1.0.tgz#279b225df1d582b1f54e65addd4352e18faa0713"
 
 strict-uri-encode@^2.0.0:
   version "2.0.0"
