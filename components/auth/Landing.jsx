@@ -47,7 +47,9 @@ export default function Landing({ navigation }) {
 
                 <GoogleButton />
 
-                <AppleButton />
+                {Platform.OS == 'ios' &&
+                    <AppleButton />
+                }
                 <Button
                     colorScheme="indigo"
                     leftIcon={<MaterialIcons name="email" size={24} color="white" />}

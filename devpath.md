@@ -15,6 +15,7 @@
 - JS (2-3 hours)
 - NODE ()
 - REACT
+- REACT NATIVE 
 
 
 
