@@ -19,3 +19,11 @@ A COMMUNITY FOR DOG OWNERS
 - NativeBase (UI Components)
 - Firebase (Backend)
 - Sentry (Error Reporting)
+
+
+
+Steps to Distribute
+
+1. expo build: ios
+2. Download IPA file from expo 
+3. Upload to Apple Connect

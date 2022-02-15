@@ -58,6 +58,7 @@ export default function DogCard(props) {
     
 
 
+
   }
 
   const confirm = () => {
@@ -78,7 +79,7 @@ export default function DogCard(props) {
     <Center w="100%">
 
       {/* TURN ALERT ON */}
-      <Modal isOpen={showAlertModal} onClose={() => setShowAlertModal(false)}>
+      <Modal isOpen={showAlertModal} avoidKeyboard onClose={() => setShowAlertModal(false)}>
         <Modal.Content maxWidth="400px">
           <Modal.CloseButton />
           <Modal.Header colorScheme='red.500'>Mark Dog as Lost?</Modal.Header>
@@ -125,7 +126,7 @@ export default function DogCard(props) {
       </Modal>
 
       {/* TURN ALERT OFF */}
-      <Modal isOpen={showCancelModal} onClose={() => setShowCancelModal(false)}>
+      <Modal isOpen={showCancelModal} avoidKeyboard onClose={() => setShowCancelModal(false)}>
         <Modal.Content maxWidth="400px">
           <Modal.CloseButton />
           <Modal.Header colorScheme='emerald.500'>Mark Dog as Found?</Modal.Header>

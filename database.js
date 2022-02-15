@@ -142,7 +142,7 @@ onAuthStateChanged(auth, user => {
                 email,
                 uid
             }))
-            getUserDetails(uid);
+            getUserDetails(uid, email);
 
         }
 
@@ -219,7 +219,6 @@ export function socialSignIn(credential) {
 
     signInWithCredential(auth, credential).then((result) => {
         console.log(result)
-        createUserDoc(result.user.email, result.user.uid)
     }).catch((err) => {
         console.log(err)
         sendFireError(err, 'Apple.login.firebase')
@@ -241,7 +240,7 @@ export async function signAnon() {
             // ...
         });
 }
-0
+
 export function signOutUser() {
     const {
         email,
@@ -323,7 +322,7 @@ export function signInUser(email, password) {
         .then((userCredential) => {
             // Signed in
             var user = userCredential.user;
-            getUserDetails(user.uid);
+            getUserDetails(user.uid, email);
         })
         .catch((error) => {
 
@@ -333,7 +332,7 @@ export function signInUser(email, password) {
         });
 }
 
-export async function getUserDetails(uid) {
+export async function getUserDetails(uid, email) {
 
     getMyHomies(uid);
 
@@ -367,6 +366,10 @@ export async function getUserDetails(uid) {
 
     } else {
         Analytics.logEvent('User_doc_not_found', uAnalytics())
+
+        if (uid && email) {
+            createUserDoc(email, uid)
+        }
     }
 
 

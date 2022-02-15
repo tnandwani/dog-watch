@@ -74,6 +74,7 @@ export default function Main() {
     const [notification, setNotification] = useState(false);
     const notificationListener = useRef();
     const responseListener = useRef();
+    let keyboard = useSelector((state) => state.interface.keyboard);
 
     const dispatch = useDispatch()
 
@@ -104,37 +105,39 @@ export default function Main() {
     }, []);
 
     return (
-        <Tab.Navigator screenListeners={{
-            state: (e) => {
-                // Do something with the state
-                let screen = e.data.state
-                let currentScreen = screen.routes[screen.index].name
-                setScreenAnalytics(currentScreen);
-                dispatch(setTabScreen(currentScreen))
+  
+            <Tab.Navigator screenListeners={{
+                state: (e) => {
+                    // Do something with the state
+                    let screen = e.data.state
+                    let currentScreen = screen.routes[screen.index].name
+                    setScreenAnalytics(currentScreen);
+                    dispatch(setTabScreen(currentScreen))
 
-            }
-        }}>
+                }
+            }}>
 
-            {/* <Tab.Screen name="Home" component={HomeTab} options={{
+                {/* <Tab.Screen name="Home" component={HomeTab} options={{
                 headerShown: false,
                 tabBarIcon: ({ color, size }) => (
                     <MaterialIcons name="home" color={color} size={size} />
                 )
             }} /> */}
-            <Tab.Screen name="Explore" component={ExploreTab} options={{
-                headerShown: false,
-                tabBarIcon: ({ color, size }) => (
-                    <MaterialIcons name="compass" color={color} size={size} />
-                )
-            }} />
-            <Tab.Screen name="Profile" component={ProfileTab} options={{
-                headerShown: false,
-                tabBarIcon: ({ color, size }) => (
-                    <MaterialIcons name="dog-side" color={color} size={size} />
-                )
-            }} />
+                <Tab.Screen name="Explore" component={ExploreTab} options={{
+                    headerShown: false,
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialIcons name="compass" color={color} size={size} />
+                    )
+                }} />
+                <Tab.Screen name="Profile" component={ProfileTab} options={{
+                    headerShown: false,
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialIcons name="dog-side" color={color} size={size} />
+                    )
+                }} />
 
 
-        </Tab.Navigator>
+            </Tab.Navigator>
+
     )
 }

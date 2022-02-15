@@ -20,6 +20,7 @@ import { updateShowLostModal } from "../../redux/slices/interfaceSlice";
 import LostModal from '../modals/LostModal';
 import DogViewModal from '../modals/DogViewModal';
 import Gmap from "../views/Gmap";
+import Feedback from "../modals/Feedback";
 
 
 export default function ExploreTab({ navigation }) {

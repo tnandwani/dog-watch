@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { Keyboard } from "react-native";
+import React, { useState, useEffect} from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Keyboard, Platform, KeyboardAvoidingView } from "react-native";
 import { sendFeedback } from "../../database";
 // UI 
 import {
@@ -8,16 +8,19 @@ import {
   Button,
   Popover,
   HStack,
+  Modal,
   Icon,
   Center,
   Heading,
   TextArea,
   Switch,
+  useDisclose,
   useToast,
   FormControl,
 } from "native-base"
 
 import { Ionicons } from "@expo/vector-icons"
+import { updateShowFeedback } from "../../redux/slices/interfaceSlice";
 
 export default function Feedback(props) {
   useEffect(() => { }, []);
@@ -27,28 +30,17 @@ export default function Feedback(props) {
   let [popOpen, setPopOpen] = useState(false)
 
   const toast = useToast()
+  let showFeedbackModal = useSelector((state) => state.interface.modals.showFeedback);
+
+  const dispatch = useDispatch()
 
   return (
-    <Popover
-      isOpen={popOpen}
-      initialFocusRef={initialFocusRef}
-      trigger={(triggerProps) => {
-        return <Button
-          leftIcon={<Icon as={Ionicons} name="paw" size="sm" />}
-          endIcon={<Icon as={Ionicons} name="paw" size="sm" />}
-          colorScheme="indigo"
-          {...triggerProps}
-          onPress={() => { setPopOpen(true) }}
-        >
-          Send Feedback
-        </Button>
-      }}
-    >
-      <Popover.Content width="56" >
-        <Popover.Arrow />
-  
-        <Popover.Header>Send Feedback</Popover.Header>
-        <Popover.Body>
+
+    <Modal isOpen={showFeedbackModal} avoidKeyboard onClose={() => dispatch(updateShowFeedback(false))}>
+      <Modal.Content maxWidth="400px">
+        <Modal.CloseButton />
+        <Modal.Header colorScheme='emerald.500'>Send Feedback</Modal.Header>
+        <Modal.Body>
           <FormControl>
             <Center>
 
@@ -79,27 +71,24 @@ export default function Feedback(props) {
               onChangeText={(v) => { setMessage(v) }}
             />
           </FormControl>
-        </Popover.Body>
-        <Popover.Footer>
-          
+        </Modal.Body>
+        <Modal.Footer>
           <Button.Group>
-            <Button colorScheme="indigo" variant = 'outline' onPress={() => {
-
-              setPopOpen(false)
-
+            <Button colorScheme="indigo" variant='outline' onPress={() => {
+              dispatch(updateShowFeedback(false))
             }}>Cancel</Button>
             <Button colorScheme="indigo" onPress={() => {
-              sendFeedback(suggestion, message); 
+              sendFeedback(suggestion, message);
               toast.show({
                 description: "Thanks for the Feedback!",
                 mb: '3'
               })
-              setPopOpen(false)
-              
+              dispatch(updateShowFeedback(false))
             }}>Send</Button>
           </Button.Group>
-        </Popover.Footer>
-      </Popover.Content>
-    </Popover>
+        </Modal.Footer>
+      </Modal.Content>
+    </Modal>
+
   );
 }
