@@ -215,13 +215,15 @@ export function fLogEvent(name) {
 
 
 export function socialSignIn(credential) {
-    
-    
+
+
     signInWithCredential(auth, credential).then((result) => {
         console.log(result)
         createUserDoc(result.user.email, result.user.uid)
     }).catch((err) => {
         console.log(err)
+        sendFireError(err, 'Apple.login.firebase')
+
 
     });
 }
