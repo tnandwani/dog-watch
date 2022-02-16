@@ -83,7 +83,9 @@ export default function Main() {
         // If mobile
         if (Platform.OS !== 'web') {
             registerForPushNotificationsAsync().then(token => {
-                addUsertoZone(token)
+                if (token){
+                    addUsertoZone(token)
+                }
             }).catch((error) => {
                 sendFireError(error.message, "MAIN.registerForPushNotificationsAsync")
             });
