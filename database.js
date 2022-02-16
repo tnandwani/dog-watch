@@ -1102,37 +1102,39 @@ export async function convertImage(imageURI) {
     console.log('3a')
 
     // convert to JPG
-    const manipResult = await manipulateAsync(
+    manipulateAsync(
         imageURI,
         [], {
             compress: 1,
             format: SaveFormat.JPEG
         }
-    );
+    ).then((manipResult) => {
+        console.log("mani result ", manipResult)
+        // convert to blob
 
-    console.log("mani result ", manipResult)
-    // convert to blob
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            console.log('3a.1')
 
-    const blob = await new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        console.log('3a.1')
+            xhr.onload = function () {
+                resolve(xhr.response);
+            };
+            xhr.onerror = function (e) {
+                reject(new TypeError("Network request failed"));
+            };
+            console.log('3a.2')
+            xhr.responseType = "blob";
+            xhr.open("GET", manipResult.uri, true);
+            xhr.send(null);
+        });
 
-        xhr.onload = function () {
-            resolve(xhr.response);
-        };
-        xhr.onerror = function (e) {
-            reject(new TypeError("Network request failed"));
-        };
-        console.log('3a.2')
-        xhr.responseType = "blob";
-        xhr.open("GET", manipResult.uri, true);
-        xhr.send(null);
-    });
+        console.log('3a.3')
+        // start upload photo
+        uploadPhoto(blob);
 
-    console.log('3a.3')
-    // start upload photo
-    uploadPhoto(blob);
-
+    }).catch((err) => {
+        sendFireError(err.message, "convertImage")
+    });;
 
 }
 
