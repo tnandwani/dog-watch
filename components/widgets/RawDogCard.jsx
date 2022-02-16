@@ -53,8 +53,8 @@ export default function RawDogCard(props) {
                                 <Image
 
                                     source={{
-                                        // uri: profileImage,
-                                        uri: "https://i.ytimg.com/vi/MPV2METPeJU/maxresdefault.jpg",
+                                        uri: profileImage,
+                                        // uri: "https://i.ytimg.com/vi/MPV2METPeJU/maxresdefault.jpg",
 
                                     }}
                                     onLoad={() => setIsLoaded(true)}
