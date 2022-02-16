@@ -103,6 +103,7 @@ import * as Sentry from 'sentry-expo';
 
 // Analytics.resetAnalyticsData();
 import {
+    setIsPublishing,
     updateCreateAlert,
     updateDogProgress,
     updateLoginAlert,
@@ -1041,6 +1042,7 @@ let navigator;
 
 export async function testPublish(navigation) {
 
+    store.dispatch(setIsPublishing(true))
 
     navigator = navigation;
 
@@ -1072,6 +1074,7 @@ export async function testPublish(navigation) {
 export async function testEditPublish(navigation) {
 
     navigator = navigation;
+    store.dispatch(setIsPublishing(true))
 
     // get owner
     const uid = store.getState().rawDog.owner
@@ -1210,6 +1213,7 @@ export function addDogToUser(readyDog) {
             store.dispatch(saveDogCards(readyDog))
         }
 
+            store.dispatch(setIsPublishing(false))
         navigator.navigate('Profile');
 
     }).catch((error) => {

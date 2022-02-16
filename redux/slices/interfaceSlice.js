@@ -16,6 +16,7 @@ export const interfaceSlice = createSlice({
       createAccount: 'Must be atleast 6 characters.',
       login: 'Must be atleast 6 characters.'
     },
+    isPublishing: false,
     progress: {
       dog: 0,
     },
@@ -44,7 +45,9 @@ export const interfaceSlice = createSlice({
     setTabScreen: (state, action) => {
       state.screen = action.payload
     },
-
+    setIsPublishing: (state, action) => {
+      state.isPublishing = action.payload
+    },
   },
 })
 
@@ -57,6 +60,7 @@ export const {
   updateDogProgress,
   setTabScreen,
   updateShowLostModal,
+  setIsPublishing
 
 } = interfaceSlice.actions
 
