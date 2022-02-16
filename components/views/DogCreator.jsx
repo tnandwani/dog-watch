@@ -127,7 +127,7 @@ export default function DogCreator({ navigation }) {
         }
 
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [6, 6],
             quality: 1,
