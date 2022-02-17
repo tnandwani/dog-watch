@@ -192,8 +192,8 @@ export default function DogCard(props) {
                     onLoadEnd={() => setIsLoaded(true)}
                     w='100%'
                     source={{
-                      uri: profileImage,
-                      // uri: "https://i.ytimg.com/vi/MPV2METPeJU/maxresdefault.jpg",
+                      // uri: profileImage,
+                      uri: "https://i.ytimg.com/vi/MPV2METPeJU/maxresdefault.jpg",
                     }}
                     alt="image"
                   />

@@ -1041,7 +1041,7 @@ export function sendSentryMessage(message, context) {
 let navigator;
 
 export async function testPublish(navigation) {
-
+    console.log('1')
     store.dispatch(setIsPublishing(true))
 
     navigator = navigation;
@@ -1054,6 +1054,7 @@ export async function testPublish(navigation) {
     const duid = uuidv4();
     store.dispatch(createDUID(duid));
 
+    console.log('2')
     let imageURI = store.getState().rawDog.profileImage
     // if pic selected 
     if (imageURI !== 'https://cdn.pixabay.com/photo/2013/11/28/11/31/dog-220273_960_720.jpg') {
@@ -1072,6 +1073,7 @@ export async function testPublish(navigation) {
 }
 
 export async function testEditPublish(navigation) {
+    console.log('1')
 
     navigator = navigation;
     store.dispatch(setIsPublishing(true))
@@ -1083,6 +1085,7 @@ export async function testEditPublish(navigation) {
 
     let imageURI = store.getState().rawDog.profileImage
 
+    console.log('2')
 
     console.log("edited pic is: ", imageURI)
     // if new pic selected 
@@ -1101,7 +1104,6 @@ export async function testEditPublish(navigation) {
 export async function convertImage(imageURI) {
     console.log('3a')
 
-    // convert to JPG
     manipulateAsync(
         imageURI,
         [], {
@@ -1109,37 +1111,46 @@ export async function convertImage(imageURI) {
             format: SaveFormat.JPEG
         }
     ).then((manipResult) => {
+        console.log('3b')
         console.log("mani result ", manipResult)
-        // convert to blob
-
-        const blob = await new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            console.log('3a.1')
-
-            xhr.onload = function () {
-                resolve(xhr.response);
-            };
-            xhr.onerror = function (e) {
-                reject(new TypeError("Network request failed"));
-            };
-            console.log('3a.2')
-            xhr.responseType = "blob";
-            xhr.open("GET", manipResult.uri, true);
-            xhr.send(null);
-        });
-
-        console.log('3a.3')
-        // start upload photo
-        uploadPhoto(blob);
-
+        blobify(manipResult.uri)
     }).catch((err) => {
-        sendFireError(err.message, "convertImage")
+        sendFireError(err, "blobing")
     });;
+
+
+
+
+    // start upload photo
+}
+
+
+export async function blobify(uri) {
+    console.log('3c')
+
+    const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+
+        xhr.onload = function () {
+            resolve(xhr.response);
+        };
+        xhr.onerror = function (e) {
+            reject(new TypeError("Network request failed"));
+        };
+        console.log('3a.2')
+        xhr.responseType = "blob";
+        xhr.open("GET", uri, true);
+        xhr.send(null);
+    });
+    console.log('3d')
+
+    uploadPhoto(blob);
+
 
 }
 
 export function uploadPhoto(blob) {
-    console.log('3b')
+    console.log('3e')
 
     const duid = store.getState().rawDog.duid
     const storageRef = ref(storage, 'profileImages/' + duid);
@@ -1215,7 +1226,7 @@ export function addDogToUser(readyDog) {
             store.dispatch(saveDogCards(readyDog))
         }
 
-            store.dispatch(setIsPublishing(false))
+        store.dispatch(setIsPublishing(false))
         navigator.navigate('Profile');
 
     }).catch((error) => {

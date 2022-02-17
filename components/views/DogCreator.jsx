@@ -253,7 +253,7 @@ export default function DogCreator({ navigation }) {
                         _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
                         Dog Name
                     </FormControl.Label>
-                    <Input placeholder='Dog Name' onChangeText={(value) => updateName(value)} />
+                    <Input placeholder='Dog Name' autoFocus onChangeText={(value) => updateName(value)} />
                 </FormControl>
 
 
