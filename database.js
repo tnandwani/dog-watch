@@ -488,11 +488,6 @@ export async function addUsertoZone(pushToken) {
     const userToken = store.getState().user.pushToken
     const userRef = doc(db, "users", uid);
 
-    // check if new token
-    console.log("old token is, ", userToken)
-    console.log("new token is, ", pushToken)
-
-
     if (userToken !== pushToken) {
         updateDoc(userRef, {
             pushToken: pushToken
@@ -1078,11 +1073,6 @@ export async function testEditPublish(navigation) {
     navigator = navigation;
     store.dispatch(setIsPublishing(true))
 
-    // get owner
-    const uid = store.getState().rawDog.owner
-    // create dog duid 
-    const duid = store.getState().rawDog.duid
-
     let imageURI = store.getState().rawDog.profileImage
 
     console.log('2')
@@ -1092,7 +1082,7 @@ export async function testEditPublish(navigation) {
     if (imageURI !== 'https://cdn.pixabay.com/photo/2013/11/28/11/31/dog-220273_960_720.jpg' && !imageURI.includes("firebasestorage")) {
 
         // 3a. Convert pic (optional) 
-        convertImage(imageURI);
+        blobify(imageURI);
 
         // 3b. upload pic + get URL (optional)
     } else {
@@ -1104,47 +1094,57 @@ export async function testEditPublish(navigation) {
 export async function convertImage(imageURI) {
     console.log('3a')
 
+    const resize = {
+        resize: {
+            height: 1000
+        }
+    }
     manipulateAsync(
         imageURI,
-        [], {
+        [resize], {
             compress: 1,
-            format: SaveFormat.JPEG
+            format: SaveFormat.JPEG,
         }
-    ).then((manipResult) => {
-        console.log('3b')
-        console.log("mani result ", manipResult)
-        blobify(manipResult.uri)
+    ).then((result) => {
+        // start upload photo
+        console.log('result is...')
+
+        // gets stuck here for some f-ing reason
+        console.log(result)
+
+        store.dispatch(saveDogPic(result.uri))
+
     }).catch((err) => {
-        sendFireError(err, "blobing")
+        sendFireError(err, "converting")
     });;
-
-
-
-
-    // start upload photo
 }
 
 
 export async function blobify(uri) {
-    console.log('3c')
+    console.log('3c', uri)
 
-    const blob = await new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
+    if (uri) {
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
 
-        xhr.onload = function () {
-            resolve(xhr.response);
-        };
-        xhr.onerror = function (e) {
-            reject(new TypeError("Network request failed"));
-        };
-        console.log('3a.2')
-        xhr.responseType = "blob";
-        xhr.open("GET", uri, true);
-        xhr.send(null);
-    });
-    console.log('3d')
+            xhr.onload = function () {
+                resolve(xhr.response);
+            };
+            xhr.onerror = function (e) {
+                console.log(e)
 
-    uploadPhoto(blob);
+                reject(new Error("Network request failed"));
+            };
+            console.log('3a.2')
+            xhr.responseType = "blob";
+            xhr.open("GET", uri, true);
+            xhr.send(null);
+        });
+        console.log('3d')
+
+        uploadPhoto(blob);
+
+    }
 
 
 }

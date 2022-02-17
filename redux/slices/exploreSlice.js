@@ -25,7 +25,7 @@ export const exploreSlice = createSlice({
       state.myZone = action.payload
     },
     resetZone: (state, action) => {
-      console.log("reseting")
+      console.log("reseting zone data")
       state.myZone = {
         members: [],
         lost: [],

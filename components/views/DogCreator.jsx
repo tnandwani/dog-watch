@@ -41,7 +41,7 @@ import {
 } from 'native-base';
 import { saveDogPic } from '../../redux/slices/rawDogSlice';
 import { breedList, mapQuestKey } from '../../constants';
-import { deleteDog, logAnalEvent, sendFireError, sendSentryMessage, uAnalytics } from '../../database';
+import { convertImage, deleteDog, logAnalEvent, sendFireError, sendSentryMessage, uAnalytics } from '../../database';
 import { AndroidAudioContentType } from 'expo-notifications';
 
 
@@ -134,11 +134,16 @@ export default function DogCreator({ navigation }) {
         });
         if (!result.cancelled) {
             // get URI
-            
+
             const URI = result.uri
-            console.log("URI IS" , result);
+            console.log("URI IS", result);
+            // pass raw uri as prop
             setProfileImage(URI);
-            dispatch(saveDogPic(URI));
+
+            //  prep image for upload
+            convertImage(URI)
+
+
 
         }
     };
@@ -211,7 +216,7 @@ export default function DogCreator({ navigation }) {
                 }).catch((error) => {
                     sendFireError(error, "EXPLORETAB.fetch.data");
                     alert("Problem getting location - Try again later.")
-ƒ
+                    ƒ
                 });
 
 
@@ -325,7 +330,7 @@ export default function DogCreator({ navigation }) {
                                 endIcon: <CheckIcon size="5" />,
                             }}
                             onValueChange={(value) => updateAge(value)}
-                        > 
+                        >
                             {ageSelects}
                         </Select>
                     </FormControl>

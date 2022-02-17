@@ -29,7 +29,6 @@ export default function AppleButton() {
                     ],
                     nonce: hashedNonce,
                 }).then((credential) => {
-                    console.log("cred is");
                     console.log(credential);
                     // signed in
 
