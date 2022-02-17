@@ -1094,11 +1094,13 @@ export async function testEditPublish(navigation) {
 export async function convertImage(imageURI) {
     console.log('3a')
 
+
+    // compress and save image as jpg
     manipulateAsync(
         imageURI,
         [{
             resize: {
-                height: 1000
+                height: 500
             },
         }], {
             compress: 1,
