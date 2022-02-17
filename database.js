@@ -1054,7 +1054,7 @@ export async function testPublish(navigation) {
     // if pic selected 
     if (imageURI !== 'https://cdn.pixabay.com/photo/2013/11/28/11/31/dog-220273_960_720.jpg') {
         // 3a. Convert pic (optional) 
-        convertImage(imageURI);
+        blobify(imageURI);
 
         // 3b. upload pic + get URL (optional)
     } else {
@@ -1094,25 +1094,25 @@ export async function testEditPublish(navigation) {
 export async function convertImage(imageURI) {
     console.log('3a')
 
-    const resize = {
-        resize: {
-            height: 1000
-        }
-    }
     manipulateAsync(
         imageURI,
-        [resize], {
+        [{
+            resize: {
+                height: 1000
+            },
+        }], {
             compress: 1,
             format: SaveFormat.JPEG,
         }
     ).then((result) => {
         // start upload photo
-        console.log('result is...')
+            console.log('3b')
 
+        console.log('result is...')
         // gets stuck here for some f-ing reason
         console.log(result)
-
         store.dispatch(saveDogPic(result.uri))
+
 
     }).catch((err) => {
         sendFireError(err, "converting")
