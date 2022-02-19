@@ -199,9 +199,12 @@ export default function DogCreator({ navigation }) {
                     }
 
 
+                    let userLocation = {
+                        latitude: currentPin.coords.latitude,
+                        longitude: currentPin.coords.longitude,
+                        zone: zip,
 
-                    // create new location object 
-                    let userLocation = zip
+                    }
 
                     // save state and update UI
                     setLocation(userLocation);

@@ -251,6 +251,15 @@ export default function Personality({ navigation }) {
                     {!editing &&
                         <Button colorScheme="indigo"
                             isLoading={isPublishing}
+                            _loading={{
+                                bg: "emerald.400",
+                                _text: {
+                                    color: "coolGray.700"
+                                }
+                            }} _spinner={{
+                                color: "white"
+                            }}
+                            spinnerPlacement="end" 
                             isLoadingText="Submitting"
                             isDisabled={isFinished}
                             onPress={() => onPublish()}>
@@ -261,6 +270,14 @@ export default function Personality({ navigation }) {
                         <Button colorScheme="indigo"
                             isLoading={isPublishing}
                             isLoadingText="Updating"
+                            _loading={{
+                                bg: "emerald.400",
+                                _text: {
+                                    color: "coolGray.700"
+                                }
+                            }} _spinner={{
+                                color: "white"
+                            }}
                             isDisabled={isFinished}
                             onPress={() => onUpdateDog()}
                         >

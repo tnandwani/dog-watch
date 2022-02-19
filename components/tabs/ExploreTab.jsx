@@ -9,8 +9,8 @@ import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 
 
-import { StyleSheet, Dimensions, Platform, Share} from "react-native";
-import { getHomies, updateFireLocation, sendFireError, sendSentryMessage, signAnon, logAnalEvent} from "../../database";
+import { StyleSheet, Dimensions, Platform, Share } from "react-native";
+import { getHomies, updateFireLocation, sendFireError, sendSentryMessage, signAnon, logAnalEvent } from "../../database";
 import DogCard from '../widgets/DogCard'
 
 import { Box, Button, Center, FlatList, Spinner, Text, Fab, Icon, HStack, Badge, Flex, VStack, useToast, Heading, Divider } from "native-base";
@@ -90,7 +90,7 @@ export default function ExploreTab({ navigation }) {
       }
     }
 
- 
+
   }, []);
 
 
@@ -144,11 +144,16 @@ export default function ExploreTab({ navigation }) {
 
 
           // create new location object 
-          let userLocation = zip
+          let userLocation = {
+            latitude: currentPin.coords.latitude,
+            longitude: currentPin.coords.longitude,
+            zone: zip,
+
+          }
           // save state and update UI
           // save state and update UI
           setLocationStatus("Location Received");
-          if (user.status  == 'returning'){
+          if (user.status == 'returning') {
             updateFireLocation(userLocation);
           }
           dispatch(updateLocation(userLocation));
