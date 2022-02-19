@@ -478,7 +478,7 @@ export async function addUsertoZone(pushToken) {
 
     // add token to user
     const uid = store.getState().user.uid
-    const userToken = store.getState().user.pushToken
+    const userToken = store.getState().explore.pushToken
     const userRef = doc(db, "users", uid);
 
     if (userToken !== pushToken) {
