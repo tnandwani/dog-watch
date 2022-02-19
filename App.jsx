@@ -131,6 +131,7 @@ export function AppContent() {
               component={Personality}
               options={{
                 headerShown: false,
+                gestureEnabled: false
               }}
             />
 

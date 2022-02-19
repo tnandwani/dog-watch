@@ -48,7 +48,6 @@ export default function RawDogCard(props) {
                 <HStack w='100%'>
                     <Center w='30%'>
                         <Skeleton isLoaded={isLoaded} flex="1" h="100" w="115%" rounded="md" startColor="indigo.400">
-
                             <AspectRatio w="115%" ratio={9 / 9}>
                                 <Image
 

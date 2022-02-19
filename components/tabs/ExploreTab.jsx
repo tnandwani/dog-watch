@@ -136,20 +136,15 @@ export default function ExploreTab({ navigation }) {
           sendFireError(error, "EXPLORETAB.fetch.response");
         }).then(data => {
           const addy = data.results[0].locations[0].postalCode
-          
-
           let zip = addy
           if (addy.includes("-")) {
             zip = addy.substr(0, addy.indexOf('-'));
           }
 
-          // create new location object 
-          let userLocation = {
-            latitude: currentPin.coords.latitude,
-            longitude: currentPin.coords.longitude,
-            zone: zip,
 
-          }
+
+          // create new location object 
+          let userLocation = zip
           // save state and update UI
           // save state and update UI
           setLocationStatus("Location Received");

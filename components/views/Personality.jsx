@@ -86,7 +86,7 @@ export default function Personality({ navigation }) {
             </Heading>
 
 
-            <VStack space={2} mt="3">
+            <VStack space={3} mt="3">
 
                 <FormControl >
 
