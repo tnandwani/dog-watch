@@ -30,7 +30,6 @@ import {
     saveOwner
 } from "./redux/slices/rawDogSlice";
 import {
-    addLocalAlert,
     addTag,
     removeTag,
     foundZoneDog,
@@ -55,9 +54,6 @@ import {
     onAuthStateChanged,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
-    signInWithPopup,
-    signInWithRedirect,
-    GoogleAuthProvider,
     signInWithCredential,
     signOut
 } from 'firebase/auth';
@@ -75,11 +71,9 @@ import {
     where,
     updateDoc,
     arrayUnion,
-    increment,
     deleteDoc,
     arrayRemove,
-    doc,
-    Timestamp
+    doc
 } from 'firebase/firestore';
 
 import {
@@ -87,7 +81,6 @@ import {
     getStorage,
     uploadBytes,
     ref,
-    uploadString,
 } from "firebase/storage";
 import {
     saveDogPic
@@ -869,6 +862,7 @@ export async function editPublish(imageURI, navigation) {
 
 
 export async function markLost(dog, EContact, index, message) {
+
     Analytics.logEvent('LOST_DOG_start', uAnalytics)
 
     const timestamp = new Date().toLocaleDateString('en-us')
@@ -880,6 +874,8 @@ export async function markLost(dog, EContact, index, message) {
         EContact,
         lost
     }));
+
+    
     const alert = {
         duid: dog.duid,
         date: timestamp,
@@ -906,31 +902,27 @@ export async function markLost(dog, EContact, index, message) {
         sendFireError(error.message, "markLost.updateDoc.dogRef");
 
     });
+
     const zone = store.getState().user.zone
     const docRef = doc(db, "zones", zone);
-    getDoc(docRef).then((docSnap) => {
-            if (docSnap.exists()) {
-                let members = docSnap.data().members
-                store.dispatch(saveZoneData(members));
+    const docSnap = await getDoc(docRef);
 
-                sendNotificationtoZone(dog, alert, members).then((result) => {
-                    Analytics.logEvent('LOST_DOG_notifications_sent', uAnalytics())
+    if (docSnap.exists()) {
+        let members = docSnap.data().members
+        store.dispatch(saveZoneData(members));
 
-                }).catch((error) => {
-                    sendFireError(error.message, "markLost.getDoc.zoneRef.sendNotificationtoZone");
+        sendNotificationtoZone(dog, alert, members).then((result) => {
+            Analytics.logEvent('LOST_DOG_notifications_sent', uAnalytics())
 
-                });
-            } else {
-                // doc.data() will be undefined in this case
-                sendFireError(error.message, "markLost.getDoc.zoneRef.noZoneExist");
-            }
+        }).catch((error) => {
+            sendFireError(error.message, "markLost.getDoc.zoneRef.sendNotificationtoZone");
 
-        })
-        .catch((error) => {
-            sendFireError(error.message, "markLost.getDoc.zoneRef");
+        });
+    } else {
+        sendFireError(error.message, "markLost.getDoc.zoneRef.noZoneExist");
 
+    }
 
-        })
 
 }
 
@@ -1108,7 +1100,7 @@ export async function convertImage(imageURI) {
         }
     ).then((result) => {
         // start upload photo
-            console.log('3b')
+        console.log('3b')
 
         console.log('result is...')
         // gets stuck here for some f-ing reason
