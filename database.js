@@ -474,52 +474,53 @@ export async function getHomies() {
 
 }
 
-export async function addUsertoZone(pushToken) {
+
+
+export async function addTokenToUser(newToken) {
 
     // add token to user
     const uid = store.getState().user.uid
-    const userToken = store.getState().explore.pushToken
     const userRef = doc(db, "users", uid);
+    
+    updateDoc(userRef, {
+        pushToken: newToken
+    }).then(() => {
+        store.dispatch(updatePushToken(newToken))
+    }).catch((error) => {
+        sendFireError(error.message, "addTokenToUser.updateDoc.userRef");
+    });
 
-    if (userToken !== pushToken) {
-        updateDoc(userRef, {
-            pushToken: pushToken
-        }).catch((error) => {
-            sendFireError(error.message, "addUsertoZone.updateDoc.userRef");
-        });
-
-        // add token to zone
-        const zone = store.getState().user.zone
-        const zoneRef = doc(db, "zones", zone);
-        // const zoneDoc = await getDoc(zoneRef);
-
-        if (zone !== "Unverified") {
-            updateDoc(zoneRef, {
-                members: arrayUnion(pushToken)
-            }).then((resp) => {
-                Analytics.logEvent('joined_neighborhood_notigang', uAnalytics())
-            }).catch((error) => {
-
-                if (error.message.includes("No document to update")) {
-                    Analytics.logEvent('FIRST_TIME_ZONER', uAnalytics())
-                    setDoc(doc(db, "zones", zone), {
-                        members: [pushToken]
-                    });
-                } else {
-                    sendFireError(error.message, "addUsertoZone.updateDoc.zoneRef");
-                }
-            })
-        }
-    }
-    store.dispatch(updatePushToken(pushToken))
 }
 
+export function addTokenToZone(newToken, zone) {
 
-export async function updateFireLocation(location) {
+    const zoneRef = doc(db, "zones", zone);
+    // const zoneDoc = await getDoc(zoneRef);
+
+    if (zone !== "Unverified") {
+        updateDoc(zoneRef, {
+            members: arrayUnion(newToken)
+        }).then((resp) => {
+            Analytics.logEvent('joined_neighborhood_notigang', uAnalytics())
+        }).catch((error) => {
+
+            if (error.message.includes("No document to update")) {
+                Analytics.logEvent('FIRST_TIME_ZONER', uAnalytics())
+                setDoc(doc(db, "zones", zone), {
+                    members: [newToken]
+                });
+            } else {
+                sendFireError(error.message, "addTokenToUser.updateDoc.zoneRef");
+            }
+        })
+    }
+}
+
+export async function updateUserLocation(location) {
 
     // get user details
     const uid = store.getState().user.uid
-    const pushToken = store.getState().user.pushToken
+    const pushToken = store.getState().explore.pushToken
 
     const userRef = doc(db, "users", uid);
     updateDoc(userRef, {
@@ -528,14 +529,15 @@ export async function updateFireLocation(location) {
         latitude: location.latitude,
     }).then(() => {
         Analytics.logEvent('Updated_user_Location', uAnalytics())
+        if (pushToken) {
+            addTokenToZone(pushToken, location.zone);
+            Analytics.logEvent('Added_Token_to_Zone', uAnalytics())
+        }
+
     }).catch((error) => {
-        sendFireError(error.message, "updateFireLocation.updateDoc.userRef");
+        sendFireError(error.message, "updateUserLocation.updateDoc.userRef");
     })
 
-    if (pushToken) {
-        addUsertoZone(pushToken);
-        Analytics.logEvent('Added_Token_to_Zone', uAnalytics())
-    }
 
 }
 
@@ -754,7 +756,7 @@ export async function editPublish(imageURI, navigation) {
                     longitude: readyDog.longitude,
                     latitude: readyDog.latitude,
                 }).then((resp) => {
-                    Analytics.logEvent('Edit_dog_finish', uAnalytics)
+                    Analytics.logEvent('Edit_dog_finish', uAnalytics())
                     if (store.getState().user.zone != readyDog.zone) {
                         store.dispatch(updateLocation({
                             zone: readyDog.zone,
@@ -813,7 +815,7 @@ export async function editPublish(imageURI, navigation) {
 
                 setDoc(doc(db, "dogs", duid), readyDog)
                     .then((resp) => {
-                        Analytics.logEvent('Edited_dog_doc_wPhoto', uAnalytics)
+                        Analytics.logEvent('Edited_dog_doc_wPhoto', uAnalytics())
 
                         // post new dog list + update coords
                         const userRef = doc(db, "users", uid);
@@ -863,7 +865,7 @@ export async function editPublish(imageURI, navigation) {
 
 export async function markLost(dog, EContact, index, message) {
 
-    Analytics.logEvent('LOST_DOG_start', uAnalytics)
+    Analytics.logEvent('LOST_DOG_start', uAnalytics())
 
     const timestamp = new Date().toLocaleDateString('en-us')
 
@@ -875,7 +877,7 @@ export async function markLost(dog, EContact, index, message) {
         lost
     }));
 
-    
+
     const alert = {
         duid: dog.duid,
         date: timestamp,
@@ -891,7 +893,7 @@ export async function markLost(dog, EContact, index, message) {
         contact: EContact,
         alert: alert
     }).then(() => {
-        Analytics.logEvent('LOST_DOG_marked_publicly', uAnalytics)
+        Analytics.logEvent('LOST_DOG_marked_publicly', uAnalytics())
         // change dog var
         dog.lost = true;
         dog.contact = EContact;

@@ -10,7 +10,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ExploreTab from './tabs/ExploreTab'
 import ProfileTab from './tabs/ProfileTab'
-import { addUsertoZone, sendFireError, setScreenAnalytics } from '../database';
+import { addTokenToUser, sendFireError, setScreenAnalytics } from '../database';
 
 
 
@@ -74,7 +74,7 @@ export default function Main() {
     const [notification, setNotification] = useState(false);
     const notificationListener = useRef();
     const responseListener = useRef();
-    let keyboard = useSelector((state) => state.interface.keyboard);
+    let oldToken = useSelector((state) => state.explore.pushToken);
 
     const dispatch = useDispatch()
 
@@ -84,8 +84,8 @@ export default function Main() {
         if (Platform.OS !== 'web') {
             registerForPushNotificationsAsync().then(token => {
                 console.log('got token:', token)
-                if (token){
-                    addUsertoZone(token);
+                if (token !== oldToken){
+                    addTokenToUser(token);
                 }
             }).catch((error) => {
                 sendFireError(error.message, "MAIN.registerForPushNotificationsAsync")
