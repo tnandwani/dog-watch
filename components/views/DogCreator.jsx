@@ -78,7 +78,7 @@ export default function DogCreator({ navigation }) {
     // location
     const [visibility, setVisibility] = useState();
     const [location, setLocation] = useState();
-    const [locationStatus, setLocationStatus] = useState("No Location Recieved");
+    const [locationLoading, setLocationLoading] = useState(false);
     const [locationHelper, setLocationHelper] = useState("Visibility based on privacy");
 
     const dispatch = useDispatch()
@@ -147,6 +147,7 @@ export default function DogCreator({ navigation }) {
 
         }
     };
+
     const getLocation = () => {
 
         (async () => {
@@ -154,7 +155,7 @@ export default function DogCreator({ navigation }) {
             // get API key for web created accounts - too expensive for only web
             // Location.setGoogleApiKey(googleAPI)
 
-            setLocationStatus(<Spinner color="indigo.500" />);
+            setLocationLoading(true);
             if (Platform.OS === 'android' && !Constants.isDevice) {
                 sendFireError('Permission to access location was denied', 'Location_Permission_Eror');
                 return;
@@ -208,7 +209,10 @@ export default function DogCreator({ navigation }) {
 
                     // save state and update UI
                     setLocation(userLocation);
-                    setLocationStatus("Location Received")
+                    setLocationLoading(false)
+
+
+
                     dispatch(saveLocation(userLocation));
 
                 }).catch((error) => {
@@ -356,14 +360,60 @@ export default function DogCreator({ navigation }) {
 
 
                 <FormControl>
-                    <FormControl.HelperText>
-                        {/* {locationHelper} */}
-                    </FormControl.HelperText>
-                    <Button mt="4" colorScheme="indigo" _text={{ color: 'white' }} shadow="7" onPress={getLocation}  > Set as Home </Button>
 
-                    <FormControl.HelperText>
-                        {locationStatus}
-                    </FormControl.HelperText>
+
+                    {!location &&
+                        <Popover trigger={triggerProps => {
+                            return <Button {...triggerProps}
+                                mt="4"
+                                colorScheme="indigo" _text={{ color: 'white' }}
+                                shadow="7"
+                            >
+                                Verify Zone
+                            </Button>;
+                        }}>
+                            <Popover.Content accessibilityLabel="Delete Customerd" w="56">
+                                <Popover.Arrow />
+                                <Popover.CloseButton />
+                                <Popover.Header>Permission Request</Popover.Header>
+                                <Popover.Body>
+                                    We are about to ask for your location. This is so we can verify you are real and still in the same zone. This helps us keep our community safe.
+                                </Popover.Body>
+                                <Popover.Footer justifyContent="flex-end">
+                                    <Button.Group space={2}>
+                                        <Button isLoading={locationLoading}
+                                            _loading={{
+                                                bg: "sucess.400",
+                                                _text: {
+                                                    color: "white"
+                                                }
+                                            }} _spinner={{
+                                                color: "white"
+                                            }}
+                                            spinnerPlacement="end"
+                                            isLoadingText="Requesting"
+                                            onPress={getLocation}
+                                            colorScheme="success">Sounds Good!</Button>
+                                    </Button.Group>
+                                </Popover.Footer>
+                            </Popover.Content>
+                        </Popover>
+                    }
+                    {location &&
+                        <Button
+                            mt="4"
+                            colorScheme="success" _text={{ color: 'white' }}
+                            shadow="7"
+                            disabled
+                            endIcon={<CheckIcon size="5" />}
+
+                        >
+                            Verified Zone
+                        </Button>
+                    }
+
+
+
                 </FormControl>
 
 
@@ -432,6 +482,6 @@ export default function DogCreator({ navigation }) {
             </Center>
 
 
-        </Box>
+        </Box >
     )
 }

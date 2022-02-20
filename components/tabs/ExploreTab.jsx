@@ -8,12 +8,13 @@ import { mapQuestKey } from "../../constants";
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 
+import emptyLogo from '../../assets/emptyLogo.png';
 
 import { StyleSheet, Dimensions, Platform, Share } from "react-native";
 import { getHomies, updateUserLocation, sendFireError, sendSentryMessage, signAnon, logAnalEvent } from "../../database";
 import DogCard from '../widgets/DogCard'
 
-import { Box, Button, Center, FlatList, Spinner, Text, Fab, Icon, HStack, Badge, Flex, VStack, useToast, Heading, Divider } from "native-base";
+import { Box, Button, Center, FlatList, Spinner, Text, Fab, Image, Icon, Popover, HStack, Badge, Flex, VStack, useToast, Heading, Divider } from "native-base";
 import { updateLocation } from "../../redux/slices/userSlice";
 import { updateLoading } from "../../redux/slices/exploreSlice";
 import { updateShowLostModal } from "../../redux/slices/interfaceSlice";
@@ -30,14 +31,13 @@ export default function ExploreTab({ navigation }) {
   let lostDogs = useSelector((state) => state.explore.myZone.lost);
 
   let loading = useSelector((state) => state.explore.loading);
-  const [locationStatus, setLocationStatus] = useState('');
+  const [locationLoading, setLocationLoading] = useState(false);
   let [safeAreaNeeded, setSafeAreaNeeded] = useState(0);
   let [safeAreaNeededX, setSafeAreaNeededX] = useState(2);
   let screenName = useSelector((state) => state.interface.screen);
 
   let [safeH, setSafeH] = useState('65%');
   // default for mobile
-
 
   const toast = useToast()
   const sendInvite = async () => {
@@ -93,12 +93,11 @@ export default function ExploreTab({ navigation }) {
 
   }, []);
 
-
   const getLocation = () => {
 
     (async () => {
 
-      setLocationStatus(<Spinner color="indigo.500" />);
+      setLocationLoading(true);
       if (Platform.OS === 'android' && !Constants.isDevice) {
         sendFireError('Permission to access location was denied', 'Location_Permission_Eror');
         return;
@@ -152,7 +151,8 @@ export default function ExploreTab({ navigation }) {
           }
           // save state and update UI
           // save state and update UI
-          setLocationStatus("Location Received");
+          setLocationLoading(false);
+          
           if (user.status == 'returning') {
             updateUserLocation(userLocation);
           }
@@ -213,20 +213,45 @@ export default function ExploreTab({ navigation }) {
           <Box m='2'>
             {(user.zone === 'Unverified') &&
               <Box>
-                <Button
-                  w='100%'
-                  mt='2'
-                  colorScheme="indigo"
-                  _text={{ color: "white" }}
-                  shadow="7"
-                  onPress={getLocation}
-                >
-                  Join The Watch
-                </Button>
-                <Box mt='3'>
-                  {locationStatus}
+                <Popover trigger={triggerProps => {
+                  return <Button {...triggerProps} w='100%'
+                    mt='2'
+                    colorScheme="indigo"
+                    _text={{ color: "white" }}
+                    shadow="7"
+                  >
+                    Join The Watch
+                  </Button>;
+                }}>
+                  <Popover.Content accessibilityLabel="Delete Customerd" w="56">
+                    <Popover.Arrow/>
+                    <Popover.CloseButton />
+                    <Popover.Header>Permission Request</Popover.Header>
+                    <Popover.Body>
+                      We are about to ask for your location. This is so we can verify you are real and also add you to the correct zone. This helps us keep our community safe.
+                    </Popover.Body>
+                    <Popover.Footer justifyContent="flex-end">
+                      <Button.Group space={2}>
+                        <Button onPress={getLocation}
+                          colorScheme="success"
+                          isLoading={locationLoading}
+                          _loading={{
+                            bg: "sucess.400",
+                            _text: {
+                              color: "white"
+                            }
+                          }} _spinner={{
+                            color: "white"
+                          }}
+                          spinnerPlacement="end"
+                          isLoadingText="Requesting"
+                        >Sounds Good!</Button>
+                      </Button.Group>
+                    </Popover.Footer>
+                  </Popover.Content>
+                </Popover>
 
-                </Box>
+
               </Box>
             }
             {(user.zone !== 'Unverified') &&
@@ -247,14 +272,23 @@ export default function ExploreTab({ navigation }) {
 
                 <Divider my="2" />
                 {/* CARDS */}
-                <FlatList maxH={safeH} data={dogTags} renderItem={(dog) => (
-                  <Box my='1'>
-                    <DogCard dog={dog} navigation={navigation} />
-                  </Box>
-                )
+                {/* if dogs in area */}
+                {dogTags.length > 0 &&
+                  <FlatList maxH={safeH} data={dogTags} renderItem={(dog) => (
+                    <Box my='1'>
+                      <DogCard dog={dog} navigation={navigation} />
+                    </Box>
+                  )
+                  }
+                    keyExtractor={(dog) => dog.duid}
+                  />
                 }
-                  keyExtractor={(dog) => dog.duid}
-                />
+                {dogTags.length < 1 &&
+                  <Center>
+                    <Image source={emptyLogo} style={{ width: 305, height: 159, opacity: 0.8 }} />
+                  </Center>
+
+                }
                 <Button
                   mb={3}
                   px='5'
