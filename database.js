@@ -215,7 +215,7 @@ export function socialSignIn(credential) {
         console.log(result)
     }).catch((err) => {
         console.log(err)
-        sendFireError(err, 'Apple.login.firebase')
+        sendFireError(err, 'login.social.firebaseConnect')
 
 
     });
@@ -232,6 +232,8 @@ export async function signAnon() {
             const errorCode = error.code;
             const errorMessage = error.message;
             // ...
+                        sendFireError(errorMessage, "anon.login");
+
         });
 }
 
@@ -320,7 +322,7 @@ export function signInUser(email, password) {
         })
         .catch((error) => {
 
-            sendFireError(error.message, "signInUser.signInWith");
+            sendFireError(error.message, "email.login");
             store.dispatch(updateLoginAlert(error.message))
 
         });
@@ -995,7 +997,10 @@ export function sendFireError(error, func) {
     });
 
     const user = store.getState().user;
+
+    if (!func.includes('login')){
     sendSentryMessage(func + " : " + error)
+    }
 
     Analytics.logEvent('fire_error', {
         uid: user.uid, // from redux 

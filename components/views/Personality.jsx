@@ -45,13 +45,13 @@ export default function Personality({ navigation }) {
     const editing = useSelector((state) => state.rawDog.editing)
 
     // personality local state
-    let [people, setPeople] = useState()
-    let [otherDogs, setOtherDogs] = useState()
-    let [sharing, setSharing] = useState()
-    let [energy, setEnergy] = useState()
-    let [sn, setSn] = useState(true)
-    let [training, setTraining] = useState()
-    let [bio, setBio] = useState("")
+    let [people, setPeople] = useState(useSelector((state) => state.rawDog.personality.people))
+    let [otherDogs, setOtherDogs] = useState(useSelector((state) => state.rawDog.personality.people))
+    let [sharing, setSharing] = useState(useSelector((state) => state.rawDog.personality.people))
+    let [energy, setEnergy] = useState(useSelector((state) => state.rawDog.personality.people))
+    let [sn, setSn] = useState(useSelector((state) => state.rawDog.personality.people))
+    let [training, setTraining] = useState(useSelector((state) => state.rawDog.personality.people))
+    let [bio, setBio] = useState(useSelector((state) => state.rawDog.personality.bio))
 
     let [isFinished, setIsFinished] = useState(true)
 
@@ -67,7 +67,6 @@ export default function Personality({ navigation }) {
 
         // update personality redux
         dispatch(savePersonality({ people, otherDogs, sharing, energy, sn, training, bio }));
-
         testPublish(navigation)
 
     }
@@ -96,7 +95,7 @@ export default function Personality({ navigation }) {
                     </FormControl.Label>
                     <TextArea
                         h={20}
-                        placeholder="Tell us more!"
+                        placeholder={bio}
                         onSubmitEditing={() => Keyboard.dismiss()}
                         onChangeText={(v) => { setBio(v); }}
                     />
@@ -107,7 +106,7 @@ export default function Personality({ navigation }) {
                         Good with people
                     </FormControl.Label>
                     <Slider
-                        defaultValue={0}
+                        defaultValue={people}
                         colorScheme='indigo'
                         minValue={0}
                         maxValue={100}
@@ -132,11 +131,10 @@ export default function Personality({ navigation }) {
                         Good with other dogs
                     </FormControl.Label>
                     <Slider
-                        defaultValue={0}
+                        defaultValue={otherDogs}
                         colorScheme='indigo'
                         minValue={0}
                         maxValue={100}
-                        accessibilityLabel="hello world"
                         step={10}
                         onChangeEnd={(v) => {
                             setOtherDogs(v);
@@ -157,11 +155,10 @@ export default function Personality({ navigation }) {
                         Sharing Toys
                     </FormControl.Label>
                     <Slider
-                        defaultValue={0}
+                        defaultValue={sharing}
                         colorScheme='indigo'
                         minValue={0}
                         maxValue={100}
-                        accessibilityLabel="hello world"
                         step={10}
                         onChangeEnd={(v) => {
                             setSharing(v);
@@ -181,11 +178,10 @@ export default function Personality({ navigation }) {
                         Energy
                     </FormControl.Label>
                     <Slider
-                        defaultValue={0}
+                        defaultValue={energy}
                         colorScheme='indigo'
                         minValue={0}
                         maxValue={100}
-                        accessibilityLabel="hello world"
                         step={10}
                         onChangeEnd={(v) => {
                             setEnergy(v);
@@ -206,7 +202,7 @@ export default function Personality({ navigation }) {
                         Training
                     </FormControl.Label>
                     <Slider
-                        defaultValue={0}
+                        defaultValue={training}
                         colorScheme='indigo'
                         minValue={0}
                         maxValue={100}
@@ -259,7 +255,7 @@ export default function Personality({ navigation }) {
                             }} _spinner={{
                                 color: "white"
                             }}
-                            spinnerPlacement="end" 
+                            spinnerPlacement="end"
                             isLoadingText="Submitting"
                             isDisabled={isFinished}
                             onPress={() => onPublish()}>

@@ -27,9 +27,9 @@ const detaultState = {
     otherDogs: null,
     sharing: null,
     energy: null,
-    sn: null,
+    sn: true,
     training: null,
-    bio: null
+    bio: "Tell us More!"
   }
 }
 

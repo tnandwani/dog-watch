@@ -63,10 +63,10 @@ export default function DogCreator({ navigation }) {
     }, []);
 
     // dog details 
-    const [dogName, setDogName] = useState(null);
-    const [breed, setBreed] = useState(null);
-    const [age, setAge] = useState(null);
-    const [gender, setGender] = useState(null);
+    const [dogName, setDogName] = useState(useSelector((state) => state.rawDog.dogName));
+    const [breed, setBreed] = useState(useSelector((state) => state.rawDog.breed));
+    const [age, setAge] = useState(useSelector((state) => state.rawDog.age));
+    const [gender, setGender] = useState(useSelector((state) => state.rawDog.gender));
     const [profileImage, setProfileImage] = useState('https://cdn.pixabay.com/photo/2013/11/28/11/31/dog-220273_960_720.jpg');
 
     // owner
@@ -76,7 +76,7 @@ export default function DogCreator({ navigation }) {
     const editing = useSelector((state) => state.rawDog.editing)
 
     // location
-    const [visibility, setVisibility] = useState();
+    const [visibility, setVisibility] = useState(useSelector((state) => state.rawDog.visibility));
     const [location, setLocation] = useState();
     const [locationLoading, setLocationLoading] = useState(false);
     const [locationHelper, setLocationHelper] = useState("Visibility based on privacy");
@@ -260,7 +260,7 @@ export default function DogCreator({ navigation }) {
                         _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
                         Dog Name
                     </FormControl.Label>
-                    <Input placeholder='Dog Name' autoFocus onChangeText={(value) => updateName(value)} />
+                    <Input placeholder={dogName} autoFocus onChangeText={(value) => updateName(value)} />
                 </FormControl>
 
 
