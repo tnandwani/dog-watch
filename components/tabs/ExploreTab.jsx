@@ -301,9 +301,9 @@ export default function ExploreTab({ navigation }) {
                 >
                   Invite Friends
                 </Button>
-                <Center>
+                {/* <Center>
                   <Text fontWeight='thin' fontSize="xs">© Dog Watch by Hutch Studios</Text>
-                </Center>
+                </Center> */}
 
 
               </Box>
