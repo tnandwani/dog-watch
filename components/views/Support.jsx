@@ -1,15 +1,10 @@
 import React, { useEffect } from 'react'
 import { Box, Button, Stack, Icon, Center, Heading, Divider } from "native-base"
-import { MaterialIcons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
-import { googleSignIn } from '../../database';
-import { Platform } from 'react-native';
-import GoogleButton from './socials/GoogleButton'
-import AppleButton from './socials/AppleButton'
 
 
 export default function Support({ navigation }) {
     useEffect(() => {
-    }, []);
+    }, []);å
 
     return (
 
