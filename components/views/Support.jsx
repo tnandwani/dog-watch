@@ -4,7 +4,7 @@ import { Box, Button, Stack, Icon, Center, Heading, Divider } from "native-base"
 
 export default function Support({ navigation }) {
     useEffect(() => {
-    }, []);å
+    }, []);
 
     return (
 
