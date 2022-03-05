@@ -6,9 +6,12 @@ import { Platform } from 'react-native';
 import GoogleButton from './socials/GoogleButton'
 import AppleButton from './socials/AppleButton'
 
+import * as Linking from 'expo-linking';
+
 
 export default function Landing({ navigation }) {
     useEffect(() => {
+        Linking.createURL('Landing');
     }, []);
 
     return (
@@ -39,7 +42,10 @@ export default function Landing({ navigation }) {
                 <Button
                     colorScheme="muted"
                     leftIcon={<MaterialCommunityIcons name="email-plus" size={24} color="white" />}
-                    onPress={() => navigation.navigate("Create")}
+                    onPress={() => {
+                        navigation.navigate("Create")
+                    }
+                    }
                 >
                     Create Account
                 </Button>

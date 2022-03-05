@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Image,  Keyboard } from "react-native";
+import { Image, Keyboard } from "react-native";
 import Report from "./Report";
 import {
   Box,
@@ -8,11 +8,13 @@ import {
   AspectRatio,
   Text,
   Pressable,
+  Badge,
   Center,
   Skeleton,
   Stack,
   HStack,
   VStack,
+  Icon,
   IconButton,
   Button,
   Modal,
@@ -52,10 +54,10 @@ export default function DogCard(props) {
   const editDog = () => {
     // pass dog to rawDog
     dispatch(importDog(props.dog.item))
-    
+
     // open Dog Creator 
     props.navigation.navigate('DogCreator')
-    
+
 
 
 
@@ -184,7 +186,7 @@ export default function DogCard(props) {
 
           <HStack w="100%">
             <Center w="25%">
-              <Skeleton isLoaded={isLoaded} flex="1" h="100" w="100%"  rounded="md" startColor="indigo.400">
+              <Skeleton isLoaded={isLoaded} flex="1" h="100" w="100%" rounded="md" startColor="indigo.400">
 
                 <AspectRatio w="115%" ratio={9 / 9}>
                   <Image
@@ -208,6 +210,7 @@ export default function DogCard(props) {
                 <Heading size="md" ml="-1">
 
                   {props.dog.item.dogName}
+
                 </Heading>
                 <Text
                   fontSize="xs"
@@ -233,6 +236,14 @@ export default function DogCard(props) {
                 >
 
                   {props.dog.item.age + " Years Old"}
+
+                  {/* gender icon */}
+                  {props.dog.item.gender === 'F' &&
+                    <Icon ml='1' as={MaterialCommunityIcons} name="gender-female" color="pink.400" size="xs" />
+                  }
+                  {props.dog.item.gender === 'M' &&
+                    <Icon ml='1' as={MaterialCommunityIcons} name="gender-male" color="blue.400" size="xs" />
+                  }
                 </Text>
               </Stack>
             </Box>
