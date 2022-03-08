@@ -98,7 +98,7 @@ export default function DogCard(props) {
               <FormControl.Label>Emergency Contact</FormControl.Label>
               <Input onChangeText={(value) => setEContact(value)} />
               <FormControl.HelperText>
-                Are you sure you want to mark your dog as lost?
+                Note: People in your zone will be able to see the emergency contact info while your dog is marked as lost.
               </FormControl.HelperText>
             </FormControl>
 
