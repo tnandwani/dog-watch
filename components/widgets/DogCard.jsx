@@ -239,10 +239,10 @@ export default function DogCard(props) {
 
                   {/* gender icon */}
                   {props.dog.item.gender === 'F' &&
-                    <Icon ml='1' as={MaterialCommunityIcons} name="gender-female" color="pink.400" size="xs" />
+                    <Icon ml='2' as={MaterialCommunityIcons} name="gender-female" color="pink.400" size="xs" />
                   }
                   {props.dog.item.gender === 'M' &&
-                    <Icon ml='1' as={MaterialCommunityIcons} name="gender-male" color="blue.400" size="xs" />
+                    <Icon ml='2' as={MaterialCommunityIcons} name="gender-male" color="blue.400" size="xs" />
                   }
                 </Text>
               </Stack>

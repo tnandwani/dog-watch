@@ -7,13 +7,16 @@ import GoogleButton from './socials/GoogleButton'
 import AppleButton from './socials/AppleButton'
 
 import * as Linking from 'expo-linking';
+import { useDispatch } from 'react-redux';
+import { changeStatus } from '../../redux/slices/userSlice';
+import { fontStyle } from 'styled-system';
 
 
 export default function Landing({ navigation }) {
     useEffect(() => {
         
-        (Linking.createURL('Landing'));
     }, []);
+    const dispatch = useDispatch();
 
     return (
 
@@ -64,6 +67,15 @@ export default function Landing({ navigation }) {
                 >
                     Email Login
                 </Button>
+
+                <Box mt ='5'>
+                    <Button _text={{ fontStyle: 'italic', fontSize: 'xs', fontWeight: 500 }}colorScheme='indigo' variant={'ghost'} onPress={()=>{
+                        dispatch(changeStatus('support'))
+                    }}>
+                        Support
+                    </Button>
+
+                </Box>
             </Stack>
         </Center >
 

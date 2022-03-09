@@ -35,7 +35,8 @@ import { getDevice } from './redux/slices/userSlice';
 import { setTabScreen } from './redux/slices/interfaceSlice';
 
 
-import { setScreenAnalytics } from './database';
+import { pathRouter, setScreenAnalytics } from './database';
+import { useURL } from 'expo-linking';
 
 
 // SENTRY INIT
@@ -57,6 +58,7 @@ export function AppContent() {
   const dispatch = useDispatch();
   var status = useSelector((state) => state.user.status);
 
+
   dispatch(getDevice(Platform.OS));
 
   return (
@@ -67,7 +69,7 @@ export function AppContent() {
         </Center>
       )}
       {status == "support" && (
-        <Support/>
+        <Support />
       )}
       {status == "new" && (
         <NavigationContainer theme={MyTheme}  >

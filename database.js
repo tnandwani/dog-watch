@@ -120,56 +120,65 @@ const auth = getAuth();
 const storage = getStorage();
 const db = getFirestore();
 
-// check if going to support page
+// URL PAGE NAVIGATION 
 Linking.getInitialURL().then((result) => {
-    console.log(result);
-    if (result.includes('support')) {
-        store.dispatch(changeStatus('support'))
-    } else {
-       autoLogin()
-    }
+    pathRouter(result);
 }).catch((err) => {
     console.log(err);
+    autoLogin()
 });
 
 
-export function autoLogin(){
-     onAuthStateChanged(auth, user => {
-         if (user != null) {
-             const uid = user.uid;
-             const email = user.email;
-             const device = store.getState().device;
+export function pathRouter(path) {
+    if (path) {
+        if (path.toLowerCase().includes('support')) {
+            store.dispatch(changeStatus('support'))
+        } else {
+            autoLogin()
+        }
+    } else {
+        autoLogin()
+    }
 
-             if (!email) {
-                 store.dispatch(signInAccount({
-                     uid
-                 }))
-                 store.dispatch(changeStatus('new'))
+}
 
-             } else {
-                 store.dispatch(signInAccount({
-                     email,
-                     uid
-                 }))
-                 getUserDetails(uid, email);
+export function autoLogin() {
+    onAuthStateChanged(auth, user => {
+        if (user != null) {
+            const uid = user.uid;
+            const email = user.email;
+            const device = store.getState().device;
 
-             }
+            if (!email) {
+                store.dispatch(signInAccount({
+                    uid
+                }))
+                // ANON USER
+                store.dispatch(changeStatus('new'))
 
+            } else {
+                store.dispatch(signInAccount({
+                    email,
+                    uid
+                }))
+                // RETURNING USER
+                getUserDetails(uid, email);
 
-             Analytics.setUserId(uid);
-             Analytics.logEvent('auto_logged_in')
+            }
 
-         } else {
-             store.dispatch(changeStatus('new'))
+            Analytics.setUserId(uid);
+            Analytics.logEvent('auto_logged_in')
 
+        } else {
+            // NEW USER
+            store.dispatch(changeStatus('new'))
+            // if (store.getState().user.device !== 'web') {
+            //     Analytics.resetAnalyticsData();
+            // }
 
-             // if (store.getState().user.device !== 'web') {
-             //     Analytics.resetAnalyticsData();
-             // }
+        }
 
-         }
-
-     });
+    });
 }
 
 
