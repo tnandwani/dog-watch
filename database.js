@@ -106,6 +106,7 @@ from './redux/slices/interfaceSlice';
 import {
     Platform
 } from 'react-native';
+import * as Linking from 'expo-linking'
 ////////// APP START
 
 if (Platform.OS !== 'web') {
@@ -119,42 +120,57 @@ const auth = getAuth();
 const storage = getStorage();
 const db = getFirestore();
 
-onAuthStateChanged(auth, user => {
-    if (user != null) {
-        const uid = user.uid;
-        const email = user.email;
-        const device = store.getState().device;
-
-        if (!email) {
-            store.dispatch(signInAccount({
-                uid
-            }))
-            store.dispatch(changeStatus('new'))
-
-        } else {
-            store.dispatch(signInAccount({
-                email,
-                uid
-            }))
-            getUserDetails(uid, email);
-
-        }
-
-
-        Analytics.setUserId(uid);
-        Analytics.logEvent('auto_logged_in')
-
+// check if going to support page
+Linking.getInitialURL().then((result) => {
+    console.log(result);
+    if (result.includes('support')) {
+        store.dispatch(changeStatus('support'))
     } else {
-        store.dispatch(changeStatus('new'))
-
-
-        // if (store.getState().user.device !== 'web') {
-        //     Analytics.resetAnalyticsData();
-        // }
-
+       autoLogin()
     }
-
+}).catch((err) => {
+    console.log(err);
 });
+
+
+export function autoLogin(){
+     onAuthStateChanged(auth, user => {
+         if (user != null) {
+             const uid = user.uid;
+             const email = user.email;
+             const device = store.getState().device;
+
+             if (!email) {
+                 store.dispatch(signInAccount({
+                     uid
+                 }))
+                 store.dispatch(changeStatus('new'))
+
+             } else {
+                 store.dispatch(signInAccount({
+                     email,
+                     uid
+                 }))
+                 getUserDetails(uid, email);
+
+             }
+
+
+             Analytics.setUserId(uid);
+             Analytics.logEvent('auto_logged_in')
+
+         } else {
+             store.dispatch(changeStatus('new'))
+
+
+             // if (store.getState().user.device !== 'web') {
+             //     Analytics.resetAnalyticsData();
+             // }
+
+         }
+
+     });
+}
 
 
 //////////////////// UI FUNCTIONS 
@@ -232,7 +248,7 @@ export async function signAnon() {
             const errorCode = error.code;
             const errorMessage = error.message;
             // ...
-                        sendFireError(errorMessage, "anon.login");
+            sendFireError(errorMessage, "anon.login");
 
         });
 }
@@ -483,7 +499,7 @@ export async function addTokenToUser(newToken) {
     // add token to user
     const uid = store.getState().user.uid
     const userRef = doc(db, "users", uid);
-    
+
     updateDoc(userRef, {
         pushToken: newToken
     }).then(() => {
@@ -998,8 +1014,8 @@ export function sendFireError(error, func) {
 
     const user = store.getState().user;
 
-    if (!func.includes('login')){
-    sendSentryMessage(func + " : " + error)
+    if (!func.includes('login')) {
+        sendSentryMessage(func + " : " + error)
     }
 
     Analytics.logEvent('fire_error', {

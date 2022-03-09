@@ -11,7 +11,8 @@ import * as Linking from 'expo-linking';
 
 export default function Landing({ navigation }) {
     useEffect(() => {
-        Linking.createURL('Landing');
+        
+        (Linking.createURL('Landing'));
     }, []);
 
     return (

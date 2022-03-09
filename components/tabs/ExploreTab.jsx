@@ -36,7 +36,7 @@ export default function ExploreTab({ navigation }) {
   let [safeAreaNeededX, setSafeAreaNeededX] = useState(2);
   let screenName = useSelector((state) => state.interface.screen);
 
-  let [safeH, setSafeH] = useState('65%');
+  let [safeH, setSafeH] = useState('70%');
   // default for mobile
 
   const toast = useToast()
@@ -65,7 +65,7 @@ export default function ExploreTab({ navigation }) {
     if (Platform.OS == "web") {
       setSafeAreaNeeded(6)
       setSafeAreaNeededX(5)
-      setSafeH('75%')
+      setSafeH('80%')
       // web height
     }
 

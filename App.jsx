@@ -66,7 +66,9 @@ export function AppContent() {
           <Spinner color="indigo.500" />
         </Center>
       )}
-
+      {status == "support" && (
+        <Support/>
+      )}
       {status == "new" && (
         <NavigationContainer theme={MyTheme}  >
           <Stack.Navigator initialRouteName="Landing" screenListeners={{
