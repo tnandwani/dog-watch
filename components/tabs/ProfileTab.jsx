@@ -13,10 +13,10 @@ import {
 
 } from "native-base"
 import { Ionicons } from "@expo/vector-icons"
-import Feedback from '../modals/Feedback'
 import { signOutUser } from '../../database';
 import { resetRawDog } from '../../redux/slices/rawDogSlice';
 import { updateShowFeedback } from '../../redux/slices/interfaceSlice'
+import Resources from '../widgets/Resources'
 
 export default function ProfileTab({ navigation }) {
 
@@ -35,7 +35,6 @@ export default function ProfileTab({ navigation }) {
     return (
         <Box safeArea flex={1} p="1" py="8" w="90%" mx="auto" maxW='768'>
 
-        <Feedback />
             
             {/* add dog card for each  */}
 
@@ -53,7 +52,9 @@ export default function ProfileTab({ navigation }) {
             }
 
             <VStack space = {4}>
-                <Button mt="5" colorScheme="indigo" variant="outline" onPress={() => createDogStart()}> + Add Dog </Button>
+
+                <Resources />
+                <Button colorScheme="indigo" variant="outline" onPress={() => createDogStart()}> + Add Dog </Button>
                 <Button colorScheme="orange" _text={{ color: 'white' }} onPress={() => signOutUser()} > Sign Out</Button>
                 <Button
                     leftIcon={<Icon as={Ionicons} name="paw" size="sm" />}

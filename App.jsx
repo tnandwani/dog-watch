@@ -30,14 +30,10 @@ import Support from "./components/views/Support"; // holds user tabs
 import Personality from "./components/views/Personality";
 import { useDispatch } from 'react-redux';
 import { getDevice } from './redux/slices/userSlice';
-
-
 import { setTabScreen } from './redux/slices/interfaceSlice';
+import { setScreenAnalytics } from './database';
 
-
-import { pathRouter, setScreenAnalytics } from './database';
-import { useURL } from 'expo-linking';
-
+import Feedback from './components/modals/Feedback';
 
 // SENTRY INIT
 if (Platform.OS == 'web') {
@@ -63,6 +59,8 @@ export function AppContent() {
 
   return (
     <NativeBaseProvider>
+      <Feedback />
+
       {status == "loading" && (
         <Center flex={1} px="3">
           <Spinner color="indigo.500" />

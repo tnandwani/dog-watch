@@ -293,7 +293,7 @@ export default function ExploreTab({ navigation }) {
                   mb={3}
                   px='5'
                   py='3'
-                  mt='2'
+                  mt='3'
                   variant="subtle"
                   colorScheme="indigo"
                   onPress={() => sendInvite()}
