@@ -18,6 +18,7 @@ import { signOutUser } from '../../database';
 import { resetRawDog } from '../../redux/slices/rawDogSlice';
 import { updateShowFeedback } from '../../redux/slices/interfaceSlice'
 import Resources from '../widgets/Resources'
+import { changeStatus } from '../../redux/slices/userSlice'
 
 export default function ProfileTab({ navigation }) {
 
@@ -43,7 +44,7 @@ export default function ProfileTab({ navigation }) {
                     colorScheme="indigo"
                     shadow={2}
                     placement="top-right"
-                    mt='10'
+                    mt='9'
                     size="sm"
                 icon={<Icon color="white" as={MaterialCommunityIcons} name="plus" size="4" />}
                     label={'Create Dog'} />
@@ -64,7 +65,7 @@ export default function ProfileTab({ navigation }) {
                 />
             }
 
-            <VStack space={4}>
+            <VStack space={4} mt= '3'>
 
                 <Resources />
                 <Button colorScheme="indigo" variant="outline"onPress={() => signOutUser()} > Sign Out</Button>
@@ -75,6 +76,11 @@ export default function ProfileTab({ navigation }) {
                     onPress={() => { dispatch(updateShowFeedback(true)) }}
                 >
                     Send Feedback
+                </Button>
+                <Button mt='-2' _text={{ fontStyle: 'italic', fontSize: 'xs', fontWeight: 500 }} colorScheme='indigo' variant={'ghost'} onPress={() => {
+                    dispatch(changeStatus('support'))
+                }}>
+                    Support
                 </Button>
             </VStack>
 

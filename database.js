@@ -55,7 +55,8 @@ import {
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     signInWithCredential,
-    signOut
+    signOut,
+    deleteUser
 } from 'firebase/auth';
 
 
@@ -438,6 +439,46 @@ export function reportUser(reportedDog) {
     }
 
 }
+
+export function deleteAccount() {
+
+    const user = auth.currentUser;
+    const dogList = store.getState().user.dogs
+
+    // delete user account
+    deleteUser(user).then(() => {
+        // User deleted.
+
+    }).catch((error) => {
+        // An error ocurred
+        console.log('error deleting user account')
+    });
+
+    // delete user doc
+    deleteDoc(doc(db, "users", user.uid)).then(() => {
+        // delete dog docs
+        if (dogList.length > 0) {
+            console.log(dogList)
+            dogList.forEach((dog) => {
+                deleteDogDoc(dog.duid)
+            })
+        }
+                    store.dispatch(changeStatus('new'));
+
+    }).catch((err) => {
+        console.log('error deleting user doc')
+    });
+}
+
+export async function deleteDogDoc(duid) {
+    deleteDoc(doc(db, "dogs", duid))
+        .then((result) => {
+
+        }).catch((err) => {
+            console.log(err)
+        });
+}
+
 
 //////////////////// ZONE FUNCTIONS 
 
