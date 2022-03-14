@@ -44,7 +44,7 @@ export default function ProfileTab({ navigation }) {
                     placement="top-right"
                     mt='8'
                     size="sm"
-                icon={<Icon color="white" as={MaterialCommunityIcons} name="dog-side" size="4" />}
+                icon={<Icon color="white" as={MaterialCommunityIcons} name="plus" size="4" />}
                     label={'Create Dog'} />
             }
 
