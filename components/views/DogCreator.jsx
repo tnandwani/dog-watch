@@ -377,7 +377,7 @@ export default function DogCreator({ navigation }) {
                                 <Popover.CloseButton />
                                 <Popover.Header>Permission Request</Popover.Header>
                                 <Popover.Body>
-                                    We are about to ask for your location. This is so we can verify your location and also add you to the correct zone. This helps us keep our community safe.
+                                    We are about to ask for your location. This is so we can verify the correct neighborhood for your pup. This also helps keep our community safe. 
                                 </Popover.Body>
                                 <Popover.Footer justifyContent="flex-end">
                                     <Button.Group space={2}>

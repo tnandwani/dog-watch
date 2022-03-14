@@ -4,7 +4,7 @@ import { Platform } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 
 //ICONS
-import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { MaterialCommunityIcons } from "@expo/vector-icons"
 
 // TABS 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -129,13 +129,13 @@ export default function Main() {
                 <Tab.Screen name="Explore" component={ExploreTab} options={{
                     headerShown: false,
                     tabBarIcon: ({ color, size }) => (
-                        <MaterialIcons name="compass" color={color} size={size} />
+                        <MaterialCommunityIcons name="compass" color={color} size={size} />
                     )
                 }} />
                 <Tab.Screen name="Profile" component={ProfileTab} options={{
                     headerShown: false,
                     tabBarIcon: ({ color, size }) => (
-                        <MaterialIcons name="dog-side" color={color} size={size} />
+                        <MaterialCommunityIcons name="dog-side" color={color} size={size} />
                     )
                 }} />
 
