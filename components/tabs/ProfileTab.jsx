@@ -39,10 +39,11 @@ export default function ProfileTab({ navigation }) {
             {screenName == 'Profile' &&
                 <Fab
                     onPress={() => createDogStart()}
-                    renderInPortal={false} colorScheme="indigo"
+                    renderInPortal={false} 
+                    colorScheme="indigo"
                     shadow={2}
                     placement="top-right"
-                    mt='8'
+                    mt='10'
                     size="sm"
                 icon={<Icon color="white" as={MaterialCommunityIcons} name="plus" size="4" />}
                     label={'Create Dog'} />

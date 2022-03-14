@@ -33,7 +33,7 @@ export default function Support() {
             <VStack space={1} mt="5">
 
                 <Text color={'indigo.500'} fontSize="lg" bold>Our Mission</Text>
-                <Text>The Dog Watch commnuity believes in....</Text>
+                <Text>Dog Watch is a community for dog owners.Explore other dogs in your area.You can view some of their traits and see if your dogs would get along.You can also mark your dog as lost and alert other owners in your neighborhood.View quick links to some important resources for your pup.</Text>
 
                 <Text color={'indigo.500'} mt='5' fontSize="lg" bold>Contact Us</Text>
                 <VStack mt='2' space={2}>
