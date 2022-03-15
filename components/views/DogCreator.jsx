@@ -369,7 +369,7 @@ export default function DogCreator({ navigation }) {
                                 colorScheme="indigo" _text={{ color: 'white' }}
                                 shadow="7"
                             >
-                                Verify Zone
+                                Verification Needed
                             </Button>;
                         }}>
                             <Popover.Content accessibilityLabel="Delete Customerd" w="56">
@@ -408,7 +408,7 @@ export default function DogCreator({ navigation }) {
                             endIcon={<CheckIcon size="5" />}
 
                         >
-                            Verified Zone
+                            Zone Verified 
                         </Button>
                     }
 
