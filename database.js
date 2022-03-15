@@ -447,7 +447,10 @@ export function deleteAccount() {
 
     // delete user account
     deleteUser(user).then(() => {
+
         // User deleted.
+        Analytics.logEvent('deleted_user', uAnalytics())
+
 
     }).catch((error) => {
         // An error ocurred
@@ -456,14 +459,18 @@ export function deleteAccount() {
 
     // delete user doc
     deleteDoc(doc(db, "users", user.uid)).then(() => {
+        Analytics.logEvent('deleted_user_doc', uAnalytics())
+
         // delete dog docs
         if (dogList.length > 0) {
             console.log(dogList)
             dogList.forEach((dog) => {
                 deleteDogDoc(dog.duid)
             })
+            Analytics.logEvent('deleted_dogs', uAnalytics())
+
         }
-                    store.dispatch(changeStatus('new'));
+        store.dispatch(changeStatus('new'));
 
     }).catch((err) => {
         console.log('error deleting user doc')
