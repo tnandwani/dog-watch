@@ -35,7 +35,7 @@ export default function LostList() {
 		const reportedDog = data.item;
 
 		if (reportedDog.owner === uid) {
-			alert("Cant report yourself. Kinda sus.")
+			alert("Can't report yourself. Kinda sus.")
 		} else {
 			reportUser(reportedDog)
 
