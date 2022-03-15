@@ -3,6 +3,7 @@ import { Platform } from "react-native";
 
 import { useSelector, useDispatch } from "react-redux";
 
+
 //ICONS
 import { MaterialCommunityIcons } from "@expo/vector-icons"
 
@@ -11,7 +12,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ExploreTab from './tabs/ExploreTab'
 import ProfileTab from './tabs/ProfileTab'
 import { addTokenToUser, sendFireError, setScreenAnalytics } from '../database';
-
 
 
 // NOTIFCATIONS

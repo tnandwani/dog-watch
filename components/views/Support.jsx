@@ -26,7 +26,8 @@ export default function Support() {
                 icon={<Icon color="white" as={MaterialIcons} name="close" size="4" />}
             />
             <Heading size="lg" color="coolGray.800" fontWeight="600">
-                Support Page            </Heading>
+                Support Page            
+                </Heading>
             <Heading mt="1" mb='5' color="coolGray.600" fontWeight="medium" size="xs">
                 We're here to help!
             </Heading>

@@ -8,7 +8,8 @@ import { mapQuestKey } from "../../constants";
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 
-import emptyLogo from '../../assets/emptyLogo.png';
+import emptySplash from '../../assets/emptySplash.png';
+import joinSplash from '../../assets/joinSplash.png';
 
 import { StyleSheet, Dimensions, Platform, Share } from "react-native";
 import { getHomies, updateUserLocation, sendFireError, sendSentryMessage, signAnon, logAnalEvent } from "../../database";
@@ -251,7 +252,9 @@ export default function ExploreTab({ navigation }) {
                   </Popover.Content>
                 </Popover>
 
-
+                <Center mt='50%'>
+                  <Image source={joinSplash} style={{ width: 305, height: 159, opacity: 0.8 }} />
+                </Center>
               </Box>
             }
             {(user.zone !== 'Unverified') &&
@@ -285,7 +288,7 @@ export default function ExploreTab({ navigation }) {
                 }
                 {dogTags.length < 1 &&
                   <Center>
-                    <Image source={emptyLogo} style={{ width: 305, height: 159, opacity: 0.8 }} />
+                    <Image source={emptySplash} style={{ width: 305, height: 159, opacity: 0.8 }} />
                   </Center>
 
                 }
