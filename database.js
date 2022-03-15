@@ -554,13 +554,14 @@ export async function getHomies() {
 export async function addTokenToUser(newToken) {
 
     // add token to user
-    const uid = store.getState().user.uid
-    const userRef = doc(db, "users", uid);
+    const user = store.getState().user.uid
+    const userRef = doc(db, "users", user.uid);
 
     updateDoc(userRef, {
         pushToken: newToken
     }).then(() => {
         store.dispatch(updatePushToken(newToken))
+        addTokenToZone(newToken, user.zone )
     }).catch((error) => {
         sendFireError(error.message, "addTokenToUser.updateDoc.userRef");
     });
@@ -581,8 +582,14 @@ export function addTokenToZone(newToken, zone) {
 
             if (error.message.includes("No document to update")) {
                 Analytics.logEvent('FIRST_TIME_ZONER', uAnalytics())
-                setDoc(doc(db, "zones", zone), {
+                setDoc(zoneRef, {
                     members: [newToken]
+                }).then((result) => {
+                    Analytics.logEvent('Added_Token_to_Zone', uAnalytics())
+
+                }).catch((err) => {
+                sendFireError(error.message, "addTokenToUser.setDoc.zoneRef");
+
                 });
             } else {
                 sendFireError(error.message, "addTokenToUser.updateDoc.zoneRef");
@@ -606,7 +613,6 @@ export async function updateUserLocation(location) {
         Analytics.logEvent('Updated_user_Location', uAnalytics())
         if (pushToken) {
             addTokenToZone(pushToken, location.zone);
-            Analytics.logEvent('Added_Token_to_Zone', uAnalytics())
         }
 
     }).catch((error) => {
