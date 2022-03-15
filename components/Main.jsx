@@ -47,7 +47,7 @@ async function registerForPushNotificationsAsync() {
             finalStatus = status;
         }
         if (finalStatus !== 'granted') {
-            alert('Failed to get push token for push notification!');
+            alert('Failed to signup for push notification!');
             return;
         }
         token = (await Notifications.getExpoPushTokenAsync()).data;
@@ -83,7 +83,6 @@ export default function Main() {
         // If mobile
         if (Platform.OS !== 'web') {
             registerForPushNotificationsAsync().then(token => {
-                console.log('got token:', token)
                 if (token !== oldToken){
                     addTokenToUser(token);
                 }

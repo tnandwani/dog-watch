@@ -553,18 +553,26 @@ export async function getHomies() {
 
 export async function addTokenToUser(newToken) {
 
+
+
+
+
     // add token to user
-    const user = store.getState().user.uid
+    const user = store.getState().user
     const userRef = doc(db, "users", user.uid);
 
-    updateDoc(userRef, {
-        pushToken: newToken
-    }).then(() => {
-        store.dispatch(updatePushToken(newToken))
-        addTokenToZone(newToken, user.zone )
-    }).catch((error) => {
-        sendFireError(error.message, "addTokenToUser.updateDoc.userRef");
-    });
+    if (user.pushToken != newToken) {
+        updateDoc(userRef, {
+            pushToken: newToken
+        }).then(() => {
+            store.dispatch(updatePushToken(newToken))
+            addTokenToZone(newToken, user.zone)
+        }).catch((error) => {
+            sendFireError(error.message, "addTokenToUser.updateDoc.userRef");
+        });
+
+    }
+
 
 }
 
@@ -588,7 +596,7 @@ export function addTokenToZone(newToken, zone) {
                     Analytics.logEvent('Added_Token_to_Zone', uAnalytics())
 
                 }).catch((err) => {
-                sendFireError(error.message, "addTokenToUser.setDoc.zoneRef");
+                    sendFireError(error.message, "addTokenToUser.setDoc.zoneRef");
 
                 });
             } else {
