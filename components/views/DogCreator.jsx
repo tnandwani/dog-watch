@@ -383,7 +383,7 @@ export default function DogCreator({ navigation }) {
                                     <Button.Group space={2}>
                                         <Button isLoading={locationLoading}
                                             _loading={{
-                                                bg: "sucess.400",
+                                                bg: "success.400",
                                                 _text: {
                                                     color: "white"
                                                 }
