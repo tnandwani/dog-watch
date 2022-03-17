@@ -37,7 +37,7 @@ export default function ExploreTab({ navigation }) {
   let [safeAreaNeededX, setSafeAreaNeededX] = useState(2);
   let screenName = useSelector((state) => state.interface.screen);
 
-  let [safeH, setSafeH] = useState('70%');
+  let [safeH, setSafeH] = useState('65%');
   // default for mobile
 
   const toast = useToast()
@@ -66,7 +66,7 @@ export default function ExploreTab({ navigation }) {
     if (Platform.OS == "web") {
       setSafeAreaNeeded(6)
       setSafeAreaNeededX(5)
-      setSafeH('80%')
+      setSafeH('75%')
       // web height
     }
 
@@ -273,7 +273,7 @@ export default function ExploreTab({ navigation }) {
 
                 </Box>
 
-                <Divider my="2" />
+                <Divider my="1" />
                 {/* CARDS */}
                 {/* if dogs in area */}
                 {dogTags.length > 0 &&
