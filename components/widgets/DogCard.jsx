@@ -87,19 +87,20 @@ export default function DogCard(props) {
           <Modal.Header colorScheme='red.500'>Mark Dog as Lost?</Modal.Header>
           <Modal.Body>
 
-            <FormControl isRequired >
-              <FormControl.Label>Add Alert Details</FormControl.Label>
-              <TextArea
-                onSubmitEditing={() => Keyboard.dismiss()}
-                onChangeText={(value) => setMessage(value)} />
-
-            </FormControl>
+    
             <FormControl isRequired mt='2'>
               <FormControl.Label>Emergency Contact</FormControl.Label>
               <Input onChangeText={(value) => setEContact(value)} />
               <FormControl.HelperText>
                 Note: People in your zone will be able to see the emergency contact info while your dog is marked as lost.
               </FormControl.HelperText>
+              <FormControl isRequired >
+                <FormControl.Label>Add Alert Details</FormControl.Label>
+                <TextArea
+                  onSubmitEditing={() => Keyboard.dismiss()}
+                  onChangeText={(value) => setMessage(value)} />
+
+              </FormControl>
             </FormControl>
 
           </Modal.Body>

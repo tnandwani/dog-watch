@@ -595,7 +595,7 @@ export function addTokenToZone(newToken, zone) {
                 }).then((result) => {
                     Analytics.logEvent('Added_Token_to_Zone', uAnalytics())
 
-                }).catch((err) => {
+                }).catch((error) => {
                     sendFireError(error.message, "addTokenToUser.setDoc.zoneRef");
 
                 });
