@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Box, Button, Stack, Icon, Center, Heading, Divider } from "native-base"
+import { Box, Button, VStack, Icon, Center, Heading, Divider } from "native-base"
 import { MaterialIcons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import { googleSignIn } from '../../database';
 import { Platform } from 'react-native';
@@ -20,19 +20,15 @@ export default function Landing({ navigation }) {
 
     return (
 
-        <Center flex={1} px="3">
+        <Center safeArea flex={1} px="3">
             <Heading size="2xl" color="coolGray.800" fontWeight="600" bold>
                 Dog Watch
             </Heading>
             <Heading mt="1" mb='5' color="coolGray.600" fontWeight="medium" size="xs">
                 A Community for Dog Owners
             </Heading>
-            <Stack
+            <VStack
                 mt="4"
-                direction={{
-                    base: "column",
-                    md: "row",
-                }}
                 space={4}
             >
 
@@ -76,7 +72,7 @@ export default function Landing({ navigation }) {
                     </Button>
 
                 </Box>
-            </Stack>
+            </VStack>
         </Center >
 
     )
