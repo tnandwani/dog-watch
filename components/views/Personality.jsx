@@ -95,7 +95,7 @@ export default function Personality({ navigation }) {
                     </FormControl.Label>
                     <TextArea
                         h={20}
-                        placeholder={bio}
+                        placeholder={'Tell us more!'}
                         onSubmitEditing={() => Keyboard.dismiss()}
                         onChangeText={(v) => { setBio(v); }}
                     />

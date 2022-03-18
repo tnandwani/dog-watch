@@ -29,7 +29,7 @@ const detaultState = {
     energy: null,
     sn: true,
     training: null,
-    bio: "Tell us More!"
+    bio: ""
   }
 }
 
