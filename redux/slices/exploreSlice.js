@@ -10,7 +10,7 @@ export const exploreSlice = createSlice({
     dogTags: [],
     myCoords: null,
     vapidToken: null,
-    pushToken: null,
+    pushToken: "",
     myZone: {
       members: [],
       lost: [],

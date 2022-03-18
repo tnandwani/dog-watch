@@ -553,15 +553,11 @@ export async function getHomies() {
 
 export async function addTokenToUser(newToken) {
 
-
-
-
-
     // add token to user
     const user = store.getState().user
     const userRef = doc(db, "users", user.uid);
 
-    if (user.pushToken != newToken) {
+    if (user.pushToken != newToken && newToken != "") {
         updateDoc(userRef, {
             pushToken: newToken
         }).then(() => {
@@ -619,7 +615,7 @@ export async function updateUserLocation(location) {
         latitude: location.latitude,
     }).then(() => {
         Analytics.logEvent('Updated_user_Location', uAnalytics())
-        if (pushToken) {
+        if (pushToken !== "") {
             addTokenToZone(pushToken, location.zone);
         }
 

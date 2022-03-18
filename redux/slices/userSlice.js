@@ -20,7 +20,7 @@ export const userSlice = createSlice({
     dogs: [],
     status: 'loading',
     notifications: [],
-    pushToken: null,
+    pushToken: '',
     reported: []
   },
   reducers: {
