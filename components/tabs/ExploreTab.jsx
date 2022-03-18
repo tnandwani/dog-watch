@@ -203,20 +203,21 @@ export default function ExploreTab({ navigation }) {
         <VStack w='100%' maxW={768} h="100%" >
 
           {/* MOBILE - SHOW MAP */}
-          {Platform.OS !== 'web' &&
-            <Box mt='-5%' m='-1' h="35%" bg='indigo.300'>
+          {Platform.OS !== 'web' && user.zone != 'Unverified' &&
+            <Box mt='-5' m='-1' h="35%" bg='indigo.300'>
               <Gmap lat={user.latitude} long={user.longitude} />
             </Box>
           }
           {/* WEB - SHOW WARNING */}
 
           {/* ALL PLATFORMS */}
-          <Box m='2'>
+          <Box  m='2'>
             {(user.zone === 'Unverified') &&
-              <Box>
+              <Box safeArea>
                 <Popover trigger={triggerProps => {
                   return <Button {...triggerProps} w='100%'
                     mt='2'
+                    py='5'
                     colorScheme="indigo"
                     _text={{ color: "white" }}
                     shadow="7"
@@ -224,7 +225,7 @@ export default function ExploreTab({ navigation }) {
                     Join The Watch
                   </Button>;
                 }}>
-                  <Popover.Content accessibilityLabel="Delete Customerd" w="56">
+                  <Popover.Content accessibilityLabel="Delete Customerd" mx={2}>
                     <Popover.Arrow/>
                     <Popover.CloseButton />
                     <Popover.Header>Permission Request</Popover.Header>
@@ -237,7 +238,7 @@ export default function ExploreTab({ navigation }) {
                           colorScheme="success"
                           isLoading={locationLoading}
                           _loading={{
-                            bg: "sucess.400",
+                            bg: "success.400",
                             _text: {
                               color: "white"
                             }
@@ -252,7 +253,7 @@ export default function ExploreTab({ navigation }) {
                   </Popover.Content>
                 </Popover>
 
-                <Center mt='50%'>
+                <Center mt='30%'>
                   <Image source={joinSplash} style={{ width: 305, height: 159, opacity: 0.8 }} />
                 </Center>
               </Box>

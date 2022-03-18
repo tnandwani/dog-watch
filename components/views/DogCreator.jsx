@@ -372,7 +372,7 @@ export default function DogCreator({ navigation }) {
                                 Verification Needed
                             </Button>;
                         }}>
-                            <Popover.Content accessibilityLabel="Delete Customerd" w="56">
+                            <Popover.Content accessibilityLabel="Delete Customer" mx='2'>
                                 <Popover.Arrow />
                                 <Popover.CloseButton />
                                 <Popover.Header>Permission Request</Popover.Header>
