@@ -38,7 +38,6 @@ export default function DogCard(props) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [EContact, setEContact] = useState();
   const [message, setMessage] = useState();
-  const [profileImage, setProfileImage] = useState(props.dog.item.profileImage);
 
   let uid = useSelector((state) => state.user.uid);
   let email = useSelector((state) => state.user.email);
@@ -195,7 +194,7 @@ export default function DogCard(props) {
                     onLoadEnd={() => setIsLoaded(true)}
                     w='100%'
                     source={{
-                      uri: profileImage,
+                      uri: props.dog.item.profileImage,
                       // uri: "https://i.ytimg.com/vi/MPV2METPeJU/maxresdefault.jpg",
                     }}
                     alt="image"

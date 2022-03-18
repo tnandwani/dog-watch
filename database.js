@@ -825,7 +825,6 @@ export async function editPublish(imageURI, navigation) {
 
     const readyDog = store.getState().rawDog
 
-    store.dispatch(changeDogInUser(readyDog))
 
     // check if image uploaded 
 
@@ -861,6 +860,8 @@ export async function editPublish(imageURI, navigation) {
                             latitude: readyDog.latitude,
                         }))
                     }
+                    store.dispatch(changeDogInUser(readyDog))
+
                     navigation.navigate('Profile')
                 }).catch((error) => {
                     sendFireError(error.message, "editPublish.noimage.setDoc.updateDoc");
@@ -871,7 +872,7 @@ export async function editPublish(imageURI, navigation) {
             })
     } else {
 
-
+        // New pic uploaded
         const blob = await new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             xhr.onload = function () {
@@ -896,8 +897,8 @@ export async function editPublish(imageURI, navigation) {
 
                 // add url to redux
                 store.dispatch(saveDogPic(PURI))
+                store.dispatch(changeDogInUser(readyDog))
 
-                const readyDog = store.getState().rawDog
                 // upload readyDog to dogs/
 
 
@@ -930,7 +931,6 @@ export async function editPublish(imageURI, navigation) {
                                     latitude: readyDog.latitude,
                                 }))
                             }
-
                             navigation.navigate('Profile')
 
                         }).catch((error) => {
