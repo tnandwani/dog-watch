@@ -204,14 +204,13 @@ export default function ExploreTab({ navigation }) {
 
           {/* MOBILE - SHOW MAP */}
           {Platform.OS !== 'web' && user.zone != 'Unverified' &&
-            <Box mt='-5' m='-1' h="35%" bg='indigo.300'>
-              <Gmap lat={user.latitude} long={user.longitude} />
-            </Box>
+            <Box h='35%' mt='-10' mx='-1' >
+            <Gmap lat={user.latitude} long={user.longitude} />
+          </Box>
           }
-          {/* WEB - SHOW WARNING */}
 
           {/* ALL PLATFORMS */}
-          <Box  m='2'>
+          <Box m='2'>
             {(user.zone === 'Unverified') &&
               <Box safeArea>
                 <Popover trigger={triggerProps => {
@@ -225,7 +224,7 @@ export default function ExploreTab({ navigation }) {
                     Join The Watch
                   </Button>;
                 }}>
-                  <Popover.Content accessibilityLabel="Delete Customerd" mx={2}>
+                  <Popover.Content accessibilityLabel="Delete Customer" mx={2}>
                     <Popover.Arrow/>
                     <Popover.CloseButton />
                     <Popover.Header>Permission Request</Popover.Header>

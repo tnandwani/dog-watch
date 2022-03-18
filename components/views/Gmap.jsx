@@ -12,7 +12,7 @@ export default function Gmap(props) {
 
     if (lat && long) {
         embed =
-            '<iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.google.com/maps/embed/v1/view?key='
+            '<iframe width="100%" height="101%" frameborder="0" scrolling="no" src="https://www.google.com/maps/embed/v1/view?key='
             + googleAPI
             + '&center='
             + lat
@@ -23,7 +23,7 @@ export default function Gmap(props) {
     else {
         // no location - show USA
         embed =
-            '<iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.google.com/maps/embed/v1/view?key='
+            '<iframe width="100%" height="100%" frameborder="0" scrolling="no" src="https://www.google.com/maps/embed/v1/view?key='
             + googleAPI
             + '&center=39.5538121,-98.0792827&zoom=4"></iframe>'
     }
