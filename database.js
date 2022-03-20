@@ -557,7 +557,7 @@ export async function addTokenToUser(newToken) {
     const user = store.getState().user
     const userRef = doc(db, "users", user.uid);
 
-    if (user.pushToken != newToken && newToken != "") {
+    if (user.pushToken != newToken && newToken != "" && newToken) {
         updateDoc(userRef, {
             pushToken: newToken
         }).then(() => {

@@ -22,10 +22,15 @@ A COMMUNITY FOR DOG OWNERS
 
 
 
-Steps to Distribute
-
+Steps to Distribute to Apple
 0. Change Build number in app.json
 1. expo build:ios --clear-provisioning-profile --revoke-credentials
 2. Download IPA file from expo 
 3. Upload via Transporter (eas submit --platform ios)
 4. Approve on Apple Connect 
+
+
+During Submission
+5. Change submission build 
+6. Reply to reviewer 
+7. Resubmit 
