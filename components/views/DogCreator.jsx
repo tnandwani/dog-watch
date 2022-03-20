@@ -74,7 +74,6 @@ export default function DogCreator({ navigation }) {
     const uid = useSelector((state) => state.user.uid)
     const duid = useSelector((state) => state.rawDog.duid)
     const editing = useSelector((state) => state.rawDog.editing)
-
     // location
     const [visibility, setVisibility] = useState(useSelector((state) => state.rawDog.visibility));
     const [location, setLocation] = useState();
@@ -230,9 +229,11 @@ export default function DogCreator({ navigation }) {
     }
 
 
+
     let [isFinished, setIsFinished] = useState(true)
 
     let verify = () => {
+        
 
         if (dogName !== '' && breed && age && gender && visibility && location && isFinished) {
             setIsFinished(false)
@@ -260,7 +261,7 @@ export default function DogCreator({ navigation }) {
                         _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
                         Dog Name
                     </FormControl.Label>
-                    <Input placeholder={dogName} autoFocus onChangeText={(value) => updateName(value)} />
+                    <Input placeholder={dogName} autoFocus={!editing} onChangeText={(value) => updateName(value)} />
                 </FormControl>
 
 
