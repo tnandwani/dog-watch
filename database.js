@@ -577,7 +577,7 @@ export function addTokenToZone(newToken, zone) {
     const zoneRef = doc(db, "zones", zone);
     // const zoneDoc = await getDoc(zoneRef);
 
-    if (zone !== "Unverified") {
+    if (zone !== "Unverified" && newToken && newToken != "") {
         updateDoc(zoneRef, {
             members: arrayUnion(newToken)
         }).then((resp) => {
