@@ -153,7 +153,7 @@ export default function ExploreTab({ navigation }) {
           // save state and update UI
           // save state and update UI
           setLocationLoading(false);
-          
+
           if (user.status == 'returning') {
             updateUserLocation(userLocation);
           }
@@ -205,8 +205,8 @@ export default function ExploreTab({ navigation }) {
           {/* MOBILE - SHOW MAP */}
           {Platform.OS !== 'web' && user.zone != 'Unverified' &&
             <Box h='35%' mt='-10' mx='-1' >
-            <Gmap lat={user.latitude} long={user.longitude} />
-          </Box>
+              <Gmap lat={user.latitude} long={user.longitude} />
+            </Box>
           }
 
           {/* ALL PLATFORMS */}
@@ -225,11 +225,11 @@ export default function ExploreTab({ navigation }) {
                   </Button>;
                 }}>
                   <Popover.Content accessibilityLabel="Delete Customer" mx={2}>
-                    <Popover.Arrow/>
+                    <Popover.Arrow />
                     <Popover.CloseButton />
                     <Popover.Header>Permission Request</Popover.Header>
                     <Popover.Body>
-We need to access your location so we can verify the correct neighborhood for you and your pup. This helps keep our community safe. We do not track your location. If you move you will need to update your dogs location.                    </Popover.Body>
+                      We need to access your location so we can verify the correct neighborhood for you and your pup. This helps keep our community safe. If you move you will need to update your dogs location.           </Popover.Body>
                     <Popover.Footer justifyContent="flex-end">
                       <Button.Group space={2}>
                         <Button onPress={getLocation}
