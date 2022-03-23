@@ -41,7 +41,10 @@ export const userSlice = createSlice({
 
     },
     saveDogCards: (state, action) => {
-      state.dogs.push(action.payload);
+
+      if (!state.dogs.includes(action.payload)) {
+        state.dogs.push(action.payload);
+      }
     },
     getDevice: (state, action) => {
       state.device = action.payload

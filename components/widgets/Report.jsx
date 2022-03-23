@@ -36,6 +36,10 @@ export default function Report(props) {
         <Popover.CloseButton />
         {/* @ts-ignore */}
         <Popover.Header>Report User?</Popover.Header>
+        <Popover.Body>
+          User and all their dogs will be blocked from your view.
+        </Popover.Body>
+
         <Popover.Footer>
           <Button.Group>
             <Button

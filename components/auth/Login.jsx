@@ -79,7 +79,7 @@ export default function Login({ navigation }) {
               fontWeight: 'medium',
               fontSize: 'sm',
             }}
-            onPress={() => navigation.navigate("Register")}>
+            onPress={() => navigation.navigate("Create")}>
             Sign Up
           </Link>
         </HStack>
