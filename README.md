@@ -6,31 +6,21 @@ A COMMUNITY FOR DOG OWNERS
   - view dogs in your neighborhood
 - Profile Tab
   - Find my dog (amber alert for dogs)
+- Owner Resources
+
   
 **FUTURE FEATURES**
-- Owner Resources
 - Dog Adoption
+- Dog Services
 - Feed 
 
 **STACK**
 - Expo (Platform Enviroment)
 - React Native (Front End Framework)
 - Redux (State Management)
+- Google Maps (Map Services)
+- Mapquest API (Geolocation Services)
 - NativeBase (UI Components)
 - Firebase (Backend)
+- Google Analytics (Analytics)
 - Sentry (Error Reporting)
-
-
-
-Steps to Distribute to Apple
-0. Change Build number in app.json
-1. expo build:ios --clear-provisioning-profile --revoke-credentials
-2. Download IPA file from expo 
-3. Upload via Transporter (eas submit --platform ios)
-4. Approve on Apple Connect 
-
-
-During Submission
-5. Change submission build 
-6. Reply to reviewer 
-7. Resubmit 
