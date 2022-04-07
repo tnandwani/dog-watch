@@ -9,16 +9,17 @@ export const interfaceSlice = createSlice({
     screen: null,
     modals: {
       showDogModal: false,
-      showLostModal: false
-
+      showLostModal: false,
+      showFeedback: false
     },
     alerts: {
       createAccount: 'Must be atleast 6 characters.',
       login: 'Must be atleast 6 characters.'
     },
+    isPublishing: false,
     progress: {
       dog: 0,
-    }
+    },
   },
   reducers: {
 
@@ -28,7 +29,9 @@ export const interfaceSlice = createSlice({
     updateShowLostModal: (state, action) => {
       state.modals.showLostModal = action.payload
     },
-
+    updateShowFeedback: (state, action) => {
+      state.modals.showFeedback = action.payload
+    },
     updateLoginAlert: (state, action) => {
       state.alerts.login = action.payload
     },
@@ -36,14 +39,15 @@ export const interfaceSlice = createSlice({
       state.alerts.createAccount = action.payload
     },
 
-    
     updateDogProgress: (state, action) => {
       state.progress.dog = action.payload
     },
     setTabScreen: (state, action) => {
       state.screen = action.payload
     },
-
+    setIsPublishing: (state, action) => {
+      state.isPublishing = action.payload
+    },
   },
 })
 
@@ -51,10 +55,12 @@ export const interfaceSlice = createSlice({
 export const {
   updateShowDogModal,
   updateLoginAlert,
+  updateShowFeedback,
   updateCreateAlert,
   updateDogProgress,
   setTabScreen,
-  updateShowLostModal
+  updateShowLostModal,
+  setIsPublishing
 
 } = interfaceSlice.actions
 

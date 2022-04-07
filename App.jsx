@@ -1,5 +1,5 @@
 // REACT
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { Platform, View } from 'react-native';
 //Sentry setup 
 import * as Sentry from 'sentry-expo';
@@ -26,22 +26,20 @@ import ExploreScreen from "./components/tabs/ExploreTab";
 import MainScreen from "./components/Main";
 // VIEW COMPONENTS
 import DogCreator from "./components/views/DogCreator"; // holds user tabs
+import Support from "./components/views/Support"; // holds user tabs
 import Personality from "./components/views/Personality";
 import { useDispatch } from 'react-redux';
 import { getDevice } from './redux/slices/userSlice';
-
-
 import { setTabScreen } from './redux/slices/interfaceSlice';
-
-
 import { setScreenAnalytics } from './database';
 
+import Feedback from './components/modals/Feedback';
 
 // SENTRY INIT
-if (Platform.OS == 'web'){
+if (Platform.OS == 'web') {
   Sentry.Browser.wrap(App)
 }
-else{
+else {
   Sentry.Native.wrap(App);
 }
 Sentry.init({
@@ -56,16 +54,21 @@ export function AppContent() {
   const dispatch = useDispatch();
   var status = useSelector((state) => state.user.status);
 
+
   dispatch(getDevice(Platform.OS));
 
   return (
     <NativeBaseProvider>
+      <Feedback />
+
       {status == "loading" && (
         <Center flex={1} px="3">
           <Spinner color="indigo.500" />
         </Center>
       )}
-
+      {status == "support" && (
+        <Support />
+      )}
       {status == "new" && (
         <NavigationContainer theme={MyTheme}  >
           <Stack.Navigator initialRouteName="Landing" screenListeners={{
@@ -127,10 +130,18 @@ export function AppContent() {
               }}
             />
             <Stack.Screen
+              name="Support"
+              component={Support}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
               name="Personality"
               component={Personality}
               options={{
                 headerShown: false,
+                gestureEnabled: false
               }}
             />
 

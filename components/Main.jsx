@@ -3,15 +3,15 @@ import { Platform } from "react-native";
 
 import { useSelector, useDispatch } from "react-redux";
 
+
 //ICONS
-import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { MaterialCommunityIcons } from "@expo/vector-icons"
 
 // TABS 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ExploreTab from './tabs/ExploreTab'
 import ProfileTab from './tabs/ProfileTab'
-import { addUsertoZone, sendFireError, setScreenAnalytics } from '../database';
-
+import { addTokenToUser, sendFireError, setScreenAnalytics } from '../database';
 
 
 // NOTIFCATIONS
@@ -47,7 +47,7 @@ async function registerForPushNotificationsAsync() {
             finalStatus = status;
         }
         if (finalStatus !== 'granted') {
-            alert('Failed to get push token for push notification!');
+            alert('Failed to signup for push notification!');
             return;
         }
         token = (await Notifications.getExpoPushTokenAsync()).data;
@@ -74,6 +74,7 @@ export default function Main() {
     const [notification, setNotification] = useState(false);
     const notificationListener = useRef();
     const responseListener = useRef();
+    let oldToken = useSelector((state) => state.explore.pushToken);
 
     const dispatch = useDispatch()
 
@@ -82,7 +83,9 @@ export default function Main() {
         // If mobile
         if (Platform.OS !== 'web') {
             registerForPushNotificationsAsync().then(token => {
-                addUsertoZone(token)
+                if (token !== oldToken){
+                    addTokenToUser(token);
+                }
             }).catch((error) => {
                 sendFireError(error.message, "MAIN.registerForPushNotificationsAsync")
             });
@@ -104,37 +107,39 @@ export default function Main() {
     }, []);
 
     return (
-        <Tab.Navigator screenListeners={{
-            state: (e) => {
-                // Do something with the state
-                let screen = e.data.state
-                let currentScreen = screen.routes[screen.index].name
-                setScreenAnalytics(currentScreen);
-                dispatch(setTabScreen(currentScreen))
+  
+            <Tab.Navigator screenListeners={{
+                state: (e) => {
+                    // Do something with the state
+                    let screen = e.data.state
+                    let currentScreen = screen.routes[screen.index].name
+                    setScreenAnalytics(currentScreen);
+                    dispatch(setTabScreen(currentScreen))
 
-            }
-        }}>
+                }
+            }}>
 
-            {/* <Tab.Screen name="Home" component={HomeTab} options={{
+                {/* <Tab.Screen name="Home" component={HomeTab} options={{
                 headerShown: false,
                 tabBarIcon: ({ color, size }) => (
                     <MaterialIcons name="home" color={color} size={size} />
                 )
             }} /> */}
-            <Tab.Screen name="Explore" component={ExploreTab} options={{
-                headerShown: false,
-                tabBarIcon: ({ color, size }) => (
-                    <MaterialIcons name="compass" color={color} size={size} />
-                )
-            }} />
-            <Tab.Screen name="Profile" component={ProfileTab} options={{
-                headerShown: false,
-                tabBarIcon: ({ color, size }) => (
-                    <MaterialIcons name="dog-side" color={color} size={size} />
-                )
-            }} />
+                <Tab.Screen name="Explore" component={ExploreTab} options={{
+                    headerShown: false,
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="compass" color={color} size={size} />
+                    )
+                }} />
+                <Tab.Screen name="Profile" component={ProfileTab} options={{
+                    headerShown: false,
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="dog-side" color={color} size={size} />
+                    )
+                }} />
 
 
-        </Tab.Navigator>
+            </Tab.Navigator>
+
     )
 }

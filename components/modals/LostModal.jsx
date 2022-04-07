@@ -1,9 +1,10 @@
-import React, {  } from "react";
+import React, { } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import {
   Center,
   Modal,
+  Text
 } from 'native-base';
 
 import { updateShowLostModal } from "../../redux/slices/interfaceSlice";
@@ -21,6 +22,9 @@ export default function LostModal(props) {
         <Modal.CloseButton />
         <Modal.Header colorScheme='emerald.500'>Lost Dogs</Modal.Header>
         <Modal.Body>
+          <Center>
+            <Text fontWeight={200}> Swipe for actions</Text>
+          </Center>
           {(myZone.lost.length > 0) &&
             <LostList />
           }
@@ -30,6 +34,7 @@ export default function LostModal(props) {
 
 
         </Modal.Body>
+
 
       </Modal.Content>
 

@@ -1,52 +1,79 @@
-import React, {useEffect} from 'react'
-import { Button, Stack, Icon, Center, Heading } from "native-base"
-import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import React, { useEffect } from 'react'
+import { Box, Button, VStack, Icon, Center, Heading, Divider } from "native-base"
+import { MaterialIcons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
+import { googleSignIn } from '../../database';
+import { Platform } from 'react-native';
+import GoogleButton from './socials/GoogleButton'
+import AppleButton from './socials/AppleButton'
+
+import * as Linking from 'expo-linking';
+import { useDispatch } from 'react-redux';
+import { changeStatus } from '../../redux/slices/userSlice';
+import { fontStyle } from 'styled-system';
+
 
 export default function Landing({ navigation }) {
     useEffect(() => {
+        
     }, []);
-    console.log("LANDED OPENED");
+    const dispatch = useDispatch();
 
     return (
 
-        <Center flex={1} px="3">
+        <Center safeArea flex={1} px="3">
             <Heading size="2xl" color="coolGray.800" fontWeight="600" bold>
                 Dog Watch
             </Heading>
             <Heading mt="1" mb='5' color="coolGray.600" fontWeight="medium" size="xs">
                 A Community for Dog Owners
             </Heading>
-            <Stack
+            <VStack
                 mt="4"
-                direction={{
-                    base: "column",
-                    md: "row",
-                }}
                 space={4}
             >
+
                 <Button
-                    colorScheme="indigo"
-                    leftIcon={<Icon as={MaterialIcons} name="key" size="md" />}
-                    onPress={() => navigation.navigate("Login")}
+                    colorScheme="emerald"
+                    leftIcon={<MaterialIcons name="explore" size={24} color="white" />}
+                    onPress={() => navigation.navigate("Guest Explore")}
                 >
-                    Login
+                    Guest Explore
                 </Button>
                 <Button
-                    colorScheme="orange"
-                    leftIcon={<Icon as={MaterialIcons} name="account-plus" size="md" />}
-                    onPress={() => navigation.navigate("Create")}
+                    colorScheme="muted"
+                    leftIcon={<MaterialCommunityIcons name="email-plus" size={24} color="white" />}
+                    onPress={() => {
+                        navigation.navigate("Create")
+                    }
+                    }
                 >
                     Create Account
                 </Button>
+
+
+                <GoogleButton />
+
+                {Platform.OS == 'ios' &&
+                    <AppleButton />
+                }
                 <Button
-                    colorScheme="teal"
-                    leftIcon={<Icon as={MaterialIcons} name="compass" size="md" />}
-                    onPress={() => navigation.navigate("Guest Explore")}
+                    colorScheme="indigo"
+                    leftIcon={<MaterialIcons name="email" size={24} color="white" />}
+                    onPress={() => navigation.navigate("Login")}
                 >
-                    Explore
+                    Email Login
                 </Button>
-            </Stack>
-        </Center>
+
+                <Box mt ='5'>
+                    <Button _text={{ fontStyle: 'italic', fontSize: 'xs', fontWeight: 500 }}colorScheme='indigo' variant={'ghost'} onPress={()=>{
+                        dispatch(changeStatus('support'))
+                    }}>
+                        Support
+                    </Button>
+
+                </Box>
+            </VStack>
+        </Center >
 
     )
 }

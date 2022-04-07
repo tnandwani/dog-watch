@@ -10,7 +10,7 @@ export const exploreSlice = createSlice({
     dogTags: [],
     myCoords: null,
     vapidToken: null,
-    pushToken: null,
+    pushToken: "",
     myZone: {
       members: [],
       lost: [],
@@ -23,6 +23,14 @@ export const exploreSlice = createSlice({
     },
     saveZone: (state, action) => {
       state.myZone = action.payload
+    },
+    resetZone: (state, action) => {
+      console.log("reseting zone data")
+      state.myZone = {
+        members: [],
+        lost: [],
+      };
+      state.dogTags = [];
     },
     addTag: (state, action) => {
       if (!state.dogTags.includes(action.payload)) {
@@ -57,6 +65,7 @@ export const exploreSlice = createSlice({
       // remove from explore
       const indexExplore = state.dogTags.findIndex(tags => tags.duid === action.payload);
       state.dogTags.splice(indexExplore, 1);
+
       // remove from lost
       const indexLost = state.myZone.lost.findIndex(dog => dog.duid === action.payload);
       state.myZone.lost.splice(indexLost, 1);
@@ -78,7 +87,8 @@ export const {
   updateDogView,
   foundZoneDog,
   addLostDog,
-  removeTag
+  removeTag,
+  resetZone
 } = exploreSlice.actions
 
 export default exploreSlice.reducer

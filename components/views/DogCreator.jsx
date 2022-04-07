@@ -41,7 +41,7 @@ import {
 } from 'native-base';
 import { saveDogPic } from '../../redux/slices/rawDogSlice';
 import { breedList, mapQuestKey } from '../../constants';
-import { deleteDog, sendFireError, sendSentryMessage, uAnalytics } from '../../database';
+import { convertImage, deleteDog, logAnalEvent, sendFireError, sendSentryMessage, uAnalytics } from '../../database';
 import { AndroidAudioContentType } from 'expo-notifications';
 
 
@@ -63,10 +63,10 @@ export default function DogCreator({ navigation }) {
     }, []);
 
     // dog details 
-    const [dogName, setDogName] = useState(null);
-    const [breed, setBreed] = useState(null);
-    const [age, setAge] = useState(null);
-    const [gender, setGender] = useState(null);
+    const [dogName, setDogName] = useState(useSelector((state) => state.rawDog.dogName));
+    const [breed, setBreed] = useState(useSelector((state) => state.rawDog.breed));
+    const [age, setAge] = useState(useSelector((state) => state.rawDog.age));
+    const [gender, setGender] = useState(useSelector((state) => state.rawDog.gender));
     const [profileImage, setProfileImage] = useState('https://cdn.pixabay.com/photo/2013/11/28/11/31/dog-220273_960_720.jpg');
 
     // owner
@@ -74,11 +74,10 @@ export default function DogCreator({ navigation }) {
     const uid = useSelector((state) => state.user.uid)
     const duid = useSelector((state) => state.rawDog.duid)
     const editing = useSelector((state) => state.rawDog.editing)
-
     // location
-    const [visibility, setVisibility] = useState();
+    const [visibility, setVisibility] = useState(useSelector((state) => state.rawDog.visibility));
     const [location, setLocation] = useState();
-    const [locationStatus, setLocationStatus] = useState("No Location Recieved");
+    const [locationLoading, setLocationLoading] = useState(false);
     const [locationHelper, setLocationHelper] = useState("Visibility based on privacy");
 
     const dispatch = useDispatch()
@@ -127,20 +126,27 @@ export default function DogCreator({ navigation }) {
         }
 
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [6, 6],
             quality: 1,
         });
         if (!result.cancelled) {
             // get URI
+
             const URI = result.uri
-            console.log("URI IS" , result);
+            console.log("URI IS", result);
+            // pass raw uri as prop
             setProfileImage(URI);
-            dispatch(saveDogPic(URI));
+
+            //  prep image for upload
+            convertImage(URI)
+
+
 
         }
     };
+
     const getLocation = () => {
 
         (async () => {
@@ -148,7 +154,7 @@ export default function DogCreator({ navigation }) {
             // get API key for web created accounts - too expensive for only web
             // Location.setGoogleApiKey(googleAPI)
 
-            setLocationStatus(<Spinner color="indigo.500" />);
+            setLocationLoading(true);
             if (Platform.OS === 'android' && !Constants.isDevice) {
                 sendFireError('Permission to access location was denied', 'Location_Permission_Eror');
                 return;
@@ -187,15 +193,12 @@ export default function DogCreator({ navigation }) {
                 })
                 .then(data => {
                     const addy = data.results[0].locations[0].postalCode
-                    sendSentryMessage("Joined via Dog: " + JSON.stringify(addy))
                     let zip = addy
                     if (addy.includes("-")) {
                         zip = addy.substr(0, addy.indexOf('-'));
                     }
 
 
-
-                    // create new location object 
                     let userLocation = {
                         latitude: currentPin.coords.latitude,
                         longitude: currentPin.coords.longitude,
@@ -205,11 +208,16 @@ export default function DogCreator({ navigation }) {
 
                     // save state and update UI
                     setLocation(userLocation);
-                    setLocationStatus("Location Received")
+                    setLocationLoading(false)
+
+
+
                     dispatch(saveLocation(userLocation));
 
                 }).catch((error) => {
                     sendFireError(error, "EXPLORETAB.fetch.data");
+                    alert("Problem getting location - Try again later.")
+                    ƒ
                 });
 
 
@@ -221,11 +229,13 @@ export default function DogCreator({ navigation }) {
     }
 
 
+
     let [isFinished, setIsFinished] = useState(true)
 
     let verify = () => {
+        
 
-        if (dogName && breed && age && gender && visibility && location && isFinished) {
+        if (dogName !== '' && breed && age && gender && visibility && location && isFinished) {
             setIsFinished(false)
         }
 
@@ -251,7 +261,7 @@ export default function DogCreator({ navigation }) {
                         _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
                         Dog Name
                     </FormControl.Label>
-                    <Input placeholder='Dog Name' onChangeText={(value) => updateName(value)} />
+                    <Input placeholder={dogName} autoFocus={!editing} onChangeText={(value) => updateName(value)} />
                 </FormControl>
 
 
@@ -323,7 +333,7 @@ export default function DogCreator({ navigation }) {
                                 endIcon: <CheckIcon size="5" />,
                             }}
                             onValueChange={(value) => updateAge(value)}
-                        > 
+                        >
                             {ageSelects}
                         </Select>
                     </FormControl>
@@ -351,14 +361,59 @@ export default function DogCreator({ navigation }) {
 
 
                 <FormControl>
-                    <FormControl.HelperText>
-                        {/* {locationHelper} */}
-                    </FormControl.HelperText>
-                    <Button mt="4" colorScheme="indigo" _text={{ color: 'white' }} shadow="7" onPress={getLocation}  > Set as Home </Button>
 
-                    <FormControl.HelperText>
-                        {locationStatus}
-                    </FormControl.HelperText>
+
+                    {!location &&
+                        <Popover trigger={triggerProps => {
+                            return <Button {...triggerProps}
+                                mt="4"
+                                colorScheme="indigo" _text={{ color: 'white' }}
+                                shadow="7"
+                            >
+                                Verification Needed
+                            </Button>;
+                        }}>
+                            <Popover.Content accessibilityLabel="Delete Customer" mx='2'>
+                                <Popover.Arrow />
+                                <Popover.CloseButton />
+                                <Popover.Header>Permission Request</Popover.Header>
+                                <Popover.Body>
+                                    We need to access your location so we can verify the correct neighborhood for you and your pup. This helps keep our community safe. If you move you will need to update your dogs location.                             </Popover.Body>
+                                <Popover.Footer justifyContent="flex-end">
+                                    <Button.Group space={2}>
+                                        <Button isLoading={locationLoading}
+                                            _loading={{
+                                                bg: "success.400",
+                                                _text: {
+                                                    color: "white"
+                                                }
+                                            }} _spinner={{
+                                                color: "white"
+                                            }}
+                                            spinnerPlacement="end"
+                                            isLoadingText="Requesting"
+                                            onPress={getLocation}
+                                            colorScheme="success">Sounds Good!</Button>
+                                    </Button.Group>
+                                </Popover.Footer>
+                            </Popover.Content>
+                        </Popover>
+                    }
+                    {location &&
+                        <Button
+                            mt="4"
+                            colorScheme="success" _text={{ color: 'white' }}
+                            shadow="7"
+                            disabled
+                            endIcon={<CheckIcon size="5" />}
+
+                        >
+                            Zone Verified
+                        </Button>
+                    }
+
+
+
                 </FormControl>
 
 
@@ -427,6 +482,6 @@ export default function DogCreator({ navigation }) {
             </Center>
 
 
-        </Box>
+        </Box >
     )
 }

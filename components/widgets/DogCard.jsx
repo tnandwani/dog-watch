@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Image,  Keyboard } from "react-native";
+import { Image, Keyboard } from "react-native";
 import Report from "./Report";
 import {
   Box,
@@ -8,11 +8,13 @@ import {
   AspectRatio,
   Text,
   Pressable,
+  Badge,
   Center,
   Skeleton,
   Stack,
   HStack,
   VStack,
+  Icon,
   IconButton,
   Button,
   Modal,
@@ -36,7 +38,6 @@ export default function DogCard(props) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [EContact, setEContact] = useState();
   const [message, setMessage] = useState();
-  const [profileImage, setProfileImage] = useState(props.dog.item.profileImage);
 
   let uid = useSelector((state) => state.user.uid);
   let email = useSelector((state) => state.user.email);
@@ -52,10 +53,11 @@ export default function DogCard(props) {
   const editDog = () => {
     // pass dog to rawDog
     dispatch(importDog(props.dog.item))
-    
+
     // open Dog Creator 
     props.navigation.navigate('DogCreator')
-    
+
+
 
 
   }
@@ -78,25 +80,26 @@ export default function DogCard(props) {
     <Center w="100%">
 
       {/* TURN ALERT ON */}
-      <Modal isOpen={showAlertModal} onClose={() => setShowAlertModal(false)}>
+      <Modal isOpen={showAlertModal} avoidKeyboard onClose={() => setShowAlertModal(false)}>
         <Modal.Content maxWidth="400px">
           <Modal.CloseButton />
           <Modal.Header colorScheme='red.500'>Mark Dog as Lost?</Modal.Header>
           <Modal.Body>
 
-            <FormControl isRequired >
-              <FormControl.Label>Add Alert Details</FormControl.Label>
-              <TextArea
-                onSubmitEditing={() => Keyboard.dismiss()}
-                onChangeText={(value) => setMessage(value)} />
-
-            </FormControl>
+    
             <FormControl isRequired mt='2'>
               <FormControl.Label>Emergency Contact</FormControl.Label>
               <Input onChangeText={(value) => setEContact(value)} />
               <FormControl.HelperText>
-                Are you sure you want to mark your dog as lost?
+                Note: People in your zone will be able to see the emergency contact info while your dog is marked as lost.
               </FormControl.HelperText>
+              <FormControl isRequired >
+                <FormControl.Label>Add Alert Details</FormControl.Label>
+                <TextArea
+                  onSubmitEditing={() => Keyboard.dismiss()}
+                  onChangeText={(value) => setMessage(value)} />
+
+              </FormControl>
             </FormControl>
 
           </Modal.Body>
@@ -125,7 +128,7 @@ export default function DogCard(props) {
       </Modal>
 
       {/* TURN ALERT OFF */}
-      <Modal isOpen={showCancelModal} onClose={() => setShowCancelModal(false)}>
+      <Modal isOpen={showCancelModal} avoidKeyboard onClose={() => setShowCancelModal(false)}>
         <Modal.Content maxWidth="400px">
           <Modal.CloseButton />
           <Modal.Header colorScheme='emerald.500'>Mark Dog as Found?</Modal.Header>
@@ -183,7 +186,7 @@ export default function DogCard(props) {
 
           <HStack w="100%">
             <Center w="25%">
-              <Skeleton isLoaded={isLoaded} flex="1" h="100" w="100%"  rounded="md" startColor="indigo.400">
+              <Skeleton isLoaded={isLoaded} flex="1" h="100" w="100%" rounded="md" startColor="indigo.400">
 
                 <AspectRatio w="115%" ratio={9 / 9}>
                   <Image
@@ -191,7 +194,7 @@ export default function DogCard(props) {
                     onLoadEnd={() => setIsLoaded(true)}
                     w='100%'
                     source={{
-                      uri: profileImage,
+                      uri: props.dog.item.profileImage,
                       // uri: "https://i.ytimg.com/vi/MPV2METPeJU/maxresdefault.jpg",
                     }}
                     alt="image"
@@ -207,6 +210,7 @@ export default function DogCard(props) {
                 <Heading size="md" ml="-1">
 
                   {props.dog.item.dogName}
+
                 </Heading>
                 <Text
                   fontSize="xs"
@@ -232,6 +236,14 @@ export default function DogCard(props) {
                 >
 
                   {props.dog.item.age + " Years Old"}
+
+                  {/* gender icon */}
+                  {props.dog.item.gender === 'F' &&
+                    <Icon ml='2' as={MaterialCommunityIcons} name="gender-female" color="pink.400" size="xs" />
+                  }
+                  {props.dog.item.gender === 'M' &&
+                    <Icon ml='2' as={MaterialCommunityIcons} name="gender-male" color="blue.400" size="xs" />
+                  }
                 </Text>
               </Stack>
             </Box>

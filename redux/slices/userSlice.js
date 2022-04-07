@@ -20,7 +20,7 @@ export const userSlice = createSlice({
     dogs: [],
     status: 'loading',
     notifications: [],
-    pushToken: null,
+    pushToken: '',
     reported: []
   },
   reducers: {
@@ -41,7 +41,10 @@ export const userSlice = createSlice({
 
     },
     saveDogCards: (state, action) => {
-      state.dogs.push(action.payload);
+
+      if (!state.dogs.includes(action.payload)) {
+        state.dogs.push(action.payload);
+      }
     },
     getDevice: (state, action) => {
       state.device = action.payload
@@ -76,7 +79,7 @@ export const userSlice = createSlice({
       state.dogs[index] = action.payload
     },
     removeDogfromUser: (state, action) => {
-      const index = state.dogs.findIndex(dog => dog.duid === action.payload.duid);
+      const index = state.dogs.findIndex(dog => dog.duid === action.payload);
       state.dogs.splice(index, 1)
     },
     reportUser: (state, action) => {
