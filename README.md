@@ -11,6 +11,10 @@ Get App @ https://dogwatch.page.link/join
 - Profile Tab
   - Find my dog (amber alert for dogs)
 - Owner Resources
+  - Training
+  - Health
+  - Diet 
+
 
   
 **FUTURE FEATURES**
