@@ -13,7 +13,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 export default function GoogleButton() {
 
-    const [request, response, promptAsync] = Google.useIdTokenAuthRequest(
+    const [request, response, promptAsync] = Google.useAuthRequest(
         {
             clientId: webClient.web.client_id,
             iosClientId: webClient.ios.CLIENT_ID,
