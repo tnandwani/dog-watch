@@ -16,7 +16,8 @@ export default function GoogleButton() {
     const [request, response, promptAsync] = Google.useIdTokenAuthRequest(
         {
             clientId: webClient.web.client_id,
-            iosClientId: webClient.ios.CLIENT_ID
+            iosClientId: webClient.ios.CLIENT_ID,
+            androidClientId: webClient.android.CLIENT_ID
         },
     );
 
