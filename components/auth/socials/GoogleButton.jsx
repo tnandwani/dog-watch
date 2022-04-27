@@ -1,18 +1,20 @@
 import * as React from 'react';
 import * as WebBrowser from 'expo-web-browser';
-import { ResponseType } from 'expo-auth-session';
 import * as Google from 'expo-auth-session/providers/google';
-import { getAuth, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
+import { GoogleAuthProvider } from 'firebase/auth';
 import { Button } from "native-base"
 import { AntDesign } from '@expo/vector-icons';
 import webClient from '../clients/tokens.json'
-import { googleSignIn, socialSignIn } from '../../../database';
+import { socialSignIn } from '../../../database';
+import { makeRedirectUri } from 'expo-auth-session';
 
 
 WebBrowser.maybeCompleteAuthSession();
 
 export default function GoogleButton() {
 
+    const safeRedirect = AuthSession.makeRedirectUri({ useProxy: true });
+    
     const [request, response, promptAsync] = Google.useAuthRequest(
         {
             clientId: webClient.web.client_id,
@@ -32,9 +34,9 @@ export default function GoogleButton() {
 
     return (
         <Button
-            colorScheme="red"
+            colorScheme="orange"
             leftIcon={<AntDesign name="google" size={24} color="white" />}
-            onPress={() => promptAsync()}
+            onPress={() => promptAsync({ safeRedirect}) }
         >
             Google Login
         </Button>

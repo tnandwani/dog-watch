@@ -242,8 +242,6 @@ export function socialSignIn(credential) {
     }).catch((err) => {
         console.log(err)
         sendFireError(err, 'login.social.firebaseConnect')
-
-
     });
 }
 export async function signAnon() {
