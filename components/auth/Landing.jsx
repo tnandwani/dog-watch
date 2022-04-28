@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Box, Button, VStack, Icon, Center, Heading, Divider } from "native-base"
+import { Box, Button, VStack, Icon, Text, Center, Heading, Divider } from "native-base"
 import { MaterialIcons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import { googleSignIn } from '../../database';
 import { Platform } from 'react-native';
@@ -70,7 +70,7 @@ export default function Landing({ navigation }) {
                     }}>
                         Support
                     </Button>
-
+                    <Center><Text> V1.1.1h</Text></Center>
                 </Box>
             </VStack>
         </Center >

@@ -13,7 +13,6 @@ WebBrowser.maybeCompleteAuthSession();
 
 export default function GoogleButton() {
 
-    const safeRedirect = AuthSession.makeRedirectUri({ useProxy: true });
     
     const [request, response, promptAsync] = Google.useAuthRequest(
         {
@@ -33,10 +32,11 @@ export default function GoogleButton() {
     }, [response]);
 
     return (
+        
         <Button
-            colorScheme="orange"
+            colorScheme="red"
             leftIcon={<AntDesign name="google" size={24} color="white" />}
-            onPress={() => promptAsync({ safeRedirect}) }
+            onPress={() => promptAsync(makeRedirectUri({ useProxy: true })) }
         >
             Google Login
         </Button>

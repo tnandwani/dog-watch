@@ -58,7 +58,7 @@ export default function DogCreator({ navigation }) {
 
     useEffect(() => {
 
-        Analytics.logEvent('create_dog_opened', uAnalytics())
+        Analytics.logEvent('create_dog_opened', uAnalytics());
 
     }, []);
 
@@ -68,6 +68,8 @@ export default function DogCreator({ navigation }) {
     const [age, setAge] = useState(useSelector((state) => state.rawDog.age));
     const [gender, setGender] = useState(useSelector((state) => state.rawDog.gender));
     const [profileImage, setProfileImage] = useState('https://cdn.pixabay.com/photo/2013/11/28/11/31/dog-220273_960_720.jpg');
+
+    const [namePlaceholder] = useState(useSelector((state) => state.rawDog.dogName));
 
     // owner
     // const [contact, setContact] = useState();
@@ -261,7 +263,7 @@ export default function DogCreator({ navigation }) {
                         _text={{ color: 'muted.700', fontSize: 'xs', fontWeight: 500 }}>
                         Dog Name
                     </FormControl.Label>
-                    <Input placeholder={dogName} autoFocus={!editing} onChangeText={(value) => updateName(value)} />
+                    <Input placeholder={namePlaceholder} autoFocus={!editing} onChangeText={(value) => updateName(value)} />
                 </FormControl>
 
 
