@@ -14,7 +14,7 @@ import { fontStyle } from 'styled-system';
 
 export default function Landing({ navigation }) {
     useEffect(() => {
-        
+
     }, []);
     const dispatch = useDispatch();
 
@@ -50,8 +50,10 @@ export default function Landing({ navigation }) {
                     Create Account
                 </Button>
 
-
-                <GoogleButton />
+                {/* diable google sign in on android */}
+                {Platform.OS != 'android' &&
+                    <GoogleButton />
+                }
 
                 {Platform.OS == 'ios' &&
                     <AppleButton />
@@ -64,13 +66,13 @@ export default function Landing({ navigation }) {
                     Email Login
                 </Button>
 
-                <Box mt ='5'>
-                    <Button _text={{ fontStyle: 'italic', fontSize: 'xs', fontWeight: 500 }}colorScheme='indigo' variant={'ghost'} onPress={()=>{
+                <Box mt='5'>
+                    <Button _text={{ fontStyle: 'italic', fontSize: 'xs', fontWeight: 500 }} colorScheme='indigo' variant={'ghost'} onPress={() => {
                         dispatch(changeStatus('support'))
                     }}>
                         Support
                     </Button>
-                    <Center><Text> V1.1.1h</Text></Center>
+                    <Center><Text> V1.1.1P</Text></Center>
                 </Box>
             </VStack>
         </Center >
